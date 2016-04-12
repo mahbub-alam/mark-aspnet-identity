@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace Mark.AspNet.Identity
 {
     /// <summary>
-    /// Represents store with disposable support.
+    /// Represents disposable support.
     /// </summary>
-    public abstract class DisposableStore : IDisposable
+    public abstract class Disposable : IDisposable
     {
         #region IDisposable Support
 
@@ -63,7 +63,7 @@ namespace Mark.AspNet.Identity
         /// <summary>
         /// Finializer. 
         /// </summary>
-        ~DisposableStore()
+        ~Disposable()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose(false);
@@ -71,7 +71,7 @@ namespace Mark.AspNet.Identity
 
         // This code added to correctly implement the disposable pattern.
         /// <summary>
-        /// Dispose managed or unmanaged resources.
+        /// Dispose managed and unmanaged resources.
         /// </summary>
         public void Dispose()
         {

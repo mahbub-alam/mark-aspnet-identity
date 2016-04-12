@@ -6,25 +6,43 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity.ModelConfiguration;
+using Mark.AspNet.Identity.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
     /// <summary>
-    /// Represents entity map of the EntityTypeConfiguration type. 
+    /// Represents base entity mapping. 
     /// </summary>
-    /// <typeparam name="T">Entity type.</typeparam>
-    public abstract class EntityMap<T> : EntityTypeConfiguration<T> where T : class
+    /// <typeparam name="TEntity">Entity type.</typeparam>
+    public abstract class EntityMap<TEntity> : EntityTypeConfiguration<TEntity> 
+        where TEntity : class
     {
+        EntityConfiguration _configuration;
+
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
-        /// <param name="tableName">Table name this entity type is mappped to.</param>
-        protected EntityMap(string tableName)
+        /// <param name="configuration">Entity configuration.</param>
+        protected EntityMap(EntityConfiguration configuration)
         {
-            ToTable(tableName);
+            if (configuration == null)
+            {
+                throw new ArgumentNullException("Configuration parameter null");
+            }
+
+            _configuration = configuration;
+            ToTable(_configuration.TableName);
             MapPrimaryKey();
             MapFields();
             MapRelationships();
+        }
+
+        /// <summary>
+        /// Get configuration.
+        /// </summary>
+        protected EntityConfiguration Configuration
+        {
+            get { return _configuration; }
         }
 
         /// <summary>

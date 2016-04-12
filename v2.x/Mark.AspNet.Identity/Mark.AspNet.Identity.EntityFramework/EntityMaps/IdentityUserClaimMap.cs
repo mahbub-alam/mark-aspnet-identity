@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mark.AspNet.Identity.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
     /// <summary>
-    /// Represents mapping configuration for 'UserClaim' table.
+    /// Represents entity mapping user claim entity.
     /// </summary>
     /// <typeparam name="TUserClaim">User claim type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
@@ -20,8 +21,8 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
-        /// <param name="tableName">Table name this entity type is mappped to.</param>
-        public IdentityUserClaimMap(string tableName) : base(tableName)
+        /// <param name="configuration">Entity configuration.</param>
+        public IdentityUserClaimMap(EntityConfiguration configuration) : base(configuration)
         {
         }
 
@@ -32,7 +33,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         {
             HasKey(p => p.Id);
             Property(p => p.Id)
-                .HasColumnName("Id");
+                .HasColumnName(Configuration[UserClaimFields.Id]);
         }
 
         /// <summary>
@@ -41,13 +42,13 @@ namespace Mark.AspNet.Identity.EntityFramework
         protected override void MapFields()
         {
             Property(p => p.UserId)
-                .HasColumnName("UserId");
+                .HasColumnName(Configuration[UserClaimFields.UserId]);
 
             Property(p => p.ClaimType)
-                .HasColumnName("ClaimType");
+                .HasColumnName(Configuration[UserClaimFields.ClaimType]);
 
             Property(p => p.ClaimValue)
-                .HasColumnName("ClaimValue");
+                .HasColumnName(Configuration[UserClaimFields.ClaimValue]);
         }
     }
 }

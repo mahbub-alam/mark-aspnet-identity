@@ -16,7 +16,7 @@ namespace Mark.AspNet.Identity
     /// <typeparam name="TUserLogin">User logins type.</typeparam>
     /// <typeparam name="TUserRole">User roles type.</typeparam>
     /// <typeparam name="TUserClaim">User claims type.</typeparam>
-    public class IdentityUser<TKey, TUserLogin, TUserRole, TUserClaim> : IUser<TKey>
+    public class IdentityUser<TKey, TUserLogin, TUserRole, TUserClaim> : IUser<TKey>, IEntity
         where TUserLogin : IdentityUserLogin<TKey>
         where TUserRole : IdentityUserRole<TKey>
         where TUserClaim : IdentityUserClaim<TKey>

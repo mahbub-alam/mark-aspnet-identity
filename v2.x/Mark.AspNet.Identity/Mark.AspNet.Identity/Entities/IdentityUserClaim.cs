@@ -12,7 +12,7 @@ namespace Mark.AspNet.Identity
     /// Entity type that represents one specific user claim.
     /// </summary>
     /// <typeparam name="TKey">Id type.</typeparam>
-    public class IdentityUserClaim<TKey> where TKey : struct
+    public class IdentityUserClaim<TKey> : IEntity where TKey : struct
     {
         /// <summary>
         /// Get or set primary key.

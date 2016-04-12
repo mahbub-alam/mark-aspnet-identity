@@ -15,7 +15,7 @@ namespace Mark.AspNet.Identity
     /// <typeparam name="TRole">Role type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
     /// <typeparam name="TUserRole">User role type.</typeparam>
-    public abstract class RoleStoreBase<TRole, TKey, TUserRole> : DisposableStore, IRoleStore<TRole, TKey>
+    public abstract class RoleStoreBase<TRole, TKey, TUserRole> : Disposable, IRoleStore<TRole, TKey>
         where TRole : IdentityRole<TKey, TUserRole>
         where TUserRole : IdentityUserRole<TKey>
         where TKey : struct

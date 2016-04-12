@@ -3,15 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Linq.Expressions;
+using Mark.AspNet.Identity.Common;
+using System.Security.Claims;
 
-namespace Mark.AspNet.Identity.EntityFramework
+namespace Mark.AspNet.Identity.MySql
 {
     /// <summary>
     /// Represents default storage class for 'User' management.
@@ -23,39 +21,38 @@ namespace Mark.AspNet.Identity.EntityFramework
     /// <typeparam name="TUserRole">User role type.</typeparam>
     /// <typeparam name="TUserClaim">User claim type.</typeparam>
     public class UserStore<TUser, TRole, TKey, TUserLogin, TUserRole, TUserClaim>
-        : UserStoreBase<TUser, TRole, TKey, TUserLogin, TUserRole, TUserClaim>, IQueryableUserStore<TUser, TKey>
-        where TUser : IdentityUser<TKey, TUserLogin, TUserRole, TUserClaim>
-        where TRole : IdentityRole<TKey, TUserRole>
+        : UserStoreBase<TUser, TRole, TKey, TUserLogin, TUserRole, TUserClaim>
+        where TUser : IdentityUser<TKey, TUserLogin, TUserRole, TUserClaim>, new()
+        where TRole : IdentityRole<TKey, TUserRole>, new()
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TUserRole : IdentityUserRole<TKey>, new()
         where TUserClaim : IdentityUserClaim<TKey>, new()
         where TKey : struct
     {
-        private DbContext _context;
-        private EntityStore<TRole, TKey> _roleStore;
-        private EntityStore<TUser, TKey> _userStore;
-        private DbSet<TUserLogin> _userLogins;
-        private DbSet<TUserRole> _userRoles;
-        private DbSet<TUserClaim> _userClaims;
+        private IUnitOfWork _unitOfWork;
+        private UserRepository<TUser, TKey, TUserLogin, TUserRole, TUserClaim> _userRepo;
+        private RoleRepository<TRole, TKey, TUserRole> _roleRepo;
+        private UserLoginRepository<TUserLogin, TKey> _userLoginRepo;
+        private UserRoleRepository<TUserRole, TKey> _userRoleRepo;
+        private UserClaimRepository<TUserClaim, TKey> _userClaimRepo;
 
         /// <summary>
-        /// Initialize a new instance of the class with the database context.
+        /// Initialize a new instance of the class with unit of work.
         /// </summary>
-        /// <param name="context">Database context.</param>
-        public UserStore(DbContext context)
+        /// <param name="unitOfWork">Unit of work reference.</param>
+        public UserStore(IUnitOfWork unitOfWork)
         {
-            if (context == null)
+            if (unitOfWork == null)
             {
-                throw new ArgumentNullException("'context' parameter null");
+                throw new ArgumentNullException("UnitOfWork null");
             }
 
-            _context = context;
-            AutoSaveChanges = true;
-            _roleStore = new EntityStore<TRole, TKey>(context);
-            _userStore = new EntityStore<TUser, TKey>(context);
-            _userLogins = _context.Set<TUserLogin>();
-            _userRoles = _context.Set<TUserRole>();
-            _userClaims = _context.Set<TUserClaim>();
+            _unitOfWork = unitOfWork;
+            _userRepo = new UserRepository<TUser, TKey, TUserLogin, TUserRole, TUserClaim>(_unitOfWork);
+            _roleRepo = new RoleRepository<TRole, TKey, TUserRole>(_unitOfWork);
+            _userLoginRepo = new UserLoginRepository<TUserLogin, TKey>(_unitOfWork);
+            _userRoleRepo = new UserRoleRepository<TUserRole, TKey>(_unitOfWork);
+            _userClaimRepo = new UserClaimRepository<TUserClaim, TKey>(_unitOfWork);
         }
 
         /// <summary>
@@ -65,13 +62,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// </summary>
         protected override void DisposeManaged()
         {
-            if (DisposeContext)
-            {
-                _context.Dispose();
-            }
-
-            _roleStore.Dispose();
-            _userStore.Dispose();
+            // Do nothing
         }
 
         /// <summary>
@@ -80,36 +71,12 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// </summary>
         protected override void DisposeExtra()
         {
-            _context = null;
-            _roleStore = null;
-            _userStore = null;
-            _userLogins = null;
-            _userRoles = null;
-            _userClaims = null;
-        }
-
-        /// <summary>
-        /// Get database context.
-        /// </summary>
-        public DbContext Context
-        {
-            get { return _context; }
-        }
-
-        /// <summary>
-        /// Whether to dispose database context when this object is disposed.
-        /// </summary>
-        public bool DisposeContext
-        {
-            get; set;
-        }
-
-        /// <summary>
-        /// Get the underlying user entity set.
-        /// </summary>
-        public IQueryable<TUser> Users
-        {
-            get { return _userStore.EntitySet; }
+            _unitOfWork = null;
+            _userRepo = null;
+            _roleRepo = null;
+            _userLoginRepo = null;
+            _userRoleRepo = null;
+            _userClaimRepo = null;
         }
 
         /// <summary>
@@ -122,9 +89,10 @@ namespace Mark.AspNet.Identity.EntityFramework
 
         private async Task SaveChangesAsync()
         {
-            if (this.AutoSaveChanges)
+            if (AutoSaveChanges)
             {
-                await _context.SaveChangesAsync().WithCurrentCulture();
+                _unitOfWork.SaveChanges();
+                await Task.FromResult(0);
             }
         }
 
@@ -153,7 +121,7 @@ namespace Mark.AspNet.Identity.EntityFramework
             userClaim.ClaimType = claim.Type;
             userClaim.ClaimValue = claim.Value;
 
-            _userClaims.Add(userClaim);
+            _userClaimRepo.Add(userClaim);
 
             await Task.FromResult(0);
         }
@@ -183,7 +151,7 @@ namespace Mark.AspNet.Identity.EntityFramework
             userLogin.LoginProvider = login.LoginProvider;
             userLogin.ProviderKey = login.ProviderKey;
 
-            _userLogins.Add(userLogin);
+            _userLoginRepo.Add(userLogin);
 
             await Task.FromResult(0);
         }
@@ -208,8 +176,7 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'roleName' parameter null/empty");
             }
 
-            TRole role = await _roleStore.EntitySet.Where(p => p.Name.ToLower() == roleName.ToLower())
-                .SingleOrDefaultAsync().WithCurrentCulture();
+            TRole role = _roleRepo.FindByName(roleName);
 
             if (role == null)
             {
@@ -220,7 +187,9 @@ namespace Mark.AspNet.Identity.EntityFramework
             userRole.UserId = user.Id;
             userRole.RoleId = role.Id;
 
-            _userRoles.Add(userRole);
+            _userRoleRepo.Add(userRole);
+
+            await Task.FromResult(0);
         }
 
         /// <summary>
@@ -237,7 +206,7 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'user' parameter null");
             }
 
-            _userStore.Create(user);
+            _userRepo.Add(user);
             await SaveChangesAsync().WithCurrentCulture();
         }
 
@@ -255,49 +224,68 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'user' parameter null");
             }
 
-            _userStore.Delete(user);
+            _userRepo.Remove(user);
             await SaveChangesAsync().WithCurrentCulture();
         }
 
         private async Task IncludeLoginsAsync(TUser user)
         {
-            DbEntityEntry<TUser> userEntry = _context.Entry(user);
-
-            if (!userEntry.Collection(p => p.Logins).IsLoaded)
+            if (!user.Logins.Any())
             {
-                await _userLogins.Where(p => p.UserId.Equals(user.Id))
-                    .LoadAsync().WithCurrentCulture();
-                userEntry.Collection(p => p.Logins).IsLoaded = true;
+                user.Logins = _userLoginRepo.FindAllByUserId(user.Id);
+                await Task.FromResult(0);
             }
         }
 
         private async Task IncludeRolesAsync(TUser user)
         {
-            DbEntityEntry<TUser> userEntry = _context.Entry(user);
-
-            if (!userEntry.Collection(p => p.Roles).IsLoaded)
+            if (!user.Roles.Any())
             {
-                await _userRoles.Where(p => p.UserId.Equals(user.Id))
-                    .LoadAsync().WithCurrentCulture();
-                userEntry.Collection(p => p.Roles).IsLoaded = true;
+                user.Roles = _userRoleRepo.FindAllByUserId(user.Id);
+                await Task.FromResult(0);
             }
         }
 
         private async Task IncludeClaimsAsync(TUser user)
         {
-            DbEntityEntry<TUser> userEntry = _context.Entry(user);
-
-            if (!userEntry.Collection(p => p.Claims).IsLoaded)
+            if (!user.Claims.Any())
             {
-                await _userClaims.Where(p => p.UserId.Equals(user.Id))
-                    .LoadAsync().WithCurrentCulture();
-                userEntry.Collection(p => p.Claims).IsLoaded = true;
+                user.Claims = _userClaimRepo.FindAllByUserId(user.Id);
+                await Task.FromResult(0);
             }
         }
 
-        private async Task<TUser> GetUserAggregateAsync(Expression<Func<TUser, bool>> filter)
+        private async Task<TUser> GetUserAggregateByIdAsync(TKey userId)
         {
-            TUser user = await _userStore.EntitySet.Where(filter).SingleOrDefaultAsync().WithCurrentCulture();
+            TUser user = _userRepo.FindById(userId);
+
+            if (user != null)
+            {
+                await IncludeLoginsAsync(user).WithCurrentCulture();
+                await IncludeRolesAsync(user).WithCurrentCulture();
+                await IncludeClaimsAsync(user).WithCurrentCulture();
+            }
+
+            return user;
+        }
+
+        private async Task<TUser> GetUserAggregateByUserNameAsync(string userName)
+        {
+            TUser user = _userRepo.FindByEmail(userName);
+
+            if (user != null)
+            {
+                await IncludeLoginsAsync(user).WithCurrentCulture();
+                await IncludeRolesAsync(user).WithCurrentCulture();
+                await IncludeClaimsAsync(user).WithCurrentCulture();
+            }
+
+            return user;
+        }
+
+        private async Task<TUser> GetUserAggregateByEmailAsync(string email)
+        {
+            TUser user = _userRepo.FindByEmail(email);
 
             if (user != null)
             {
@@ -324,8 +312,7 @@ namespace Mark.AspNet.Identity.EntityFramework
             }
 
             TUser user;
-            TUserLogin userLogin = await _userLogins.Where(p => (p.LoginProvider == login.LoginProvider) &&
-            (p.ProviderKey == login.ProviderKey)).SingleOrDefaultAsync();
+            TUserLogin userLogin = _userLoginRepo.Find(login);
 
             if (userLogin == null)
             {
@@ -333,7 +320,7 @@ namespace Mark.AspNet.Identity.EntityFramework
             }
             else
             {
-                user = await GetUserAggregateAsync(p => p.Id.Equals(userLogin.UserId)).WithCurrentCulture();
+                user = await GetUserAggregateByIdAsync(userLogin.UserId).WithCurrentCulture();
             }
 
             return user;
@@ -353,7 +340,7 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'email' parameter null/empty");
             }
 
-            TUser user = await GetUserAggregateAsync(p => p.Email.ToLower() == email.ToLower()).WithCurrentCulture();
+            TUser user = await GetUserAggregateByEmailAsync(email).WithCurrentCulture();
 
             return user;
         }
@@ -367,7 +354,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         {
             ThrowIfDisposed();
 
-            TUser user = await GetUserAggregateAsync(p => p.Id.Equals(userId)).WithCurrentCulture();
+            TUser user = await GetUserAggregateByIdAsync(userId).WithCurrentCulture();
 
             return user;
         }
@@ -386,8 +373,7 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'userName' parameter null/empty");
             }
 
-            TUser user = await GetUserAggregateAsync(p => p.UserName.ToLower() == userName.ToLower())
-                .WithCurrentCulture();
+            TUser user = await GetUserAggregateByUserNameAsync(userName).WithCurrentCulture();
 
             return user;
         }
@@ -425,7 +411,7 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             await IncludeClaimsAsync(user).WithCurrentCulture();
 
-            return _userClaims.Select(p => new Claim(p.ClaimType, p.ClaimValue)).ToList();
+            return user.Claims.Select(p => new Claim(p.ClaimType, p.ClaimValue)).ToList();
         }
 
         /// <summary>
@@ -524,7 +510,7 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             await IncludeLoginsAsync(user).WithCurrentCulture();
 
-            return _userLogins.Select(p => new UserLoginInfo(p.LoginProvider, p.ProviderKey)).ToList();
+            return user.Logins.Select(p => new UserLoginInfo(p.LoginProvider, p.ProviderKey)).ToList();
         }
 
         /// <summary>
@@ -592,12 +578,9 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'user' parameter null");
             }
 
-            // Role ids that belong to the given user from user roles table
-            var userRolesQuery = _userRoles.Where(p => p.UserId.Equals(user.Id));
-            // Get role names by joining role ids with ids in role table.
-            var roleNamesQuery = userRolesQuery.Join(_roleStore.EntitySet, p => p.RoleId, q => q.Id, (p, q) => q.Name);
+            IList<string> list = _roleRepo.FindRoleNamesByUserId(user.Id);
 
-            return await roleNamesQuery.ToListAsync().WithCurrentCulture();
+            return await Task.FromResult(list);
         }
 
         /// <summary>
@@ -689,19 +672,9 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'roleName' parameter null/empty");
             }
 
-            bool inRole = false;
-            TRole role = await _roleStore.EntitySet.Where(p => p.Name.ToLower() == roleName.ToLower())
-                .SingleOrDefaultAsync().WithCurrentCulture();
+            bool inRole = _userRoleRepo.IsInRole(user.Id, roleName);
 
-            if (role == null)
-            {
-                return inRole;
-            }
-
-            inRole = await _userRoles.AnyAsync(p => p.RoleId.Equals(role.Id) && p.UserId.Equals(user.Id))
-                .WithCurrentCulture();
-
-            return inRole;
+            return await Task.FromResult(inRole);
         }
 
         /// <summary>
@@ -724,20 +697,17 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'claim' parameter null");
             }
 
-            IEnumerable<TUserClaim> list = null;
+            IEnumerable<TUserClaim> list = _userClaimRepo.FindAllByUserId(user.Id, claim);
 
-            if (_context.Entry(user).Collection(p => p.Claims).IsLoaded)
+            if (list.Any())
             {
-                list = user.Claims.Where(p => p.ClaimValue == claim.Value &&
-                p.ClaimType == claim.Type).ToList();
-            }
-            else
-            {
-                list = await _userClaims.Where(p => p.ClaimValue == claim.Value &&
-                p.ClaimType == claim.Type && p.UserId.Equals(user.Id)).ToListAsync().WithCurrentCulture();
+                foreach (TUserClaim c in list)
+                {
+                    _userClaimRepo.Remove(c);
+                }
             }
 
-            _userClaims.RemoveRange(list);
+            await Task.FromResult(0);
         }
 
         /// <summary>
@@ -760,22 +730,20 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'roleName' parameter null/empty");
             }
 
-            TRole role = await _roleStore.EntitySet.Where(p => p.Name.ToLower() == roleName.ToLower())
-                .SingleOrDefaultAsync().WithCurrentCulture();
+            TRole role = _roleRepo.FindByName(roleName);
 
             if (role == null)
             {
                 return;
-
             }
 
-            TUserRole userRole = await _userRoles.Where(p => p.RoleId.Equals(role.Id) && p.UserId.Equals(user.Id))
-                .SingleOrDefaultAsync().WithCurrentCulture();
+            TUserRole userRole = new TUserRole();
+            userRole.UserId = user.Id;
+            userRole.RoleId = role.Id;
 
-            if (userRole != null)
-            {
-                _userRoles.Remove(userRole);
-            }
+            _userRoleRepo.Remove(userRole);
+
+            await Task.FromResult(0);
         }
 
         /// <summary>
@@ -798,24 +766,14 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'login' parameter null");
             }
 
-            TUserLogin userLogin = null;
-
-            if (_context.Entry(user).Collection(p => p.Logins).IsLoaded)
-            {
-                userLogin = user.Logins.Where(p => p.LoginProvider == login.LoginProvider &&
-                p.ProviderKey == login.ProviderKey).SingleOrDefault();
-            }
-            else
-            {
-                userLogin = await _userLogins.Where(p => p.LoginProvider == login.LoginProvider &&
-                p.ProviderKey == login.ProviderKey && p.UserId.Equals(user.Id))
-                .SingleOrDefaultAsync().WithCurrentCulture();
-            }
+            TUserLogin userLogin = _userLoginRepo.Find(user.Id, login);
 
             if (userLogin != null)
             {
-                _userLogins.Remove(userLogin);
+                _userLoginRepo.Remove(userLogin);
             }
+
+            await Task.FromResult(0);
         }
 
         /// <summary>
@@ -1039,7 +997,7 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'user' parameter null");
             }
 
-            _userStore.Update(user);
+            _userRepo.Change(user);
             await SaveChangesAsync().WithCurrentCulture();
         }
     }
@@ -1057,15 +1015,16 @@ namespace Mark.AspNet.Identity.EntityFramework
             IdentityUserLogin<TKey>,
             IdentityUserRole<TKey>,
             IdentityUserClaim<TKey>>
-        where TUser : IdentityUser<TKey>
+        where TUser : IdentityUser<TKey>, new()
         where TKey : struct
     {
         /// <summary>
-        /// Initialize a new instance of the class with the database context.
+        /// Initialize a new instance of the class with unit of work.
         /// </summary>
-        /// <param name="context">Database context.</param>
-        public UserStore(DbContext context) : base(context)
+        /// <param name="unitOfWork">Unit of work reference.</param>
+        public UserStore(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
     }
+
 }

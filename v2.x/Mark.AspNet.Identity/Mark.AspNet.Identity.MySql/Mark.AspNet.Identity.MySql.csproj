@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D77BB5AD-50C4-42FC-B7DA-9A77274CCB52}</ProjectGuid>
+    <ProjectGuid>{3ABE8744-F52A-4491-96B6-0DF1CFE385C3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mark.AspNet.Identity</RootNamespace>
-    <AssemblyName>Mark.AspNet.Identity</AssemblyName>
+    <RootNamespace>Mark.AspNet.Identity.MySql</RootNamespace>
+    <AssemblyName>Mark.AspNet.Identity.MySql</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Mark.AspNet.Identity.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Mark.AspNet.Identity.MySql.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +35,10 @@
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -46,45 +50,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Misc\DbCommandContext.cs" />
-    <Compile Include="Common\IDbStorageContext.cs" />
-    <Compile Include="Common\IDbTransactionContext.cs" />
-    <Compile Include="Entities\IEntity.cs" />
-    <Compile Include="Misc\DbStorageContext.cs" />
-    <Compile Include="Misc\DbTransactionContext.cs" />
-    <Compile Include="ModelConfiguration\Entities.cs" />
-    <Compile Include="ModelConfiguration\EntityConfiguration.cs" />
-    <Compile Include="ModelConfiguration\RoleConfiguration.cs" />
-    <Compile Include="ModelConfiguration\UserClaimConfiguration.cs" />
-    <Compile Include="ModelConfiguration\UserClaimFields.cs" />
-    <Compile Include="ModelConfiguration\UserConfiguration.cs" />
-    <Compile Include="ModelConfiguration\UserLoginConfiguration.cs" />
-    <Compile Include="ModelConfiguration\UserLoginFields.cs" />
-    <Compile Include="ModelConfiguration\UserRoleConfiguration.cs" />
-    <Compile Include="ModelConfiguration\UserRoleFields.cs" />
-    <Compile Include="Misc\CultureAwaiter.cs" />
-    <Compile Include="Common\IRepository.cs" />
-    <Compile Include="Common\IStorageContext.cs" />
-    <Compile Include="Common\ITransactionContext.cs" />
-    <Compile Include="Common\IUnitOfWork.cs" />
-    <Compile Include="Common\IUnitOfWorkHandler.cs" />
-    <Compile Include="Common\Repository.cs" />
-    <Compile Include="ModelConfiguration\RoleFields.cs" />
-    <Compile Include="Misc\UnitOfWork.cs" />
-    <Compile Include="ModelConfiguration\UserFields.cs" />
-    <Compile Include="Misc\Disposable.cs" />
-    <Compile Include="Stores\RoleStoreBase.cs" />
-    <Compile Include="Entities\IdentityRole.cs" />
-    <Compile Include="Entities\IdentityUser.cs" />
-    <Compile Include="Entities\IdentityUserClaim.cs" />
-    <Compile Include="Entities\IdentityUserLogin.cs" />
-    <Compile Include="Entities\IdentityUserRole.cs" />
+    <Compile Include="Repositories\DbRepository.cs" />
+    <Compile Include="Repositories\RoleRepository.cs" />
+    <Compile Include="Repositories\UserClaimRepository.cs" />
+    <Compile Include="Repositories\UserLoginRepository.cs" />
+    <Compile Include="Repositories\UserRepository.cs" />
+    <Compile Include="Stores\RoleStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Stores\UserStoreBase.cs" />
-    <Compile Include="Misc\TaskExtensions.cs" />
+    <Compile Include="Repositories\UserRoleRepository.cs" />
+    <Compile Include="Stores\UserStore.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mark.AspNet.Identity\Mark.AspNet.Identity.csproj">
+      <Project>{d77bb5ad-50c4-42fc-b7da-9a77274ccb52}</Project>
+      <Name>Mark.AspNet.Identity</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Misc\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mark.AspNet.Identity", "Mar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mark.AspNet.Identity.EntityFramework", "Mark.AspNet.Identity.EntityFramework\Mark.AspNet.Identity.EntityFramework.csproj", "{F440DA35-7C2D-4843-B02D-F0EB7B11447E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mark.AspNet.Identity.EntityFramework.Tests", "Mark.AspNet.Identity.EntityFramework.Tests\Mark.AspNet.Identity.EntityFramework.Tests.csproj", "{974C8B62-F014-490D-A7A6-BEE2B7F45469}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mark.AspNet.Identity.MySql", "Mark.AspNet.Identity.MySql\Mark.AspNet.Identity.MySql.csproj", "{3ABE8744-F52A-4491-96B6-0DF1CFE385C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{F440DA35-7C2D-4843-B02D-F0EB7B11447E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F440DA35-7C2D-4843-B02D-F0EB7B11447E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F440DA35-7C2D-4843-B02D-F0EB7B11447E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{974C8B62-F014-490D-A7A6-BEE2B7F45469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{974C8B62-F014-490D-A7A6-BEE2B7F45469}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{974C8B62-F014-490D-A7A6-BEE2B7F45469}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{974C8B62-F014-490D-A7A6-BEE2B7F45469}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3ABE8744-F52A-4491-96B6-0DF1CFE385C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3ABE8744-F52A-4491-96B6-0DF1CFE385C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3ABE8744-F52A-4491-96B6-0DF1CFE385C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3ABE8744-F52A-4491-96B6-0DF1CFE385C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -14,7 +14,7 @@ namespace Mark.AspNet.Identity
     /// </summary>
     /// <typeparam name="TKey">Id type.</typeparam>
     /// <typeparam name="TUserRole">User role type.</typeparam>
-    public class IdentityRole<TKey, TUserRole> : IRole<TKey> 
+    public class IdentityRole<TKey, TUserRole> : IRole<TKey>, IEntity 
         where TUserRole : IdentityUserRole<TKey>
         where TKey : struct
     {

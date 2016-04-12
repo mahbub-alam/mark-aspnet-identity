@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mark.AspNet.Identity.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
@@ -20,8 +21,8 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
-        /// <param name="tableName">Table name this entity type is mappped to.</param>
-        public IdentityUserRoleMap(string tableName) : base(tableName)
+        /// <param name="configuration">Entity configuration.</param>
+        public IdentityUserRoleMap(EntityConfiguration configuration) : base(configuration)
         {
         }
 
@@ -37,11 +38,11 @@ namespace Mark.AspNet.Identity.EntityFramework
             });
 
             Property(p => p.UserId)
-                .HasColumnName("UserId")
+                .HasColumnName(Configuration[UserRoleFields.UserId])
                 .IsRequired();
 
             Property(p => p.RoleId)
-                .HasColumnName("RoleId")
+                .HasColumnName(Configuration[UserRoleFields.RoleId])
                 .IsRequired();
         }
     }

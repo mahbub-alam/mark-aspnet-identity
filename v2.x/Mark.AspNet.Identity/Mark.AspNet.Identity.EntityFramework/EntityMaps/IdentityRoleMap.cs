@@ -7,11 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Mark.AspNet.Identity.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
     /// <summary>
-    /// Represents mapping configuration for 'Role' table.
+    /// Represents entity mapping for role entity.
     /// </summary>
     /// <typeparam name="TRole">Role type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
@@ -25,8 +26,8 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
-        /// <param name="tableName">Table name this entity type is mappped to.</param>
-        public IdentityRoleMap(string tableName) : base(tableName)
+        /// <param name="configuration">Entity configuration.</param>
+        public IdentityRoleMap(EntityConfiguration configuration) : base(configuration)
         {
         }
 
@@ -37,7 +38,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         {
             HasKey(p => p.Id);
             Property(p => p.Id)
-                .HasColumnName("Id");
+                .HasColumnName(Configuration[RoleFields.Id]);
         }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         protected override void MapFields()
         {
             Property(p => p.Name)
-                .HasColumnName("Name")
+                .HasColumnName(Configuration[RoleFields.Name])
                 .IsRequired()
                 .HasMaxLength(64)
                 .HasColumnAnnotation("Index", new IndexAnnotation(
@@ -65,7 +66,7 @@ namespace Mark.AspNet.Identity.EntityFramework
     }
 
     /// <summary>
-    /// Represents mapping configuration for 'Role' table.
+    /// Represents entity mapping for role entity.
     /// </summary>
     /// <typeparam name="TRole">Role type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
@@ -74,11 +75,12 @@ namespace Mark.AspNet.Identity.EntityFramework
         where TRole : IdentityRole<TKey, IdentityUserRole<TKey>>
         where TKey : struct
     {
+
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
-        /// <param name="tableName">Table name this entity type is mappped to.</param>
-        public IdentityRoleMap(string tableName) : base(tableName)
+        /// <param name="configuration">Entity configuration.</param>
+        public IdentityRoleMap(EntityConfiguration configuration) : base(configuration)
         {
         }
     }

@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mark.AspNet.Identity.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
     /// <summary>
-    /// Represents mapping configuration for 'UserLogin' table.
+    /// Represents entity mapping user login entity.
     /// </summary>
     /// <typeparam name="TUserLogin">User login type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
@@ -20,8 +21,8 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
-        /// <param name="tableName">Table name this entity type is mappped to.</param>
-        public IdentityUserLoginMap(string tableName) : base(tableName)
+        /// <param name="configuration">Entity configuration.</param>
+        public IdentityUserLoginMap(EntityConfiguration configuration) : base(configuration)
         {
         }
 
@@ -38,13 +39,13 @@ namespace Mark.AspNet.Identity.EntityFramework
             });
 
             Property(p => p.LoginProvider)
-                .HasColumnName("LoginProvider");
+                .HasColumnName(Configuration[UserLoginFields.LoginProvider]);
 
             Property(p => p.ProviderKey)
-                .HasColumnName("ProviderKey");
+                .HasColumnName(Configuration[UserLoginFields.ProviderKey]);
 
             Property(p => p.UserId)
-                .HasColumnName("UserId");
+                .HasColumnName(Configuration[UserLoginFields.UserId]);
         }
     }
 }

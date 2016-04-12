@@ -1,14 +1,12 @@
-﻿// Written by: MAB
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.Entity;
-using Microsoft.AspNet.Identity;
+using MySql.Data.MySqlClient;
+using Mark.AspNet.Identity.Common;
 
-namespace Mark.AspNet.Identity.EntityFramework
+namespace Mark.AspNet.Identity.MySql
 {
     /// <summary>
     /// Represents default storage class for 'Role' management.
@@ -16,52 +14,27 @@ namespace Mark.AspNet.Identity.EntityFramework
     /// <typeparam name="TRole">Role type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
     /// <typeparam name="TUserRole">User role type.</typeparam>
-    public class RoleStore<TRole, TKey, TUserRole> : RoleStoreBase<TRole, TKey, TUserRole>, IQueryableRoleStore<TRole, TKey>
-        where TRole : IdentityRole<TKey, TUserRole>
+    public class RoleStore<TRole, TKey, TUserRole> : RoleStoreBase<TRole, TKey, TUserRole>
+        where TRole : IdentityRole<TKey, TUserRole>, new()
         where TUserRole : IdentityUserRole<TKey>
         where TKey : struct
     {
-        private DbContext _context;
-        private EntityStore<TRole, TKey> _roleStore;
+        private IUnitOfWork _unitOfWork;
+        private RoleRepository<TRole, TKey, TUserRole> _repo;
 
         /// <summary>
-        /// Initialize a new instance of the class with the database context.
+        /// Initialize a new instance of the class with unit of work.
         /// </summary>
-        /// <param name="context">Database context.</param>
-        public RoleStore(DbContext context)
+        /// <param name="unitOfWork">Unit of work reference.</param>
+        public RoleStore(IUnitOfWork unitOfWork)
         {
-            if (context == null)
+            if (unitOfWork == null)
             {
-                throw new ArgumentNullException("'context' parameter null");
+                throw new ArgumentNullException("UnitOfWork null");
             }
 
-            _context = context;
-            AutoSaveChanges = true;
-            _roleStore = new EntityStore<TRole, TKey>(context);
-        }
-
-        /// <summary>
-        /// Get database context.
-        /// </summary>
-        public DbContext Context
-        {
-            get { return _context; }
-        }
-
-        /// <summary>
-        /// Whether to dispose database context when this object is disposed.
-        /// </summary>
-        public bool DisposeContext
-        {
-            get; set;
-        }
-
-        /// <summary>
-        /// Get the underlying role entity set.
-        /// </summary>
-        public IQueryable<TRole> Roles
-        {
-            get { return _roleStore.EntitySet; }
+            _unitOfWork = unitOfWork;
+            _repo = new RoleRepository<TRole, TKey, TUserRole>(_unitOfWork);
         }
 
         /// <summary>
@@ -76,7 +49,8 @@ namespace Mark.AspNet.Identity.EntityFramework
         {
             if (AutoSaveChanges)
             {
-                await _context.SaveChangesAsync().WithCurrentCulture();
+                _unitOfWork.SaveChanges();
+                await Task.FromResult(0);
             }
         }
 
@@ -94,7 +68,7 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'role' parameter null");
             }
 
-            _roleStore.Create(role);
+            _repo.Add(role);
             await SaveChangesAsync().WithCurrentCulture();
         }
 
@@ -112,7 +86,7 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'role' parameter null");
             }
 
-            _roleStore.Delete(role);
+            _repo.Remove(role);
             await SaveChangesAsync().WithCurrentCulture();
         }
 
@@ -123,9 +97,9 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// <returns>Returns the role if found; otherwise, returns null.</returns>
         public override async Task<TRole> FindByIdAsync(TKey roleId)
         {
-            ThrowIfDisposed();
+            TRole role = _repo.FindById(roleId);
 
-            return await _roleStore.FindByIdAsync(roleId).WithCurrentCulture();
+            return await Task.FromResult(role);
         }
 
         /// <summary>
@@ -135,16 +109,9 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// <returns>Returns the role if found; otherwise, returns null.</returns>
         public override async Task<TRole> FindByNameAsync(string roleName)
         {
-            ThrowIfDisposed();
+            TRole role = _repo.FindByName(roleName);
 
-            if (String.IsNullOrWhiteSpace(roleName))
-            {
-                throw new ArgumentNullException("'roleName' parameter null/empty");
-            }
-
-            return await this.Roles
-                .Where(p => p.Name.ToLower() == roleName.ToLower())
-                .SingleOrDefaultAsync().WithCurrentCulture();
+            return await Task.FromResult(role);
         }
 
         /// <summary>
@@ -161,8 +128,18 @@ namespace Mark.AspNet.Identity.EntityFramework
                 throw new ArgumentNullException("'role' parameter null");
             }
 
-            _roleStore.Update(role);
+            _repo.Change(role);
             await SaveChangesAsync().WithCurrentCulture();
+        }
+
+        /// <summary>
+        /// Dispose unmanaged resources and/or set large fields (managed/unmanaged) to null. This method 
+        /// will be called whether the <see cref="Disposable.Dispose()"/> method is called by the finalizer or your code.
+        /// </summary>
+        protected override void DisposeExtra()
+        {
+            _repo = null;
+            _unitOfWork = null;
         }
 
         /// <summary>
@@ -172,40 +149,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// </summary>
         protected override void DisposeManaged()
         {
-            if (DisposeContext)
-            {
-                _context.Dispose();
-            }
-
-            _roleStore.Dispose();
-        }
-
-        /// <summary>
-        /// Dispose unmanaged resources and/or set large fields (managed/unmanaged) to null. This method 
-        /// will be called whether the <see cref="Disposable.Dispose()"/> method is called by the finalizer or your code.
-        /// </summary>
-        protected override void DisposeExtra()
-        {
-            _context = null;
-            _roleStore = null;
-        }
-    }
-
-    /// <summary>
-    /// Represents default storage class for 'Role' management.
-    /// </summary>
-    /// <typeparam name="TRole">Role type.</typeparam>
-    /// <typeparam name="TKey">Id type.</typeparam>
-    public class RoleStore<TRole, TKey> : RoleStore<TRole, TKey, IdentityUserRole<TKey>>
-        where TRole : IdentityRole<TKey>
-        where TKey : struct
-    {
-        /// <summary>
-        /// Initialize a new instance of the class with the database context.
-        /// </summary>
-        /// <param name="context">Database context.</param>
-        public RoleStore(DbContext context) : base(context)
-        {
+            // Nothing
         }
     }
 }

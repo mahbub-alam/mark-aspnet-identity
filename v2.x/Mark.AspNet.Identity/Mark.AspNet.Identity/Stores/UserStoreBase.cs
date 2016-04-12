@@ -20,7 +20,7 @@ namespace Mark.AspNet.Identity
     /// <typeparam name="TUserRole">User role type.</typeparam>
     /// <typeparam name="TUserClaim">User claim type.</typeparam>
     public abstract class UserStoreBase<TUser, TRole, TKey, TUserLogin, TUserRole, TUserClaim>
-        : DisposableStore, IUserStore<TUser, TKey>, IUserLoginStore<TUser, TKey>, IUserRoleStore<TUser, TKey>, 
+        : Disposable, IUserStore<TUser, TKey>, IUserLoginStore<TUser, TKey>, IUserRoleStore<TUser, TKey>, 
         IUserClaimStore<TUser, TKey>, IUserPasswordStore<TUser, TKey>, IUserSecurityStampStore<TUser, TKey>, 
         IUserEmailStore<TUser, TKey>, IUserPhoneNumberStore<TUser, TKey>, IUserTwoFactorStore<TUser, TKey>, 
         IUserLockoutStore<TUser, TKey>
