@@ -38,7 +38,8 @@ namespace Mark.AspNet.Identity.MySql
         protected override void SaveAddedItem(TRole item)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format(@"INSERT INTO {0} ({1}) VALUES (@{2});",
+            command.CommandText = String.Format(
+                @"INSERT INTO {0} ({1}) VALUES (@{2});",
                 DbContext[Entities.Role].TableName,
                 // Configured field names
                 DbContext[Entities.Role][RoleFields.Name],
@@ -68,7 +69,8 @@ namespace Mark.AspNet.Identity.MySql
         protected override void SaveChangedItem(TRole item)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format(@"UPDATE {0} SET {1} = @{3} WHERE {2} = @{4};",
+            command.CommandText = String.Format(
+                @"UPDATE {0} SET {1} = @{3} WHERE {2} = @{4};",
                 DbContext[Entities.Role].TableName,
                 // Configured field names
                 DbContext[Entities.Role][RoleFields.Name],
@@ -101,7 +103,8 @@ namespace Mark.AspNet.Identity.MySql
         protected override void SaveRemovedItem(TRole item)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format(@"DELETE FROM {0} WHERE {1} = @{2};",
+            command.CommandText = String.Format(
+                @"DELETE FROM {0} WHERE {1} = @{2};",
                 DbContext[Entities.Role].TableName,
                 // Configured field names
                 DbContext[Entities.Role][RoleFields.Id],
@@ -132,7 +135,8 @@ namespace Mark.AspNet.Identity.MySql
         public TRole FindById(TKey id)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format("SELECT * FROM {0} WHERE {1} = @{2};",
+            command.CommandText = String.Format(
+                @"SELECT * FROM {0} WHERE {1} = @{2};",
                 DbContext[Entities.Role].TableName,
                 // Configured field names
                 DbContext[Entities.Role][RoleFields.Id],
@@ -185,7 +189,8 @@ namespace Mark.AspNet.Identity.MySql
         public TRole FindByName(string roleName)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format("SELECT * FROM {0} WHERE LOWER({1}) = LOWER(@{2});",
+            command.CommandText = String.Format(
+                @"SELECT * FROM {0} WHERE LOWER({1}) = LOWER(@{2});",
                 DbContext[Entities.Role].TableName,
                 // Configured field names
                 DbContext[Entities.Role][RoleFields.Name],

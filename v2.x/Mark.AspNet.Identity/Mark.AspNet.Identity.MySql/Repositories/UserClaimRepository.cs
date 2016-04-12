@@ -121,7 +121,8 @@ namespace Mark.AspNet.Identity.MySql
         public ICollection<TUserClaim> FindAllByUserId(TKey userId)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format(@"SELECT * FROM {0} WHERE {1} = @{2};",
+            command.CommandText = String.Format(
+                @"SELECT * FROM {0} WHERE {1} = @{2};",
                 DbContext[Entities.UserClaim].TableName,
                 // Configured field names
                 DbContext[Entities.UserClaim][UserClaimFields.UserId],

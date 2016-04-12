@@ -38,7 +38,8 @@ namespace Mark.AspNet.Identity.MySql
         protected override void SaveAddedItem(TUserRole item)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format(@"INSERT INTO {0} ({1}, {2}) VALUES (@{3}, @{4});",
+            command.CommandText = String.Format(
+                @"INSERT INTO {0} ({1}, {2}) VALUES (@{3}, @{4});",
                 DbContext[Entities.UserRole].TableName,
                 // Configured field names
                 DbContext[Entities.UserRole][UserRoleFields.UserId],
@@ -80,7 +81,8 @@ namespace Mark.AspNet.Identity.MySql
         protected override void SaveRemovedItem(TUserRole item)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format(@"DELETE FROM {0} WHERE {1} = @{3} AND {2} = @{4};",
+            command.CommandText = String.Format(
+                @"DELETE FROM {0} WHERE {1} = @{3} AND {2} = @{4};",
                 DbContext[Entities.UserRole].TableName,
                 // Configured field names
                 DbContext[Entities.UserRole][UserRoleFields.UserId],
@@ -114,7 +116,8 @@ namespace Mark.AspNet.Identity.MySql
         public ICollection<TUserRole> FindAllByUserId(TKey userId)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format("SELECT * FROM {0} WHERE {1} = @{2};",
+            command.CommandText = String.Format(
+                @"SELECT * FROM {0} WHERE {1} = @{2};",
                 DbContext[Entities.UserRole].TableName,
                 // Configured field names
                 DbContext[Entities.UserRole][UserRoleFields.UserId],

@@ -37,7 +37,8 @@ namespace Mark.AspNet.Identity.MySql
         protected override void SaveAddedItem(TUserLogin item)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format(@"INSERT INTO {0} ({1}, {2}, {3}) VALUES (@{4}, @{5}, @{6});",
+            command.CommandText = String.Format(
+                @"INSERT INTO {0} ({1}, {2}, {3}) VALUES (@{4}, @{5}, @{6});",
                 DbContext[Entities.UserLogin].TableName,
                 // Configured field names
                 DbContext[Entities.UserLogin][UserLoginFields.LoginProvider],
@@ -82,7 +83,8 @@ namespace Mark.AspNet.Identity.MySql
         protected override void SaveRemovedItem(TUserLogin item)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format(@"DELETE FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
+            command.CommandText = String.Format(
+                @"DELETE FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
                 DbContext[Entities.UserLogin].TableName,
                 // Configured field names
                 DbContext[Entities.UserLogin][UserLoginFields.LoginProvider],
@@ -119,7 +121,8 @@ namespace Mark.AspNet.Identity.MySql
         public TUserLogin Find(UserLoginInfo loginInfo)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format("SELECT * FROM {0} WHERE {1} = @{3} AND {2} = @{4};",
+            command.CommandText = String.Format(
+                @"SELECT * FROM {0} WHERE {1} = @{3} AND {2} = @{4};",
                 DbContext[Entities.UserLogin].TableName,
                 // Configured field names
                 DbContext[Entities.UserLogin][UserLoginFields.LoginProvider],
@@ -248,7 +251,8 @@ namespace Mark.AspNet.Identity.MySql
         public ICollection<TUserLogin> FindAllByUserId(TKey userId)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format("SELECT * FROM {0} WHERE {1} = @{2};",
+            command.CommandText = String.Format(
+                @"SELECT * FROM {0} WHERE {1} = @{2};",
                 DbContext[Entities.UserLogin].TableName,
                 // Configured field names
                 DbContext[Entities.UserLogin][UserLoginFields.UserId],

@@ -177,7 +177,8 @@ namespace Mark.AspNet.Identity.MySql
         protected override void SaveRemovedItem(TUser item)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format(@"DELETE FROM {0} WHERE {1} = @{2};",
+            command.CommandText = String.Format(
+                @"DELETE FROM {0} WHERE {1} = @{2};",
                 DbContext[Entities.User].TableName,
                 // Configured field names
                 DbContext[Entities.User][UserFields.Id],
@@ -208,7 +209,8 @@ namespace Mark.AspNet.Identity.MySql
         public TUser FindById(TKey id)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format("SELECT * FROM {0} WHERE {1} = @{2};",
+            command.CommandText = String.Format(
+                @"SELECT * FROM {0} WHERE {1} = @{2};",
                 DbContext[Entities.User].TableName,
                 // Configured field names
                 DbContext[Entities.User][UserFields.Id],
@@ -293,7 +295,8 @@ namespace Mark.AspNet.Identity.MySql
         public TUser FindByUserName(string userName)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format("SELECT * FROM {0} WHERE LOWER({1}) = LOWER(@{2});",
+            command.CommandText = String.Format(
+                @"SELECT * FROM {0} WHERE LOWER({1}) = LOWER(@{2});",
                 DbContext[Entities.User].TableName,
                 // Configured field names
                 DbContext[Entities.User][UserFields.UserName],
@@ -379,7 +382,8 @@ namespace Mark.AspNet.Identity.MySql
         public TUser FindByEmail(string email)
         {
             DbCommand command = DbContext.Connection.CreateCommand();
-            command.CommandText = String.Format("SELECT * FROM {0} WHERE LOWER({1}) = LOWER(@{2});",
+            command.CommandText = String.Format(
+                @"SELECT * FROM {0} WHERE LOWER({1}) = LOWER(@{2});",
                 DbContext[Entities.User].TableName,
                 // Configured field names
                 DbContext[Entities.User][UserFields.Email],

@@ -47,6 +47,7 @@ namespace Mark.AspNet.Identity.MySql
                 throw new ArgumentNullException("UnitOfWork null");
             }
 
+            AutoSaveChanges = true;
             _unitOfWork = unitOfWork;
             _userRepo = new UserRepository<TUser, TKey, TUserLogin, TUserRole, TUserClaim>(_unitOfWork);
             _roleRepo = new RoleRepository<TRole, TKey, TUserRole>(_unitOfWork);
