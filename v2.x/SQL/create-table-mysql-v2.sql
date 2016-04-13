@@ -37,6 +37,15 @@ CREATE TABLE UserLogin
 	PRIMARY KEY (LoginProvider, ProviderKey, UserId)
 );
 
+CREATE TABLE UserRole
+(
+	UserId INT(10) NOT NULL, 
+	RoleId INT(10) NOT NULL,
+	FOREIGN KEY (UserId) REFERENCES `User` (Id), 
+	FOREIGN KEY (RoleId) REFERENCES Role (Id), 
+	PRIMARY KEY (UserId, RoleId)
+);
+
 CREATE TABLE UserClaim
 (
 	Id INT(10) NOT NULL AUTO_INCREMENT, 

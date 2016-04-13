@@ -43,6 +43,15 @@ CREATE TABLE UserLogin
 	CONSTRAINT PK_UserLogin_CompId PRIMARY KEY (LoginProvider, ProviderKey, UserId)
 );
 
+CREATE TABLE UserRole
+(
+	UserId INT(10) NOT NULL, 
+	RoleId INT(10) NOT NULL,
+	CONSTRAINT FK_UserRole_UserId FOREIGN KEY (UserId) REFERENCES [User] (Id), 
+	CONSTRAINT FK_UserRole_RoleId FOREIGN KEY (RoleId) REFERENCES Role (Id), 
+	CONSTRAINT PK_UserRole_CompId PRIMARY KEY (UserId, RoleId)
+);
+
 CREATE TABLE UserClaim
 (
 	Id INT NOT NULL IDENTITY, 
