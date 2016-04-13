@@ -16,19 +16,19 @@ namespace Mark.AspNet.Identity.Common
     public interface IUnitOfWorkHandler
     {
         /// <summary>
-        /// Save the item that is registered to be added to a persistent storage.
+        /// Save adding of the item that is registered to be added to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         void SaveAddedItem(IEntity item);
 
         /// <summary>
-        /// Save the item that is registered to be changed to a persistent storage.
+        /// Save changes in the item that is registered to be changed to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         void SaveChangedItem(IEntity item);
 
         /// <summary>
-        /// Save the item that is registered to be remvoed from a persistent storage.
+        /// Save the removing of the item that is registered to be remvoed from a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         void SaveRemovedItem(IEntity item);

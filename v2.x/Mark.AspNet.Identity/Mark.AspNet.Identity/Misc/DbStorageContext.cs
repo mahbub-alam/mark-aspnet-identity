@@ -13,7 +13,7 @@ using Mark.AspNet.Identity.ModelConfiguration;
 namespace Mark.AspNet.Identity
 {
     /// <summary>
-    /// Represents database storage context.
+    /// Represents default ADO.NET style storage context.
     /// </summary>
     /// <typeparam name="TConnection">Database connection type.</typeparam>
     public class DbStorageContext<TConnection> : IDbStorageContext 

@@ -10,12 +10,12 @@ using System.Data.Common;
 namespace Mark.AspNet.Identity.Common
 {
     /// <summary>
-    /// Represents transaction context interface ADO.NET style storage context.
+    /// Represents transaction context interface for ADO.NET style storage context.
     /// </summary>
     public interface IDbTransactionContext : ITransactionContext
     {
         /// <summary>
-        /// Get current connection transaction.
+        /// Get the underlying transaction associated with the current storage context.
         /// </summary>
         DbTransaction Transaction
         {

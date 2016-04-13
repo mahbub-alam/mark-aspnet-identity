@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Written by: MAB
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +14,7 @@ namespace Mark.AspNet.Identity.Common
     public interface IStorageContext : IDisposable
     {
         /// <summary>
-        /// Get an instance of the transaction context for use with the storage context.
+        /// Get an instance of the transaction context associated with the storage context.
         /// </summary>
         ITransactionContext TransactionContext
         {

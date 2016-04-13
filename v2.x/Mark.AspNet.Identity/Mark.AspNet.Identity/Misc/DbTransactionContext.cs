@@ -11,7 +11,7 @@ using System.Data.Common;
 namespace Mark.AspNet.Identity
 {
     /// <summary>
-    /// Represents transaction context for ADO.NET connection.
+    /// Represents transaction context for ADO.NET style storage context.
     /// </summary>
     public class DbTransactionContext : IDbTransactionContext
     {
@@ -24,6 +24,17 @@ namespace Mark.AspNet.Identity
         public DbTransactionContext(DbTransaction transaction)
         {
             _transaction = transaction;
+        }
+
+        /// <summary>
+        /// Get the underlying transaction associated with the current storage context.
+        /// </summary>
+        public DbTransaction Transaction
+        {
+            get
+            {
+                return _transaction;
+            }
         }
 
         /// <summary>
@@ -40,17 +51,6 @@ namespace Mark.AspNet.Identity
         public void Rollback()
         {
             _transaction.Rollback();
-        }
-
-        /// <summary>
-        /// Get current connection transaction.
-        /// </summary>
-        public DbTransaction Transaction
-        {
-            get
-            {
-                return _transaction;
-            }
         }
 
         #region IDisposable Support
