@@ -58,21 +58,23 @@ namespace Mark.AspNet.Identity.EntityFramework
                     new IndexAttribute("UK_User_UserName") { IsUnique = true }));
 
             Property(p => p.SecurityStamp)
+                .HasMaxLength(255)
                 .HasColumnName(Configuration[UserFields.SecurityStamp]);
 
             Property(p => p.PasswordHash)
+                .HasMaxLength(255)
                 .HasColumnName(Configuration[UserFields.PasswordHash]);
 
             Property(p => p.Email)
-                .HasColumnName(Configuration[UserFields.Email])
-                .HasMaxLength(64);
+                .HasMaxLength(64)
+                .HasColumnName(Configuration[UserFields.Email]);
 
             Property(p => p.EmailConfirmed)
                 .HasColumnName(Configuration[UserFields.EmailConfirmed]);
 
             Property(p => p.PhoneNumber)
-                .HasColumnName(Configuration[UserFields.PhoneNumber])
-                .HasMaxLength(15);
+                .HasMaxLength(16)
+                .HasColumnName(Configuration[UserFields.PhoneNumber]);
 
             Property(p => p.PhoneNumberConfirmed)
                 .HasColumnName(Configuration[UserFields.PhoneNumberConfirmed]);

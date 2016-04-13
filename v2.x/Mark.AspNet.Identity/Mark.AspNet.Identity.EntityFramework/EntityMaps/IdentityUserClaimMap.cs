@@ -45,9 +45,11 @@ namespace Mark.AspNet.Identity.EntityFramework
                 .HasColumnName(Configuration[UserClaimFields.UserId]);
 
             Property(p => p.ClaimType)
+                .HasMaxLength(255)
                 .HasColumnName(Configuration[UserClaimFields.ClaimType]);
 
             Property(p => p.ClaimValue)
+                .HasMaxLength(255)
                 .HasColumnName(Configuration[UserClaimFields.ClaimValue]);
         }
     }

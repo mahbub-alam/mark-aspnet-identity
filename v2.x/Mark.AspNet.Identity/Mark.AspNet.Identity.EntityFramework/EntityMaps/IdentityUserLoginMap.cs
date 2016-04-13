@@ -39,9 +39,11 @@ namespace Mark.AspNet.Identity.EntityFramework
             });
 
             Property(p => p.LoginProvider)
+                .HasMaxLength(128)
                 .HasColumnName(Configuration[UserLoginFields.LoginProvider]);
 
             Property(p => p.ProviderKey)
+                .HasMaxLength(128)
                 .HasColumnName(Configuration[UserLoginFields.ProviderKey]);
 
             Property(p => p.UserId)
