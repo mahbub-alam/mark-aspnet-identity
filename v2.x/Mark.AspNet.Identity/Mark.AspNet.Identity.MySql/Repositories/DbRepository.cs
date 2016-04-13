@@ -18,7 +18,7 @@ namespace Mark.AspNet.Identity.MySql
     internal abstract class DbRepository<TEntity> : Repository<TEntity> 
         where TEntity : IEntity
     {
-        private DbStorageContext<MySqlConnection> _dbContext;
+        private DbStorageContext<MySqlConnection> _storageContext;
 
         /// <summary>
         /// Initialize a new instance of the class with the unit of work reference.
@@ -26,9 +26,9 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="unitOfWork">Unit of work reference to be used.</param>
         public DbRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            _dbContext = this.UnitOfWork.StorageContext as DbStorageContext<MySqlConnection>;
+            _storageContext = this.UnitOfWork.StorageContext as DbStorageContext<MySqlConnection>;
 
-            if (_dbContext == null)
+            if (_storageContext == null)
             {
                 throw new InvalidCastException("Wrong storage context");
             }
@@ -37,9 +37,9 @@ namespace Mark.AspNet.Identity.MySql
         /// <summary>
         /// Get database context.
         /// </summary>
-        protected DbStorageContext<MySqlConnection> DbContext
+        protected DbStorageContext<MySqlConnection> StorageContext
         {
-            get { return _dbContext; }
+            get { return _storageContext; }
         }
     }
 }

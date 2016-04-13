@@ -31,27 +31,27 @@ namespace Mark.AspNet.Identity.MySql
         }
 
         /// <summary>
-        /// Save the item that is registered to be added to a persistent storage.
+        /// Save adding of the item that is registered to be added to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected override void SaveAddedItem(TUserLogin item)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"INSERT INTO {0} ({1}, {2}, {3}) VALUES (@{4}, @{5}, @{6});",
-                DbContext[Entities.UserLogin].TableName,
+                StorageContext[Entities.UserLogin].TableName,
                 // Configured field names
-                DbContext[Entities.UserLogin][UserLoginFields.LoginProvider],
-                DbContext[Entities.UserLogin][UserLoginFields.ProviderKey],
-                DbContext[Entities.UserLogin][UserLoginFields.UserId],
+                StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider],
+                StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey],
+                StorageContext[Entities.UserLogin][UserLoginFields.UserId],
                 // Parameter names
                 UserLoginFields.LoginProvider,
                 UserLoginFields.ProviderKey,
                 UserLoginFields.UserId);
 
-            if (DbContext.TransactionExists)
+            if (StorageContext.TransactionExists)
             {
-                command.Transaction = DbContext.TransactionContext.Transaction;
+                command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
             DbCommandContext<TUserLogin> cmdContext = new DbCommandContext<TUserLogin>(command,
@@ -64,11 +64,11 @@ namespace Mark.AspNet.Identity.MySql
                 parameters[UserLoginFields.UserId].Value = entity.UserId;
             });
 
-            DbContext.AddCommand(cmdContext);
+            StorageContext.AddCommand(cmdContext);
         }
 
         /// <summary>
-        /// (Not implemented) Save the item that is registered to be changed to a persistent storage.
+        /// (Not implemented) Save changes in the item that is registered to be changed to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected override void SaveChangedItem(TUserLogin item)
@@ -77,27 +77,27 @@ namespace Mark.AspNet.Identity.MySql
         }
 
         /// <summary>
-        /// Save the item that is registered to be remvoed from a persistent storage.
+        /// Save the removing of the item that is registered to be remvoed from a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected override void SaveRemovedItem(TUserLogin item)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"DELETE FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
-                DbContext[Entities.UserLogin].TableName,
+                StorageContext[Entities.UserLogin].TableName,
                 // Configured field names
-                DbContext[Entities.UserLogin][UserLoginFields.LoginProvider],
-                DbContext[Entities.UserLogin][UserLoginFields.ProviderKey],
-                DbContext[Entities.UserLogin][UserLoginFields.UserId],
+                StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider],
+                StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey],
+                StorageContext[Entities.UserLogin][UserLoginFields.UserId],
                 // Parameter names
                 UserLoginFields.LoginProvider,
                 UserLoginFields.ProviderKey,
                 UserLoginFields.UserId);
 
-            if (DbContext.TransactionExists)
+            if (StorageContext.TransactionExists)
             {
-                command.Transaction = DbContext.TransactionContext.Transaction;
+                command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
             DbCommandContext<TUserLogin> cmdContext = new DbCommandContext<TUserLogin>(command,
@@ -110,7 +110,7 @@ namespace Mark.AspNet.Identity.MySql
                 parameters[UserLoginFields.UserId].Value = entity.UserId;
             });
 
-            DbContext.AddCommand(cmdContext);
+            StorageContext.AddCommand(cmdContext);
         }
 
         /// <summary>
@@ -120,13 +120,13 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the user login if found; otherwise, returns null.</returns>
         public TUserLogin Find(UserLoginInfo loginInfo)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{3} AND {2} = @{4};",
-                DbContext[Entities.UserLogin].TableName,
+                StorageContext[Entities.UserLogin].TableName,
                 // Configured field names
-                DbContext[Entities.UserLogin][UserLoginFields.LoginProvider],
-                DbContext[Entities.UserLogin][UserLoginFields.ProviderKey],
+                StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider],
+                StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey],
                 // Parameter names
                 UserLoginFields.LoginProvider,
                 UserLoginFields.ProviderKey);
@@ -135,7 +135,7 @@ namespace Mark.AspNet.Identity.MySql
             cmdContext.Parameters[UserLoginFields.LoginProvider].Value = loginInfo.LoginProvider;
             cmdContext.Parameters[UserLoginFields.ProviderKey].Value = loginInfo.ProviderKey;
 
-            DbConnection conn = DbContext.Connection;
+            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             TUserLogin UserLogin = default(TUserLogin);
 
@@ -150,13 +150,13 @@ namespace Mark.AspNet.Identity.MySql
                     UserLogin = new TUserLogin();
 
                     UserLogin.LoginProvider = reader.GetString(reader.GetOrdinal(
-                        DbContext[Entities.UserLogin][UserLoginFields.LoginProvider]));
+                        StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider]));
 
                     UserLogin.ProviderKey = reader.GetString(reader.GetOrdinal(
-                        DbContext[Entities.UserLogin][UserLoginFields.ProviderKey]));
+                        StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey]));
 
                     UserLogin.UserId = (TKey)reader.GetValue(reader.GetOrdinal(
-                        DbContext[Entities.UserLogin][UserLoginFields.UserId]));
+                        StorageContext[Entities.UserLogin][UserLoginFields.UserId]));
                 }
             }
             catch (Exception)
@@ -184,14 +184,14 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the user login if found; otherwise, returns null.</returns>
         public TUserLogin Find(TKey userId, UserLoginInfo loginInfo)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
-                DbContext[Entities.UserLogin].TableName,
+                StorageContext[Entities.UserLogin].TableName,
                 // Configured field names
-                DbContext[Entities.UserLogin][UserLoginFields.LoginProvider],
-                DbContext[Entities.UserLogin][UserLoginFields.ProviderKey],
-                DbContext[Entities.UserLogin][UserLoginFields.UserId],
+                StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider],
+                StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey],
+                StorageContext[Entities.UserLogin][UserLoginFields.UserId],
                 // Parameter names
                 UserLoginFields.LoginProvider,
                 UserLoginFields.ProviderKey,
@@ -202,7 +202,7 @@ namespace Mark.AspNet.Identity.MySql
             cmdContext.Parameters[UserLoginFields.ProviderKey].Value = loginInfo.ProviderKey;
             cmdContext.Parameters[UserLoginFields.UserId].Value = userId;
 
-            DbConnection conn = DbContext.Connection;
+            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             TUserLogin UserLogin = default(TUserLogin);
 
@@ -217,13 +217,13 @@ namespace Mark.AspNet.Identity.MySql
                     UserLogin = new TUserLogin();
 
                     UserLogin.LoginProvider = reader.GetString(reader.GetOrdinal(
-                        DbContext[Entities.UserLogin][UserLoginFields.LoginProvider]));
+                        StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider]));
 
                     UserLogin.ProviderKey = reader.GetString(reader.GetOrdinal(
-                        DbContext[Entities.UserLogin][UserLoginFields.ProviderKey]));
+                        StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey]));
 
                     UserLogin.UserId = (TKey)reader.GetValue(reader.GetOrdinal(
-                        DbContext[Entities.UserLogin][UserLoginFields.UserId]));
+                        StorageContext[Entities.UserLogin][UserLoginFields.UserId]));
                 }
             }
             catch (Exception)
@@ -250,19 +250,19 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns a list of user UserLogins if found; otherwise, returns empty list.</returns>
         public ICollection<TUserLogin> FindAllByUserId(TKey userId)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{2};",
-                DbContext[Entities.UserLogin].TableName,
+                StorageContext[Entities.UserLogin].TableName,
                 // Configured field names
-                DbContext[Entities.UserLogin][UserLoginFields.UserId],
+                StorageContext[Entities.UserLogin][UserLoginFields.UserId],
                 // Parameter names
                 UserLoginFields.UserId);
 
             DbCommandContext<TUserLogin> cmdContext = new DbCommandContext<TUserLogin>(command);
             cmdContext.Parameters[UserLoginFields.UserId].Value = userId;
 
-            DbConnection conn = DbContext.Connection;
+            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             List<TUserLogin> list = new List<TUserLogin>();
             TUserLogin UserLogin = default(TUserLogin);
@@ -278,13 +278,13 @@ namespace Mark.AspNet.Identity.MySql
                     UserLogin = new TUserLogin();
 
                     UserLogin.LoginProvider = reader.GetString(reader.GetOrdinal(
-                        DbContext[Entities.UserLogin][UserLoginFields.LoginProvider]));
+                        StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider]));
 
                     UserLogin.ProviderKey = reader.GetString(reader.GetOrdinal(
-                        DbContext[Entities.UserLogin][UserLoginFields.ProviderKey]));
+                        StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey]));
 
                     UserLogin.UserId = (TKey)reader.GetValue(reader.GetOrdinal(
-                        DbContext[Entities.UserLogin][UserLoginFields.UserId]));
+                        StorageContext[Entities.UserLogin][UserLoginFields.UserId]));
 
                     list.Add(UserLogin);
                 }

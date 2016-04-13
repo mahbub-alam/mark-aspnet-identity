@@ -31,27 +31,27 @@ namespace Mark.AspNet.Identity.MySql
         }
 
         /// <summary>
-        /// Save the item that is registered to be added to a persistent storage.
+        /// Save adding of the item that is registered to be added to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected override void SaveAddedItem(TUserClaim item)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"INSERT INTO {0} ({1}, {2}, {3}) VALUES (@{4}, @{5}, @{6});",
-                DbContext[Entities.UserClaim].TableName,
+                StorageContext[Entities.UserClaim].TableName,
                 // Configured field names
-                DbContext[Entities.UserClaim][UserClaimFields.ClaimType],
-                DbContext[Entities.UserClaim][UserClaimFields.ClaimValue],
-                DbContext[Entities.UserClaim][UserClaimFields.UserId],
+                StorageContext[Entities.UserClaim][UserClaimFields.ClaimType],
+                StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue],
+                StorageContext[Entities.UserClaim][UserClaimFields.UserId],
                 // Parameter names
                 UserClaimFields.ClaimType,
                 UserClaimFields.ClaimValue,
                 UserClaimFields.UserId);
 
-            if (DbContext.TransactionExists)
+            if (StorageContext.TransactionExists)
             {
-                command.Transaction = DbContext.TransactionContext.Transaction;
+                command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
             DbCommandContext<TUserClaim> cmdContext = new DbCommandContext<TUserClaim>(command,
@@ -64,11 +64,11 @@ namespace Mark.AspNet.Identity.MySql
                 parameters[UserClaimFields.UserId].Value = entity.UserId;
             });
 
-            DbContext.AddCommand(cmdContext);
+            StorageContext.AddCommand(cmdContext);
         }
 
         /// <summary>
-        /// (Not implemented) Save the item that is registered to be changed to a persistent storage.
+        /// (Not implemented) Save changes in the item that is registered to be changed to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected override void SaveChangedItem(TUserClaim item)
@@ -77,27 +77,27 @@ namespace Mark.AspNet.Identity.MySql
         }
 
         /// <summary>
-        /// Save the item that is registered to be remvoed from a persistent storage.
+        /// Save the removing of the item that is registered to be remvoed from a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected override void SaveRemovedItem(TUserClaim item)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"DELETE FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
-                DbContext[Entities.UserClaim].TableName,
+                StorageContext[Entities.UserClaim].TableName,
                 // Configured field names
-                DbContext[Entities.UserClaim][UserClaimFields.ClaimType],
-                DbContext[Entities.UserClaim][UserClaimFields.ClaimValue],
-                DbContext[Entities.UserClaim][UserClaimFields.UserId],
+                StorageContext[Entities.UserClaim][UserClaimFields.ClaimType],
+                StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue],
+                StorageContext[Entities.UserClaim][UserClaimFields.UserId],
                 // Parameter names
                 UserClaimFields.ClaimType,
                 UserClaimFields.ClaimValue,
                 UserClaimFields.UserId);
 
-            if (DbContext.TransactionExists)
+            if (StorageContext.TransactionExists)
             {
-                command.Transaction = DbContext.TransactionContext.Transaction;
+                command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
             DbCommandContext<TUserClaim> cmdContext = new DbCommandContext<TUserClaim>(command,
@@ -110,7 +110,7 @@ namespace Mark.AspNet.Identity.MySql
                 parameters[UserClaimFields.UserId].Value = entity.UserId;
             });
 
-            DbContext.AddCommand(cmdContext);
+            StorageContext.AddCommand(cmdContext);
         }
 
         /// <summary>
@@ -120,19 +120,19 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns a list of user claims if found; otherwise, returns empty list.</returns>
         public ICollection<TUserClaim> FindAllByUserId(TKey userId)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{2};",
-                DbContext[Entities.UserClaim].TableName,
+                StorageContext[Entities.UserClaim].TableName,
                 // Configured field names
-                DbContext[Entities.UserClaim][UserClaimFields.UserId],
+                StorageContext[Entities.UserClaim][UserClaimFields.UserId],
                 // Parameter names
                 UserClaimFields.UserId);
 
             DbCommandContext<TUserClaim> cmdContext = new DbCommandContext<TUserClaim>(command);
             cmdContext.Parameters[UserClaimFields.UserId].Value = userId;
 
-            DbConnection conn = DbContext.Connection;
+            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             List<TUserClaim> list = new List<TUserClaim>();
             TUserClaim userClaim = default(TUserClaim);
@@ -147,13 +147,13 @@ namespace Mark.AspNet.Identity.MySql
                 {
                     userClaim = new TUserClaim();
                     userClaim.Id = (TKey)reader.GetValue(reader.GetOrdinal(
-                        DbContext[Entities.UserClaim][UserClaimFields.Id]));
+                        StorageContext[Entities.UserClaim][UserClaimFields.Id]));
                     userClaim.ClaimType = reader.GetString(reader.GetOrdinal(
-                        DbContext[Entities.UserClaim][UserClaimFields.ClaimType]));
+                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimType]));
                     userClaim.ClaimValue = reader.GetString(reader.GetOrdinal(
-                        DbContext[Entities.UserClaim][UserClaimFields.ClaimValue]));
+                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue]));
                     userClaim.UserId = (TKey)reader.GetValue(reader.GetOrdinal(
-                        DbContext[Entities.UserClaim][UserClaimFields.UserId]));
+                        StorageContext[Entities.UserClaim][UserClaimFields.UserId]));
 
                     list.Add(userClaim);
                 }
@@ -183,14 +183,14 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns a list of user claims if found; otherwise, returns empty list.</returns>
         public ICollection<TUserClaim> FindAllByUserId(TKey userId, Claim claim)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
-                DbContext[Entities.UserClaim].TableName,
+                StorageContext[Entities.UserClaim].TableName,
                 // Configured field names
-                DbContext[Entities.UserClaim][UserClaimFields.UserId],
-                DbContext[Entities.UserClaim][UserClaimFields.ClaimType],
-                DbContext[Entities.UserClaim][UserClaimFields.ClaimValue],
+                StorageContext[Entities.UserClaim][UserClaimFields.UserId],
+                StorageContext[Entities.UserClaim][UserClaimFields.ClaimType],
+                StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue],
                 // Parameter names
                 UserClaimFields.UserId,
                 UserClaimFields.ClaimType,
@@ -201,7 +201,7 @@ namespace Mark.AspNet.Identity.MySql
             cmdContext.Parameters[UserClaimFields.ClaimType].Value = claim.Type;
             cmdContext.Parameters[UserClaimFields.ClaimValue].Value = claim.Value;
 
-            DbConnection conn = DbContext.Connection;
+            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             List<TUserClaim> list = new List<TUserClaim>();
             TUserClaim userClaim = default(TUserClaim);
@@ -216,13 +216,13 @@ namespace Mark.AspNet.Identity.MySql
                 {
                     userClaim = new TUserClaim();
                     userClaim.Id = (TKey)reader.GetValue(reader.GetOrdinal(
-                        DbContext[Entities.UserClaim][UserClaimFields.Id]));
+                        StorageContext[Entities.UserClaim][UserClaimFields.Id]));
                     userClaim.ClaimType = reader.GetString(reader.GetOrdinal(
-                        DbContext[Entities.UserClaim][UserClaimFields.ClaimType]));
+                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimType]));
                     userClaim.ClaimValue = reader.GetString(reader.GetOrdinal(
-                        DbContext[Entities.UserClaim][UserClaimFields.ClaimValue]));
+                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue]));
                     userClaim.UserId = (TKey)reader.GetValue(reader.GetOrdinal(
-                        DbContext[Entities.UserClaim][UserClaimFields.UserId]));
+                        StorageContext[Entities.UserClaim][UserClaimFields.UserId]));
 
                     list.Add(userClaim);
                 }

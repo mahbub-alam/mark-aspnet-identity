@@ -32,25 +32,25 @@ namespace Mark.AspNet.Identity.MySql
         }
 
         /// <summary>
-        /// Save the item that is registered to be added to a persistent storage.
+        /// Save adding of the item that is registered to be added to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected override void SaveAddedItem(TUserRole item)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"INSERT INTO {0} ({1}, {2}) VALUES (@{3}, @{4});",
-                DbContext[Entities.UserRole].TableName,
+                StorageContext[Entities.UserRole].TableName,
                 // Configured field names
-                DbContext[Entities.UserRole][UserRoleFields.UserId],
-                DbContext[Entities.UserRole][UserRoleFields.RoleId],
+                StorageContext[Entities.UserRole][UserRoleFields.UserId],
+                StorageContext[Entities.UserRole][UserRoleFields.RoleId],
                 // Parameter names
                 UserRoleFields.UserId,
                 UserRoleFields.RoleId);
 
-            if (DbContext.TransactionExists)
+            if (StorageContext.TransactionExists)
             {
-                command.Transaction = DbContext.TransactionContext.Transaction;
+                command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
             DbCommandContext<TUserRole> cmdContext = new DbCommandContext<TUserRole>(command,
@@ -62,11 +62,11 @@ namespace Mark.AspNet.Identity.MySql
                 parameters[UserRoleFields.RoleId].Value = entity.RoleId;
             });
 
-            DbContext.AddCommand(cmdContext);
+            StorageContext.AddCommand(cmdContext);
         }
 
         /// <summary>
-        /// (Not implemented) Save the item that is registered to be changed to a persistent storage.
+        /// (Not implemented) Save changes in the item that is registered to be changed to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected override void SaveChangedItem(TUserRole item)
@@ -75,25 +75,25 @@ namespace Mark.AspNet.Identity.MySql
         }
 
         /// <summary>
-        /// Save the item that is registered to be remvoed from a persistent storage.
+        /// Save the removing of the item that is registered to be remvoed from a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected override void SaveRemovedItem(TUserRole item)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"DELETE FROM {0} WHERE {1} = @{3} AND {2} = @{4};",
-                DbContext[Entities.UserRole].TableName,
+                StorageContext[Entities.UserRole].TableName,
                 // Configured field names
-                DbContext[Entities.UserRole][UserRoleFields.UserId],
-                DbContext[Entities.UserRole][UserRoleFields.RoleId], 
+                StorageContext[Entities.UserRole][UserRoleFields.UserId],
+                StorageContext[Entities.UserRole][UserRoleFields.RoleId], 
                 // Parameter names
                 UserRoleFields.UserId, 
                 UserRoleFields.RoleId);
 
-            if (DbContext.TransactionExists)
+            if (StorageContext.TransactionExists)
             {
-                command.Transaction = DbContext.TransactionContext.Transaction;
+                command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
             DbCommandContext<TUserRole> cmdContext = new DbCommandContext<TUserRole>(command,
@@ -105,7 +105,7 @@ namespace Mark.AspNet.Identity.MySql
                 parameters[UserRoleFields.RoleId].Value = entity.RoleId;
             });
 
-            DbContext.AddCommand(cmdContext);
+            StorageContext.AddCommand(cmdContext);
         }
 
         /// <summary>
@@ -115,19 +115,19 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns a list of user roles if found; otherwise, returns empty list.</returns>
         public ICollection<TUserRole> FindAllByUserId(TKey userId)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{2};",
-                DbContext[Entities.UserRole].TableName,
+                StorageContext[Entities.UserRole].TableName,
                 // Configured field names
-                DbContext[Entities.UserRole][UserRoleFields.UserId],
+                StorageContext[Entities.UserRole][UserRoleFields.UserId],
                 // Parameter names
                 UserRoleFields.UserId);
 
             DbCommandContext<TUserRole> cmdContext = new DbCommandContext<TUserRole>(command);
             cmdContext.Parameters[UserRoleFields.UserId].Value = userId;
 
-            DbConnection conn = DbContext.Connection;
+            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             List<TUserRole> list = new List<TUserRole>();
             TUserRole userRole = default(TUserRole);
@@ -142,9 +142,9 @@ namespace Mark.AspNet.Identity.MySql
                 {
                     userRole = new TUserRole();
                     userRole.UserId = (TKey)reader.GetValue(reader.GetOrdinal(
-                        DbContext[Entities.UserRole][UserRoleFields.UserId]));
+                        StorageContext[Entities.UserRole][UserRoleFields.UserId]));
                     userRole.RoleId = (TKey)reader.GetValue(reader.GetOrdinal(
-                        DbContext[Entities.UserRole][UserRoleFields.RoleId]));
+                        StorageContext[Entities.UserRole][UserRoleFields.RoleId]));
 
                     list.Add(userRole);
                 }
@@ -174,17 +174,17 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns true if belongs; otherwise, returns false.</returns>
         public bool IsInRole(TKey userId, string roleName)
         {
-            DbCommand command = DbContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.Connection.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT {2} FROM {0} INNER JOIN {1} ON ({0}.{2} = {1}.{3}) 
                     WHERE {4} = @{6} AND LOWER({5}) = LOWER(@{7});",
-                DbContext[Entities.UserRole].TableName,
-                DbContext[Entities.Role].TableName,
+                StorageContext[Entities.UserRole].TableName,
+                StorageContext[Entities.Role].TableName,
                 // Configured field names
-                DbContext[Entities.UserRole][UserRoleFields.RoleId],
-                DbContext[Entities.Role][RoleFields.Id],
-                DbContext[Entities.UserRole][UserRoleFields.UserId],
-                DbContext[Entities.Role][RoleFields.Name],
+                StorageContext[Entities.UserRole][UserRoleFields.RoleId],
+                StorageContext[Entities.Role][RoleFields.Id],
+                StorageContext[Entities.UserRole][UserRoleFields.UserId],
+                StorageContext[Entities.Role][RoleFields.Name],
                 // Parameter names
                 UserRoleFields.UserId, 
                 RoleFields.Name);
@@ -193,7 +193,7 @@ namespace Mark.AspNet.Identity.MySql
             cmdContext.Parameters[UserRoleFields.UserId].Value = userId;
             cmdContext.Parameters[RoleFields.Name].Value = roleName;
 
-            DbConnection conn = DbContext.Connection;
+            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             bool inRole = false;
 
