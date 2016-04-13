@@ -90,7 +90,7 @@ namespace Mark.AspNet.Identity.Common
         #region IUnitOfWorkHandler interface members implementation
 
         /// <summary>
-        /// Save adding of the item that is registered to be added to a persistent storage.
+        /// Save the item that is registered to be added to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         public virtual void SaveAddedItem(IEntity item)
@@ -99,7 +99,7 @@ namespace Mark.AspNet.Identity.Common
         }
 
         /// <summary>
-        /// Save changes in the item that is registered to be changed to a persistent storage.
+        /// Save the item that is registered to be changed to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         public virtual void SaveChangedItem(IEntity item)
@@ -108,7 +108,7 @@ namespace Mark.AspNet.Identity.Common
         }
 
         /// <summary>
-        /// Save the removing of the item that is registered to be remvoed from a persistent storage.
+        /// Save the item that is registered to be remvoed from a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         public virtual void SaveRemovedItem(IEntity item)
@@ -119,19 +119,19 @@ namespace Mark.AspNet.Identity.Common
         #endregion IUnitOfWorkHandler interface members implementation
 
         /// <summary>
-        /// Save adding of the item that is registered to be added to a persistent storage.
+        /// Save the item that is registered to be added to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected abstract void SaveAddedItem(TEntity item);
 
         /// <summary>
-        /// Save changes in the item that is registered to be changed to a persistent storage.
+        /// Save the item that is registered to be changed to a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected abstract void SaveChangedItem(TEntity item);
 
         /// <summary>
-        /// Save the removing of the item that is registered to be remvoed from a persistent storage.
+        /// Save the item that is registered to be remvoed from a persistent storage.
         /// </summary>
         /// <param name="item">Entity item.</param>
         protected abstract void SaveRemovedItem(TEntity item);

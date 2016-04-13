@@ -84,12 +84,11 @@ namespace Mark.AspNet.Identity.MySql
         public int SaveChanges()
         {
             int retCount = 0;
-
             using (ITransactionContext tContext = _storageContext.TransactionContext)
             {
-                foreach (Work work in _workList.OrderBy(w => w.EntryDate))
+                foreach (Work work in _workList.OrderBy(w => w.ProcessDate))
                 {
-                    work.Execute();
+                    work.Save();
                 }
 
                 retCount = _storageContext.SaveChanges();
@@ -124,9 +123,6 @@ namespace Mark.AspNet.Identity.MySql
 
         #region Work type implementation
 
-        /// <summary>
-        /// Represents work type in a unit of work.
-        /// </summary>
         private enum WorkType
         {
             Added,
@@ -134,45 +130,30 @@ namespace Mark.AspNet.Identity.MySql
             Removed
         }
 
-        /// <summary>
-        /// Represents work in a unit of work.
-        /// </summary>
         private sealed class Work
         {
             private IEntity _item;
             private IUnitOfWorkHandler _handler;
             private WorkType _workType;
-            private DateTime _entryDate;
+            private DateTime _processDate;
 
-            /// <summary>
-            /// Initialize a new instance of the class.
-            /// </summary>
-            /// <param name="item">Entity item to be processed.</param>
-            /// <param name="handler">Work handler.</param>
-            /// <param name="workType">Work type.</param>
             public Work(IEntity item, IUnitOfWorkHandler handler, WorkType workType)
             {
                 _item = item;
                 _handler = handler;
                 _workType = workType;
-                _entryDate = DateTime.UtcNow;
+                _processDate = DateTime.UtcNow;
             }
 
-            /// <summary>
-            /// Get date and time of the work entry.
-            /// </summary>
-            public DateTime EntryDate
+            public DateTime ProcessDate
             {
                 get
                 {
-                    return _entryDate;
+                    return _processDate;
                 }
             }
 
-            /// <summary>
-            /// Execute the work.
-            /// </summary>
-            public void Execute()
+            public void Save()
             {
                 switch (_workType)
                 {
