@@ -1,11 +1,5 @@
 -- ASP.NET Identity v2.x MSSQL Database Script
 
---USE master;
---IF EXISTS(SELECT * FROM sys.databases WHERE name='aspnet_identity_test')
---DROP DATABASE aspnet_identity_test;
-
---CREATE DATABASE aspnet_identity_test;
-
 USE aspnet_identity_test;
 
 CREATE TABLE Role
@@ -23,13 +17,13 @@ CREATE TABLE [User]
 	SecurityStamp NVARCHAR (255) NULL, 
 	PasswordHash NVARCHAR (255) NULL, 
 	Email NVARCHAR (64) NULL, 
-	EmailConfirmed BIT NOT NULL, 
+	EmailConfirmed BIT NOT NULL DEFAULT 0, 
 	PhoneNumber NVARCHAR (16) NULL, 
-	PhoneNumberConfirmed BIT NOT NULL, 
-	TwoFactorEnabled BIT NOT NULL, 
-	LockoutEnabled BIT NOT NULL, 
+	PhoneNumberConfirmed BIT NOT NULL DEFAULT 0, 
+	TwoFactorEnabled BIT NOT NULL DEFAULT 0, 
+	LockoutEnabled BIT NOT NULL DEFAULT 0, 
 	LockoutEndDateUtc DATETIME NULL, 
-	AccessFailedCount INT NOT NULL, 
+	AccessFailedCount INT NOT NULL DEFAULT 0, 
 	CONSTRAINT UK_User_UserName UNIQUE (UserName),
 	CONSTRAINT PK_User_Id PRIMARY KEY (Id)
 );

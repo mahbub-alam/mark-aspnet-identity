@@ -17,13 +17,13 @@ CREATE TABLE `User`
 	SecurityStamp VARCHAR (255) NULL, 
 	PasswordHash VARCHAR (255) NULL, 
 	Email VARCHAR (64) NULL, 
-	EmailConfirmed TINYINT(1) NOT NULL, 
+	EmailConfirmed TINYINT(1) NOT NULL DEFAULT 0, 
 	PhoneNumber VARCHAR (16) NULL, 
-	PhoneNumberConfirmed TINYINT(1) NOT NULL, 
-	TwoFactorEnabled TINYINT(1) NOT NULL, 
-	LockoutEnabled TINYINT(1) NOT NULL, 
+	PhoneNumberConfirmed TINYINT(1) NOT NULL DEFAULT 0, 
+	TwoFactorEnabled TINYINT(1) NOT NULL DEFAULT 0, 
+	LockoutEnabled TINYINT(1) NOT NULL DEFAULT 0, 
 	LockoutEndDateUtc DATETIME NULL, 
-	AccessFailedCount INT(10) NOT NULL, 
+	AccessFailedCount INT(10) NOT NULL DEFAULT 0, 
 	UNIQUE INDEX (UserName),
 	PRIMARY KEY (Id)
 );
