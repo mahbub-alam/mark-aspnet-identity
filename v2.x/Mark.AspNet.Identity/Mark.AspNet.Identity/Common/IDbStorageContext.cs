@@ -16,26 +16,22 @@ namespace Mark.AspNet.Identity.Common
     public interface IDbStorageContext : IStorageContext
     {
         /// <summary>
-        /// Get database connection.
+        /// Open database connection if it is not opened yet.
         /// </summary>
-        DbConnection Connection
-        {
-            get;
-        }
+        void Open();
 
         /// <summary>
-        /// Whether there is a transaction exists within the storage context.
+        /// Close database connection. If the connection was already opened before calling 
+        /// <see cref="Open()"/> method, it is not closed unless closed forcibly.
         /// </summary>
-        bool TransactionExists
-        {
-            get;
-        }
+        /// <param name="forceClose">Force closing the connection.</param>
+        void Close(bool forceClose = false);
 
         /// <summary>
-        /// Create a new transaction context that is not saved as public transaction context.
+        /// Create database command object.
         /// </summary>
-        /// <returns>Returns a new transaction context.</returns>
-        IDbTransactionContext CreateTransactionContext();
+        /// <returns>Returns the object.</returns>
+        DbCommand CreateCommand();
 
         /// <summary>
         /// Get specific entity configuration.
@@ -57,8 +53,7 @@ namespace Mark.AspNet.Identity.Common
         /// <summary>
         /// Add a command for execution.
         /// </summary>
-        /// <typeparam name="TEntity">Entity type.</typeparam>
         /// <param name="commandContext">Command to be executed.</param>
-        void AddCommand<TEntity>(DbCommandContext<TEntity> commandContext) where TEntity : IEntity;
+        void AddCommand(IDbCommandContext commandContext);
     }
 }

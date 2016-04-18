@@ -12,15 +12,13 @@ namespace Mark.AspNet.Identity.Common
     /// <summary>
     /// Represents command context for ADO.NET style storage context.
     /// </summary>
-    /// <typeparam name="TEntity">Entity type.</typeparam>
-    public class DbCommandContext<TEntity> : IDisposable 
-        where TEntity : IEntity
+    public class DbCommandContext : IDbCommandContext
     {
         private DbCommand _command;
-        private ParameterCollection _parameters;
-        private ICollection<TEntity> _list;
-        private Action<ParameterCollection, TEntity> _setForEach;
-
+        private DbParameterCollection _parameters;
+        private ICollection<IEntity> _list;
+        private Action<IDbParameterCollection, IEntity> _setForEach;
+        
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
@@ -33,7 +31,7 @@ namespace Mark.AspNet.Identity.Common
             }
 
             _command = command;
-            _parameters = new ParameterCollection(_command);
+            _parameters = new DbParameterCollection(_command);
             _list = null;
         }
 
@@ -42,7 +40,7 @@ namespace Mark.AspNet.Identity.Common
         /// </summary>
         /// <param name="command">ADO.NET database command.</param>
         /// <param name="list">A list of entity objects to be used with the command.</param>
-        public DbCommandContext(DbCommand command, ICollection<TEntity> list)
+        public DbCommandContext(DbCommand command, ICollection<IEntity> list)
         {
             if (command == null)
             {
@@ -55,7 +53,7 @@ namespace Mark.AspNet.Identity.Common
             }
 
             _command = command;
-            _parameters = new ParameterCollection(_command);
+            _parameters = new DbParameterCollection(_command);
             _list = list;
         }
 
@@ -63,15 +61,26 @@ namespace Mark.AspNet.Identity.Common
         /// Set command parameters for each entity in the given entity collection.
         /// </summary>
         /// <param name="setAction">Action that will execute for each entity in the collection.</param>
-        public void SetParametersForEach(Action<ParameterCollection, TEntity> setAction)
+        public void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction) where TEntity : IEntity
         {
-            _setForEach = setAction;
+            _setForEach = new Action<IDbParameterCollection, IEntity>((collection, entity) =>
+            {
+                setAction(collection, (TEntity)entity);
+            });
+        }
+
+        /// <summary>
+        /// Get the underlying command.
+        /// </summary>
+        public DbCommand Command
+        {
+            get { return _command; }
         }
 
         /// <summary>
         /// Get command parameter collection.
         /// </summary>
-        public ParameterCollection Parameters
+        public IDbParameterCollection Parameters
         {
             get { return _parameters; }
         }
@@ -86,7 +95,7 @@ namespace Mark.AspNet.Identity.Common
 
             if (_list != null)
             {
-                foreach (TEntity entity in _list)
+                foreach (IEntity entity in _list)
                 {
                     _setForEach(_parameters, entity);
                     retValue += _command.ExecuteNonQuery();
@@ -159,67 +168,5 @@ namespace Mark.AspNet.Identity.Common
         }
 
         #endregion
-
-        /// <summary>
-        /// Represents command parameter collection.
-        /// </summary>
-        public class ParameterCollection
-        {
-            private DbCommand _command;
-            private DbParameterCollection _parameters;
-
-            /// <summary>
-            /// Initialize a new instance of the class.
-            /// </summary>
-            /// <param name="command">Database command.</param>
-            public ParameterCollection(DbCommand command)
-            {
-                _command = command;
-                _parameters = _command.Parameters;
-            }
-
-            /// <summary>
-            /// Get or set command parameter. If a command parameter not found, 
-            /// a new parameter with the given field identifier is created and returned.
-            /// </summary>
-            /// <param name="fieldIdentifier">Field identifier without '@' as prefix.</param>
-            /// <returns>Returns a command parameter associated with the field identifier. If not found, 
-            /// a new parameter with the given field identifier is created and returned.</returns>
-            public DbParameter this[string fieldIdentifier]
-            {
-                get
-                {
-                    if (_parameters.Contains("@" + fieldIdentifier))
-                    {
-                        return _parameters["@" + fieldIdentifier];
-                    }
-                    else
-                    {
-                        DbParameter parameter = _command.CreateParameter();
-                        parameter.ParameterName = "@" + fieldIdentifier;
-                        _parameters.Add(parameter);
-                        return parameter;
-                    }
-                }
-
-                set
-                {
-                    _parameters["@" + fieldIdentifier] = value;
-                }
-            }
-
-            ///// <summary>
-            ///// Add command parameter with value.
-            ///// </summary>
-            ///// <param name="fieldIdentifier">Field identifier without '@' as prefix.</param>
-            ///// <param name="value">Value to be set.</param>
-            ///// <returns>Returns the added command parameter.</returns>
-            //public DbParameter Add(string fieldIdentifier, object value)
-            //{
-            //    DbParameter parameter = this[fieldIdentifier];
-            //    parameter.Value = value;
-            //    return parameter;
-            //}
-        }
     }
 }

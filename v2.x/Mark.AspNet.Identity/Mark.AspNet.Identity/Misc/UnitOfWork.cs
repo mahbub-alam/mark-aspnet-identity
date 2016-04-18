@@ -84,13 +84,16 @@ namespace Mark.AspNet.Identity.MySql
         public int SaveChanges()
         {
             int retCount = 0;
-            using (ITransactionContext tContext = _storageContext.TransactionContext)
+
+            using (ITransactionContext tContext = _storageContext.CreateTransactionContext())
             {
+                // Execute all unit of work handlers that act upon storage context
                 foreach (Work work in _workList.OrderBy(w => w.EntryDateTime))
                 {
                     work.Execute();
                 }
 
+                // Save all acts performed by unit of handlers.
                 retCount = _storageContext.SaveChanges();
 
                 tContext.Commit();

@@ -46,10 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\IDbCommandContext.cs" />
+    <Compile Include="Common\IDbParameterCollection.cs" />
+    <Compile Include="Misc\DataReaderExtensions.cs" />
     <Compile Include="Misc\DbCommandContext.cs" />
     <Compile Include="Common\IDbStorageContext.cs" />
     <Compile Include="Common\IDbTransactionContext.cs" />
     <Compile Include="Entities\IEntity.cs" />
+    <Compile Include="Misc\DbParameterCollection.cs" />
     <Compile Include="Misc\DbStorageContext.cs" />
     <Compile Include="Misc\DbTransactionContext.cs" />
     <Compile Include="ModelConfiguration\Entities.cs" />

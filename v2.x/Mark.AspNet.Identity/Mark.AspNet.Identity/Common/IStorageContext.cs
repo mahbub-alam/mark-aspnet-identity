@@ -14,9 +14,25 @@ namespace Mark.AspNet.Identity.Common
     public interface IStorageContext : IDisposable
     {
         /// <summary>
-        /// Get an instance of the transaction context associated with the storage context.
+        /// Create a new transaction context.
+        /// </summary>
+        /// <param name="createPrivate">Whether to create private transaction context.</param>
+        /// <returns>Returns a new transaction context.</returns>
+        IDbTransactionContext CreateTransactionContext(bool createPrivate = false);
+
+        /// <summary>
+        /// Get the current global transaction context associated with the storage context. If no 
+        /// transaction context is found, a new one is created and returned.
         /// </summary>
         ITransactionContext TransactionContext
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Whether there is a transaction exists within the storage context.
+        /// </summary>
+        bool TransactionExists
         {
             get;
         }

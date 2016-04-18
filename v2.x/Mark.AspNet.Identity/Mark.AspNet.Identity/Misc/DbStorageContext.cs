@@ -22,47 +22,107 @@ namespace Mark.AspNet.Identity
         private string _connString;
         private Dictionary<string, EntityConfiguration> _entityConfigs;
         private DbConnection _conn;
+        private bool _isConnOpenAlready;
         private IDbTransactionContext _tContext;
-        private List<DbCommandContext<IEntity>> _cmdList;
+        private List<IDbCommandContext> _cmdList;
 
         /// <summary>
         /// Initialize a new instance of the class which uses the "DefaultConnection" connectionString.
         /// </summary>
         public DbStorageContext()
         {
-            Init(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+            Init("DefaultConnection");
         }
 
         /// <summary>
-        /// Initialize a new instance of the class with given connection string.
+        /// Initialize a new instance of the class with the given connection name or connection string.
         /// </summary>
-        /// <param name="connString">Connection string.</param>
-        public DbStorageContext(string connString)
+        /// <param name="connNameOrConnString">Connection name or connection string.</param>
+        public DbStorageContext(string connNameOrConnString)
         {
-            Init(connString);
+            Init(connNameOrConnString);
         }
 
-        private void Init(string connString)
+        private void Init(string connNameOrConnString)
         {
-            _connString = connString;
+            try
+            {
+                // As connection name
+                _connString = ConfigurationManager.ConnectionStrings[connNameOrConnString].ConnectionString;
+            }
+            catch (Exception)
+            {
+                // As connection string
+                _connString = connNameOrConnString;
+            }
+
             _entityConfigs = new Dictionary<string, EntityConfiguration>();
             _conn = new TConnection();
             _conn.ConnectionString = _connString;
-            _cmdList = new List<DbCommandContext<IEntity>>();
+            _cmdList = new List<IDbCommandContext>();
 
             OnConfiguringEntities(_entityConfigs);
         }
 
         /// <summary>
-        /// Get database connection.
+        /// Open database connection if not opened yet.
         /// </summary>
-        public DbConnection Connection
+        public void Open()
         {
-            get { return _conn; }
+            if (_conn != null && _conn.State != System.Data.ConnectionState.Open)
+            {
+                _conn.Open();
+                _isConnOpenAlready = false;
+            }
+            else
+            {
+                _isConnOpenAlready = true;
+            }
         }
 
         /// <summary>
-        /// Whether there is a transaction exists within the storage context.
+        /// Close database connection. If the connection was already opened before calling 
+        /// <see cref="Open()"/> method, it is not closed unless closed forcibly.
+        /// </summary>
+        /// <param name="forceClose">Force closing the connection.</param>
+        public void Close(bool forceClose = false)
+        {
+            if (_conn != null && (!_isConnOpenAlready || forceClose))
+            {
+                 _conn.Close();
+            }
+        }
+
+        /// <summary>
+        /// Create database command object.
+        /// </summary>
+        /// <returns>Returns command.</returns>
+        public DbCommand CreateCommand()
+        {
+            return _conn.CreateCommand();
+        }
+
+        /// <summary>
+        /// Create a new transaction context.
+        /// </summary>
+        /// <param name="createPrivate">Whether to create private transaction context.</param>
+        /// <returns>Returns a new transaction context.</returns>
+        public IDbTransactionContext CreateTransactionContext(bool createPrivate = false)
+        {
+            Open();
+
+            IDbTransactionContext transactionContext = new DbTransactionContext(_conn.BeginTransaction());
+
+            if (!createPrivate)
+            {
+                _tContext = transactionContext;
+            }
+
+            return transactionContext;
+        }
+
+        /// <summary>
+        /// Whether there is a global transaction exists within the storage context.
         /// </summary>
         public bool TransactionExists
         {
@@ -73,8 +133,8 @@ namespace Mark.AspNet.Identity
         }
 
         /// <summary>
-        /// Get transaction context. If a context exists, it will be returned; otherwise, 
-        /// a new one will be returned.
+        /// Get the current global transaction context associated with the storage context. If no 
+        /// transaction context is found, a new one is created and returned.
         /// </summary>
         ITransactionContext IStorageContext.TransactionContext
         {
@@ -85,8 +145,8 @@ namespace Mark.AspNet.Identity
         }
 
         /// <summary>
-        /// Get transaction context. If a context exists, it will be returned; otherwise, 
-        /// a new one will be returned.
+        /// Get the current global transaction context associated with the storage context. If no 
+        /// transaction context is found, a new one is created and returned.
         /// </summary>
         public IDbTransactionContext TransactionContext
         {
@@ -99,15 +159,6 @@ namespace Mark.AspNet.Identity
 
                 return _tContext;
             }
-        }
-
-        /// <summary>
-        /// Create a new transaction context that is not saved as public transaction context.
-        /// </summary>
-        /// <returns>Returns a new transaction context.</returns>
-        public IDbTransactionContext CreateTransactionContext()
-        {
-            return new DbTransactionContext(_conn.BeginTransaction());
         }
 
         /// <summary>
@@ -154,13 +205,12 @@ namespace Mark.AspNet.Identity
         /// <summary>
         /// Add a command for execution.
         /// </summary>
-        /// <typeparam name="TEntity">Entity type.</typeparam>
         /// <param name="commandContext">Command to be executed.</param>
-        public void AddCommand<TEntity>(DbCommandContext<TEntity> commandContext) where TEntity : IEntity
+        public void AddCommand(IDbCommandContext commandContext)
         {
             if (commandContext != null)
             {
-                _cmdList.Add(commandContext as DbCommandContext<IEntity>);
+                _cmdList.Add(commandContext);
             }
         }
 
@@ -171,35 +221,49 @@ namespace Mark.AspNet.Identity
         public int SaveChanges()
         {
             int retCount = 0;
+            IDbTransactionContext privateTContext = null;
 
-            if (_conn.State != System.Data.ConnectionState.Open)
+            Open();
+
+            // MySQL does not support nested transaction as if this class is used with 
+            // unit of work which wraps operation inside a transaction. So, checking for 
+            // existing transaction before creating private transaction context.
+            if (!TransactionExists)
             {
-                _conn.Open();
+                privateTContext = this.CreateTransactionContext(true);
             }
-
-            // Using private transaction context because, it may conflict with context 
-            // created for public context.
-            IDbTransactionContext privateTContext = this.CreateTransactionContext();
-
+            
             try
             {
-                foreach (DbCommandContext<IEntity> cmdContext in _cmdList)
+                foreach (IDbCommandContext cmdContext in _cmdList)
                 {
                     retCount += cmdContext.Execute();
                     cmdContext.Dispose();
                 }
 
-                privateTContext.Commit();
-                privateTContext.Dispose();
+                if (privateTContext != null)
+                {
+                    privateTContext.Commit();
+                }
             }
             catch (Exception)
             {
-                privateTContext.Rollback();
+                if (privateTContext != null)
+                {
+                    privateTContext.Rollback();
+                }
+
                 throw;
             }
             finally
             {
-                _conn.Close();
+                if (privateTContext != null)
+                {
+                    privateTContext.Dispose();
+                }
+
+                _cmdList.Clear();
+                Close();
             }
 
             return retCount;
@@ -219,14 +283,22 @@ namespace Mark.AspNet.Identity
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
-                    _tContext.Dispose();
-                    _conn.Close();
-                    _conn.Dispose();
+                    if (_tContext != null)
+                    {
+                        _tContext.Dispose();
+                    }
+
+                    if (_conn != null)
+                    {
+                        _conn.Close();
+                        _conn.Dispose();
+                    }
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
                 _conn = null;
+                _cmdList = null;
                 _tContext = null;
                 _connString = null;
                 _entityConfigs = null;
