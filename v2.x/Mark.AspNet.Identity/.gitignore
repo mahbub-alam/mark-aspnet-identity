@@ -1,3 +1,5 @@
 .vs
 /packages
 /*.Tests
+/*.NHibernate
+
