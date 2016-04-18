@@ -34,6 +34,7 @@ namespace Mark.AspNet.Identity.MySql
             }
 
             _unitOfWork = unitOfWork;
+            AutoSaveChanges = true;
             _repo = new RoleRepository<TRole, TKey, TUserRole>(_unitOfWork);
         }
 
@@ -97,6 +98,8 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the role if found; otherwise, returns null.</returns>
         public override async Task<TRole> FindByIdAsync(TKey roleId)
         {
+            ThrowIfDisposed();
+
             TRole role = _repo.FindById(roleId);
 
             return await Task.FromResult(role);
@@ -109,6 +112,13 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the role if found; otherwise, returns null.</returns>
         public override async Task<TRole> FindByNameAsync(string roleName)
         {
+            ThrowIfDisposed();
+
+            if (String.IsNullOrWhiteSpace(roleName))
+            {
+                throw new ArgumentException("'roleName' parameter cannot be null or empty");
+            }
+
             TRole role = _repo.FindByName(roleName);
 
             return await Task.FromResult(role);

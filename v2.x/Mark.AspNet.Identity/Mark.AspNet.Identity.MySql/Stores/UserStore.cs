@@ -47,8 +47,8 @@ namespace Mark.AspNet.Identity.MySql
                 throw new ArgumentNullException("UnitOfWork null");
             }
 
-            AutoSaveChanges = true;
             _unitOfWork = unitOfWork;
+            AutoSaveChanges = true;
             _userRepo = new UserRepository<TUser, TKey, TUserLogin, TUserRole, TUserClaim>(_unitOfWork);
             _roleRepo = new RoleRepository<TRole, TKey, TUserRole>(_unitOfWork);
             _userLoginRepo = new UserLoginRepository<TUserLogin, TKey>(_unitOfWork);
@@ -174,7 +174,7 @@ namespace Mark.AspNet.Identity.MySql
 
             if (String.IsNullOrWhiteSpace(roleName))
             {
-                throw new ArgumentNullException("'roleName' parameter null/empty");
+                throw new ArgumentException("'roleName' parameter cannot be null or empty");
             }
 
             TRole role = _roleRepo.FindByName(roleName);
@@ -272,7 +272,7 @@ namespace Mark.AspNet.Identity.MySql
 
         private async Task<TUser> GetUserAggregateByUserNameAsync(string userName)
         {
-            TUser user = _userRepo.FindByEmail(userName);
+            TUser user = _userRepo.FindByUserName(userName);
 
             if (user != null)
             {
@@ -338,7 +338,7 @@ namespace Mark.AspNet.Identity.MySql
 
             if (String.IsNullOrWhiteSpace(email))
             {
-                throw new ArgumentNullException("'email' parameter null/empty");
+                throw new ArgumentException("'email' parameter cannot be null or empty");
             }
 
             TUser user = await GetUserAggregateByEmailAsync(email).WithCurrentCulture();
@@ -371,7 +371,7 @@ namespace Mark.AspNet.Identity.MySql
 
             if (String.IsNullOrWhiteSpace(userName))
             {
-                throw new ArgumentNullException("'userName' parameter null/empty");
+                throw new ArgumentException("'userName' parameter cannot be null or empty");
             }
 
             TUser user = await GetUserAggregateByUserNameAsync(userName).WithCurrentCulture();
@@ -670,7 +670,7 @@ namespace Mark.AspNet.Identity.MySql
 
             if (String.IsNullOrWhiteSpace(roleName))
             {
-                throw new ArgumentNullException("'roleName' parameter null/empty");
+                throw new ArgumentException("'roleName' parameter cannot be null or empty");
             }
 
             bool inRole = _userRoleRepo.IsInRole(user.Id, roleName);
@@ -728,7 +728,7 @@ namespace Mark.AspNet.Identity.MySql
 
             if (String.IsNullOrWhiteSpace(roleName))
             {
-                throw new ArgumentNullException("'roleName' parameter null/empty");
+                throw new ArgumentException("'roleName' parameter cannot be null or empty");
             }
 
             TRole role = _roleRepo.FindByName(roleName);

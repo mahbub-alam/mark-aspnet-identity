@@ -41,7 +41,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveAddedItem(TUser item)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"INSERT INTO {0} ({1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}) 
                     VALUES (@{12}, @{13}, @{14}, @{15}, @{16}, @{17}, @{18}, @{19}, @{20}, 
@@ -77,10 +77,10 @@ namespace Mark.AspNet.Identity.MySql
                 command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
-            DbCommandContext<TUser> cmdContext = new DbCommandContext<TUser>(command,
-                new List<TUser> { item });
+            DbCommandContext cmdContext = new DbCommandContext(command,
+                new List<IEntity> { item });
 
-            cmdContext.SetParametersForEach((parameters, entity) =>
+            cmdContext.SetParametersForEach<TUser>((parameters, entity) =>
             {
                 parameters[UserFields.UserName].Value = entity.UserName;
                 parameters[UserFields.PasswordHash].Value = entity.PasswordHash;
@@ -104,22 +104,24 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveChangedItem(TUser item)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"UPDATE {0} SET 
-                {1} = @{12}, 
-                {2} = @{13}, 
-                {3} = @{14}, 
-                {4} = @{15}, 
-                {5} = @{16}, 
-                {6} = @{17}, 
-                {7} = @{18}, 
-                {8} = @{19}, 
-                {9} = @{20}, 
-                {10} = @{21}, 
-                WHERE {11} = @{22};",
+                {1} = @{13}, 
+                {2} = @{14}, 
+                {3} = @{15}, 
+                {4} = @{16}, 
+                {5} = @{17}, 
+                {6} = @{18}, 
+                {7} = @{19}, 
+                {8} = @{20}, 
+                {9} = @{21}, 
+                {10} = @{22},  
+                {11} = @{23}
+                WHERE {12} = @{24};",
                 StorageContext[Entities.User].TableName,
                 // Configured field names
+                StorageContext[Entities.User][UserFields.UserName],
                 StorageContext[Entities.User][UserFields.PasswordHash],
                 StorageContext[Entities.User][UserFields.SecurityStamp],
                 StorageContext[Entities.User][UserFields.Email],
@@ -132,6 +134,7 @@ namespace Mark.AspNet.Identity.MySql
                 StorageContext[Entities.User][UserFields.AccessFailedCount],
                 StorageContext[Entities.User][UserFields.Id],
                 // Parameter names
+                UserFields.UserName,
                 UserFields.PasswordHash,
                 UserFields.SecurityStamp,
                 UserFields.Email,
@@ -149,12 +152,13 @@ namespace Mark.AspNet.Identity.MySql
                 command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
-            DbCommandContext<TUser> cmdContext = new DbCommandContext<TUser>(command,
-                new List<TUser> { item });
+            DbCommandContext cmdContext = new DbCommandContext(command,
+                new List<IEntity> { item });
 
-            cmdContext.SetParametersForEach((parameters, entity) =>
+            cmdContext.SetParametersForEach<TUser>((parameters, entity) =>
             {
                 parameters[UserFields.Id].Value = entity.Id;
+                parameters[UserFields.UserName].Value = entity.UserName;
                 parameters[UserFields.PasswordHash].Value = entity.PasswordHash;
                 parameters[UserFields.SecurityStamp].Value = entity.SecurityStamp;
                 parameters[UserFields.Email].Value = entity.Email;
@@ -176,7 +180,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveRemovedItem(TUser item)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"DELETE FROM {0} WHERE {1} = @{2};",
                 StorageContext[Entities.User].TableName,
@@ -190,10 +194,10 @@ namespace Mark.AspNet.Identity.MySql
                 command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
-            DbCommandContext<TUser> cmdContext = new DbCommandContext<TUser>(command,
-                new List<TUser> { item });
+            DbCommandContext cmdContext = new DbCommandContext(command,
+                new List<IEntity> { item });
 
-            cmdContext.SetParametersForEach((parameters, entity) =>
+            cmdContext.SetParametersForEach<TUser>((parameters, entity) =>
             {
                 parameters[UserFields.Id].Value = entity.Id;
             });
@@ -208,7 +212,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the user if found; otherwise, returns null.</returns>
         public TUser FindById(TKey id)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{2};",
                 StorageContext[Entities.User].TableName,
@@ -217,14 +221,13 @@ namespace Mark.AspNet.Identity.MySql
                 // Parameter names
                 UserFields.Id);
 
-            DbCommandContext<TUser> cmdContext = new DbCommandContext<TUser>(command);
+            DbCommandContext cmdContext = new DbCommandContext(command);
             cmdContext.Parameters[UserFields.Id].Value = id;
 
-            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             TUser user = default(TUser);
 
-            conn.Open();
+            StorageContext.Open();
 
             try
             {
@@ -234,40 +237,30 @@ namespace Mark.AspNet.Identity.MySql
                 {
                     user = new TUser();
 
-                    user.Id = id;
-
-                    user.UserName = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.UserName]));
-
-                    user.PasswordHash = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.PasswordHash]));
-
-                    user.SecurityStamp = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.SecurityStamp]));
-
-                    user.Email = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.Email]));
-
-                    user.EmailConfirmed = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.EmailConfirmed]));
-
-                    user.PhoneNumber = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.PhoneNumber]));
-
-                    user.PhoneNumberConfirmed = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.PhoneNumberConfirmed]));
-
-                    user.TwoFactorEnabled = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.TwoFactorEnabled]));
-
-                    user.LockoutEnabled = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.LockoutEnabled]));
-
-                    user.LockoutEndDateUtc = reader.GetDateTime(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.LockoutEndDateUtc]));
-
-                    user.AccessFailedCount = reader.GetInt32(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.AccessFailedCount]));
+                    user.Id = (TKey)reader.GetSafeValue(
+                        StorageContext[Entities.User][UserFields.Id]);
+                    user.UserName = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.UserName]);
+                    user.PasswordHash = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.PasswordHash]);
+                    user.SecurityStamp = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.SecurityStamp]);
+                    user.Email = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.Email]);
+                    user.EmailConfirmed = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.EmailConfirmed]);
+                    user.PhoneNumber = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.PhoneNumber]);
+                    user.PhoneNumberConfirmed = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.PhoneNumberConfirmed]);
+                    user.TwoFactorEnabled = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.TwoFactorEnabled]);
+                    user.LockoutEnabled = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.LockoutEnabled]);
+                    user.LockoutEndDateUtc = reader.GetSafeDateTime(
+                        StorageContext[Entities.User][UserFields.LockoutEndDateUtc]);
+                    user.AccessFailedCount = reader.GetSafeInt32(
+                        StorageContext[Entities.User][UserFields.AccessFailedCount]);
                 }
             }
             catch (Exception)
@@ -281,7 +274,8 @@ namespace Mark.AspNet.Identity.MySql
                     reader.Close();
                 }
 
-                conn.Close();
+                cmdContext.Dispose();
+                StorageContext.Close();
             }
 
             return user;
@@ -294,7 +288,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the user if found; otherwise, returns null.</returns>
         public TUser FindByUserName(string userName)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE LOWER({1}) = LOWER(@{2});",
                 StorageContext[Entities.User].TableName,
@@ -303,14 +297,13 @@ namespace Mark.AspNet.Identity.MySql
                 // Parameter names
                 UserFields.UserName);
 
-            DbCommandContext<TUser> cmdContext = new DbCommandContext<TUser>(command);
+            DbCommandContext cmdContext = new DbCommandContext(command);
             cmdContext.Parameters[UserFields.UserName].Value = userName;
 
-            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             TUser user = default(TUser);
 
-            conn.Open();
+            StorageContext.Open();
 
             try
             {
@@ -320,41 +313,30 @@ namespace Mark.AspNet.Identity.MySql
                 {
                     user = new TUser();
 
-                    user.Id = (TKey)reader.GetValue(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.Id]));
-
-                    user.UserName = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.UserName]));
-
-                    user.PasswordHash = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.PasswordHash]));
-
-                    user.SecurityStamp = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.SecurityStamp]));
-
-                    user.Email = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.Email]));
-
-                    user.EmailConfirmed = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.EmailConfirmed]));
-
-                    user.PhoneNumber = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.PhoneNumber]));
-
-                    user.PhoneNumberConfirmed = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.PhoneNumberConfirmed]));
-
-                    user.TwoFactorEnabled = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.TwoFactorEnabled]));
-
-                    user.LockoutEnabled = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.LockoutEnabled]));
-
-                    user.LockoutEndDateUtc = reader.GetDateTime(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.LockoutEndDateUtc]));
-
-                    user.AccessFailedCount = reader.GetInt32(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.AccessFailedCount]));
+                    user.Id = (TKey)reader.GetSafeValue(
+                        StorageContext[Entities.User][UserFields.Id]);
+                    user.UserName = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.UserName]);
+                    user.PasswordHash = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.PasswordHash]);
+                    user.SecurityStamp = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.SecurityStamp]);
+                    user.Email = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.Email]);
+                    user.EmailConfirmed = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.EmailConfirmed]);
+                    user.PhoneNumber = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.PhoneNumber]);
+                    user.PhoneNumberConfirmed = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.PhoneNumberConfirmed]);
+                    user.TwoFactorEnabled = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.TwoFactorEnabled]);
+                    user.LockoutEnabled = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.LockoutEnabled]);
+                    user.LockoutEndDateUtc = reader.GetSafeDateTime(
+                        StorageContext[Entities.User][UserFields.LockoutEndDateUtc]);
+                    user.AccessFailedCount = reader.GetSafeInt32(
+                        StorageContext[Entities.User][UserFields.AccessFailedCount]);
                 }
             }
             catch (Exception)
@@ -368,7 +350,8 @@ namespace Mark.AspNet.Identity.MySql
                     reader.Close();
                 }
 
-                conn.Close();
+                cmdContext.Dispose();
+                StorageContext.Close();
             }
 
             return user;
@@ -381,7 +364,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the user if found; otherwise, returns null.</returns>
         public TUser FindByEmail(string email)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE LOWER({1}) = LOWER(@{2});",
                 StorageContext[Entities.User].TableName,
@@ -390,14 +373,13 @@ namespace Mark.AspNet.Identity.MySql
                 // Parameter names
                 UserFields.Email);
 
-            DbCommandContext<TUser> cmdContext = new DbCommandContext<TUser>(command);
+            DbCommandContext cmdContext = new DbCommandContext(command);
             cmdContext.Parameters[UserFields.Email].Value = email;
 
-            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             TUser user = default(TUser);
 
-            conn.Open();
+            StorageContext.Open();
 
             try
             {
@@ -407,41 +389,30 @@ namespace Mark.AspNet.Identity.MySql
                 {
                     user = new TUser();
 
-                    user.Id = (TKey)reader.GetValue(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.Id]));
-
-                    user.UserName = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.UserName]));
-
-                    user.PasswordHash = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.PasswordHash]));
-
-                    user.SecurityStamp = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.SecurityStamp]));
-
-                    user.Email = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.Email]));
-
-                    user.EmailConfirmed = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.EmailConfirmed]));
-
-                    user.PhoneNumber = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.PhoneNumber]));
-
-                    user.PhoneNumberConfirmed = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.PhoneNumberConfirmed]));
-
-                    user.TwoFactorEnabled = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.TwoFactorEnabled]));
-
-                    user.LockoutEnabled = reader.GetBoolean(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.LockoutEnabled]));
-
-                    user.LockoutEndDateUtc = reader.GetDateTime(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.LockoutEndDateUtc]));
-
-                    user.AccessFailedCount = reader.GetInt32(reader.GetOrdinal(
-                        StorageContext[Entities.User][UserFields.AccessFailedCount]));
+                    user.Id = (TKey)reader.GetSafeValue(
+                        StorageContext[Entities.User][UserFields.Id]);
+                    user.UserName = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.UserName]);
+                    user.PasswordHash = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.PasswordHash]);
+                    user.SecurityStamp = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.SecurityStamp]);
+                    user.Email = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.Email]);
+                    user.EmailConfirmed = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.EmailConfirmed]);
+                    user.PhoneNumber = reader.GetSafeString(
+                        StorageContext[Entities.User][UserFields.PhoneNumber]);
+                    user.PhoneNumberConfirmed = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.PhoneNumberConfirmed]);
+                    user.TwoFactorEnabled = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.TwoFactorEnabled]);
+                    user.LockoutEnabled = reader.GetSafeBoolean(
+                        StorageContext[Entities.User][UserFields.LockoutEnabled]);
+                    user.LockoutEndDateUtc = reader.GetSafeDateTime(
+                        StorageContext[Entities.User][UserFields.LockoutEndDateUtc]);
+                    user.AccessFailedCount = reader.GetSafeInt32(
+                        StorageContext[Entities.User][UserFields.AccessFailedCount]);
                 }
             }
             catch (Exception)
@@ -455,7 +426,8 @@ namespace Mark.AspNet.Identity.MySql
                     reader.Close();
                 }
 
-                conn.Close();
+                cmdContext.Dispose();
+                StorageContext.Close();
             }
 
             return user;

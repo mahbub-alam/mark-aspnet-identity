@@ -36,7 +36,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveAddedItem(TUserClaim item)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"INSERT INTO {0} ({1}, {2}, {3}) VALUES (@{4}, @{5}, @{6});",
                 StorageContext[Entities.UserClaim].TableName,
@@ -54,10 +54,10 @@ namespace Mark.AspNet.Identity.MySql
                 command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
-            DbCommandContext<TUserClaim> cmdContext = new DbCommandContext<TUserClaim>(command,
-                new List<TUserClaim> { item });
+            DbCommandContext cmdContext = new DbCommandContext(command,
+                new List<IEntity> { item });
 
-            cmdContext.SetParametersForEach((parameters, entity) =>
+            cmdContext.SetParametersForEach<TUserClaim>((parameters, entity) =>
             {
                 parameters[UserClaimFields.ClaimType].Value = entity.ClaimType;
                 parameters[UserClaimFields.ClaimValue].Value = entity.ClaimValue;
@@ -82,7 +82,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveRemovedItem(TUserClaim item)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"DELETE FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
                 StorageContext[Entities.UserClaim].TableName,
@@ -100,10 +100,10 @@ namespace Mark.AspNet.Identity.MySql
                 command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
-            DbCommandContext<TUserClaim> cmdContext = new DbCommandContext<TUserClaim>(command,
-                new List<TUserClaim> { item });
+            DbCommandContext cmdContext = new DbCommandContext(command,
+                new List<IEntity> { item });
 
-            cmdContext.SetParametersForEach((parameters, entity) =>
+            cmdContext.SetParametersForEach<TUserClaim>((parameters, entity) =>
             {
                 parameters[UserClaimFields.ClaimType].Value = entity.ClaimType;
                 parameters[UserClaimFields.ClaimValue].Value = entity.ClaimValue;
@@ -120,7 +120,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns a list of user claims if found; otherwise, returns empty list.</returns>
         public ICollection<TUserClaim> FindAllByUserId(TKey userId)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{2};",
                 StorageContext[Entities.UserClaim].TableName,
@@ -129,15 +129,14 @@ namespace Mark.AspNet.Identity.MySql
                 // Parameter names
                 UserClaimFields.UserId);
 
-            DbCommandContext<TUserClaim> cmdContext = new DbCommandContext<TUserClaim>(command);
+            DbCommandContext cmdContext = new DbCommandContext(command);
             cmdContext.Parameters[UserClaimFields.UserId].Value = userId;
 
-            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             List<TUserClaim> list = new List<TUserClaim>();
             TUserClaim userClaim = default(TUserClaim);
 
-            conn.Open();
+            StorageContext.Open();
 
             try
             {
@@ -146,14 +145,14 @@ namespace Mark.AspNet.Identity.MySql
                 while (reader.Read())
                 {
                     userClaim = new TUserClaim();
-                    userClaim.Id = (TKey)reader.GetValue(reader.GetOrdinal(
-                        StorageContext[Entities.UserClaim][UserClaimFields.Id]));
-                    userClaim.ClaimType = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimType]));
-                    userClaim.ClaimValue = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue]));
-                    userClaim.UserId = (TKey)reader.GetValue(reader.GetOrdinal(
-                        StorageContext[Entities.UserClaim][UserClaimFields.UserId]));
+                    userClaim.Id = (TKey)reader.GetSafeValue(
+                        StorageContext[Entities.UserClaim][UserClaimFields.Id]);
+                    userClaim.ClaimType = reader.GetSafeString(
+                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimType]);
+                    userClaim.ClaimValue = reader.GetSafeString(
+                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue]);
+                    userClaim.UserId = (TKey)reader.GetSafeValue(
+                        StorageContext[Entities.UserClaim][UserClaimFields.UserId]);
 
                     list.Add(userClaim);
                 }
@@ -169,7 +168,8 @@ namespace Mark.AspNet.Identity.MySql
                     reader.Close();
                 }
 
-                conn.Close();
+                cmdContext.Dispose();
+                StorageContext.Close();
             }
 
             return list;
@@ -183,7 +183,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns a list of user claims if found; otherwise, returns empty list.</returns>
         public ICollection<TUserClaim> FindAllByUserId(TKey userId, Claim claim)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
                 StorageContext[Entities.UserClaim].TableName,
@@ -196,17 +196,16 @@ namespace Mark.AspNet.Identity.MySql
                 UserClaimFields.ClaimType,
                 UserClaimFields.ClaimValue);
 
-            DbCommandContext<TUserClaim> cmdContext = new DbCommandContext<TUserClaim>(command);
+            DbCommandContext cmdContext = new DbCommandContext(command);
             cmdContext.Parameters[UserClaimFields.UserId].Value = userId;
             cmdContext.Parameters[UserClaimFields.ClaimType].Value = claim.Type;
             cmdContext.Parameters[UserClaimFields.ClaimValue].Value = claim.Value;
 
-            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             List<TUserClaim> list = new List<TUserClaim>();
             TUserClaim userClaim = default(TUserClaim);
 
-            conn.Open();
+            StorageContext.Open();
 
             try
             {
@@ -215,14 +214,14 @@ namespace Mark.AspNet.Identity.MySql
                 while (reader.Read())
                 {
                     userClaim = new TUserClaim();
-                    userClaim.Id = (TKey)reader.GetValue(reader.GetOrdinal(
-                        StorageContext[Entities.UserClaim][UserClaimFields.Id]));
-                    userClaim.ClaimType = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimType]));
-                    userClaim.ClaimValue = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue]));
-                    userClaim.UserId = (TKey)reader.GetValue(reader.GetOrdinal(
-                        StorageContext[Entities.UserClaim][UserClaimFields.UserId]));
+                    userClaim.Id = (TKey)reader.GetSafeValue(
+                        StorageContext[Entities.UserClaim][UserClaimFields.Id]);
+                    userClaim.ClaimType = reader.GetSafeString(
+                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimType]);
+                    userClaim.ClaimValue = reader.GetSafeString(
+                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue]);
+                    userClaim.UserId = (TKey)reader.GetSafeValue(
+                        StorageContext[Entities.UserClaim][UserClaimFields.UserId]);
 
                     list.Add(userClaim);
                 }
@@ -238,7 +237,8 @@ namespace Mark.AspNet.Identity.MySql
                     reader.Close();
                 }
 
-                conn.Close();
+                cmdContext.Dispose();
+                StorageContext.Close();
             }
 
             return list;

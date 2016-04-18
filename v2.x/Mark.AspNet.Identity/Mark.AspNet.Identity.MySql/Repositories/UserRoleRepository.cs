@@ -37,7 +37,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveAddedItem(TUserRole item)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"INSERT INTO {0} ({1}, {2}) VALUES (@{3}, @{4});",
                 StorageContext[Entities.UserRole].TableName,
@@ -53,10 +53,10 @@ namespace Mark.AspNet.Identity.MySql
                 command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
-            DbCommandContext<TUserRole> cmdContext = new DbCommandContext<TUserRole>(command,
-                new List<TUserRole> { item });
+            DbCommandContext cmdContext = new DbCommandContext(command,
+                new List<IEntity> { item });
 
-            cmdContext.SetParametersForEach((parameters, entity) =>
+            cmdContext.SetParametersForEach<TUserRole>((parameters, entity) =>
             {
                 parameters[UserRoleFields.UserId].Value = entity.UserId;
                 parameters[UserRoleFields.RoleId].Value = entity.RoleId;
@@ -80,7 +80,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveRemovedItem(TUserRole item)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"DELETE FROM {0} WHERE {1} = @{3} AND {2} = @{4};",
                 StorageContext[Entities.UserRole].TableName,
@@ -96,10 +96,10 @@ namespace Mark.AspNet.Identity.MySql
                 command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
-            DbCommandContext<TUserRole> cmdContext = new DbCommandContext<TUserRole>(command,
-                new List<TUserRole> { item });
+            DbCommandContext cmdContext = new DbCommandContext(command,
+                new List<IEntity> { item });
 
-            cmdContext.SetParametersForEach((parameters, entity) =>
+            cmdContext.SetParametersForEach<TUserRole>((parameters, entity) =>
             {
                 parameters[UserRoleFields.UserId].Value = entity.UserId;
                 parameters[UserRoleFields.RoleId].Value = entity.RoleId;
@@ -115,7 +115,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns a list of user roles if found; otherwise, returns empty list.</returns>
         public ICollection<TUserRole> FindAllByUserId(TKey userId)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{2};",
                 StorageContext[Entities.UserRole].TableName,
@@ -124,15 +124,14 @@ namespace Mark.AspNet.Identity.MySql
                 // Parameter names
                 UserRoleFields.UserId);
 
-            DbCommandContext<TUserRole> cmdContext = new DbCommandContext<TUserRole>(command);
+            DbCommandContext cmdContext = new DbCommandContext(command);
             cmdContext.Parameters[UserRoleFields.UserId].Value = userId;
 
-            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             List<TUserRole> list = new List<TUserRole>();
             TUserRole userRole = default(TUserRole);
 
-            conn.Open();
+            StorageContext.Open();
 
             try
             {
@@ -141,10 +140,10 @@ namespace Mark.AspNet.Identity.MySql
                 while (reader.Read())
                 {
                     userRole = new TUserRole();
-                    userRole.UserId = (TKey)reader.GetValue(reader.GetOrdinal(
-                        StorageContext[Entities.UserRole][UserRoleFields.UserId]));
-                    userRole.RoleId = (TKey)reader.GetValue(reader.GetOrdinal(
-                        StorageContext[Entities.UserRole][UserRoleFields.RoleId]));
+                    userRole.UserId = (TKey)reader.GetSafeValue(
+                        StorageContext[Entities.UserRole][UserRoleFields.UserId]);
+                    userRole.RoleId = (TKey)reader.GetSafeValue(
+                        StorageContext[Entities.UserRole][UserRoleFields.RoleId]);
 
                     list.Add(userRole);
                 }
@@ -160,7 +159,7 @@ namespace Mark.AspNet.Identity.MySql
                     reader.Close();
                 }
 
-                conn.Close();
+                StorageContext.Close();
             }
 
             return list;
@@ -174,7 +173,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns true if belongs; otherwise, returns false.</returns>
         public bool IsInRole(TKey userId, string roleName)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT {2} FROM {0} INNER JOIN {1} ON ({0}.{2} = {1}.{3}) 
                     WHERE {4} = @{6} AND LOWER({5}) = LOWER(@{7});",
@@ -189,15 +188,14 @@ namespace Mark.AspNet.Identity.MySql
                 UserRoleFields.UserId, 
                 RoleFields.Name);
 
-            DbCommandContext<IEntity> cmdContext = new DbCommandContext<IEntity>(command);
+            DbCommandContext cmdContext = new DbCommandContext(command);
             cmdContext.Parameters[UserRoleFields.UserId].Value = userId;
             cmdContext.Parameters[RoleFields.Name].Value = roleName;
 
-            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             bool inRole = false;
 
-            conn.Open();
+            StorageContext.Open();
 
             try
             {
@@ -217,7 +215,7 @@ namespace Mark.AspNet.Identity.MySql
                     reader.Close();
                 }
 
-                conn.Close();
+                StorageContext.Close();
             }
 
             return inRole;

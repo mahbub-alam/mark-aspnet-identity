@@ -37,7 +37,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveAddedItem(TRole item)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"INSERT INTO {0} ({1}) VALUES (@{2});",
                 StorageContext[Entities.Role].TableName,
@@ -51,10 +51,10 @@ namespace Mark.AspNet.Identity.MySql
                 command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
-            DbCommandContext<TRole> cmdContext = new DbCommandContext<TRole>(command,
-                new List<TRole> { item });
+            DbCommandContext cmdContext = new DbCommandContext(command,
+                new List<IEntity> { item });
 
-            cmdContext.SetParametersForEach((parameters, entity) =>
+            cmdContext.SetParametersForEach<TRole>((parameters, entity) =>
             {
                 parameters[RoleFields.Name].Value = entity.Name;
             });
@@ -68,7 +68,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveChangedItem(TRole item)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"UPDATE {0} SET {1} = @{3} WHERE {2} = @{4};",
                 StorageContext[Entities.Role].TableName,
@@ -84,10 +84,10 @@ namespace Mark.AspNet.Identity.MySql
                 command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
-            DbCommandContext<TRole> cmdContext = new DbCommandContext<TRole>(command,
-                new List<TRole> { item });
+            DbCommandContext cmdContext = new DbCommandContext(command,
+                new List<IEntity> { item });
 
-            cmdContext.SetParametersForEach((parameters, entity) =>
+            cmdContext.SetParametersForEach<TRole>((parameters, entity) =>
             {
                 parameters[RoleFields.Name].Value = entity.Name;
                 parameters[RoleFields.Id].Value = entity.Id;
@@ -102,7 +102,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveRemovedItem(TRole item)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"DELETE FROM {0} WHERE {1} = @{2};",
                 StorageContext[Entities.Role].TableName,
@@ -116,10 +116,10 @@ namespace Mark.AspNet.Identity.MySql
                 command.Transaction = StorageContext.TransactionContext.Transaction;
             }
 
-            DbCommandContext<TRole> cmdContext = new DbCommandContext<TRole>(command,
-                new List<TRole> { item });
+            DbCommandContext cmdContext = new DbCommandContext(command,
+                new List<IEntity> { item });
 
-            cmdContext.SetParametersForEach((parameters, entity) =>
+            cmdContext.SetParametersForEach<TRole>((parameters, entity) =>
             {
                 parameters[RoleFields.Id].Value = entity.Id;
             });
@@ -134,7 +134,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the role if found; otherwise, returns null.</returns>
         public TRole FindById(TKey id)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{2};",
                 StorageContext[Entities.Role].TableName,
@@ -143,14 +143,13 @@ namespace Mark.AspNet.Identity.MySql
                 // Parameter names
                 RoleFields.Id);
 
-            DbCommandContext<TRole> cmdContext = new DbCommandContext<TRole>(command);
+            DbCommandContext cmdContext = new DbCommandContext(command);
             cmdContext.Parameters[RoleFields.Id].Value = id;
 
-            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             TRole role = default(TRole);
 
-            conn.Open();
+            StorageContext.Open();
 
             try
             {
@@ -175,7 +174,8 @@ namespace Mark.AspNet.Identity.MySql
                     reader.Close();
                 }
 
-                conn.Close();
+                cmdContext.Dispose();
+                StorageContext.Close();
             }
 
             return role;
@@ -188,7 +188,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the role if found; otherwise, returns null.</returns>
         public TRole FindByName(string roleName)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE LOWER({1}) = LOWER(@{2});",
                 StorageContext[Entities.Role].TableName,
@@ -197,14 +197,13 @@ namespace Mark.AspNet.Identity.MySql
                 // Parameter names
                 RoleFields.Name);
 
-            DbCommandContext<TRole> cmdContext = new DbCommandContext<TRole>(command);
+            DbCommandContext cmdContext = new DbCommandContext(command);
             cmdContext.Parameters[RoleFields.Name].Value = roleName;
 
-            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             TRole role = default(TRole);
 
-            conn.Open();
+            StorageContext.Open();
 
             try
             {
@@ -213,10 +212,10 @@ namespace Mark.AspNet.Identity.MySql
                 if (reader.Read())
                 {
                     role = new TRole();
-                    role.Id = (TKey)reader.GetValue(reader.GetOrdinal(
-                        StorageContext[Entities.Role][RoleFields.Id]));
-                    role.Name = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.Role][RoleFields.Name]));
+                    role.Id = (TKey)reader.GetSafeValue(
+                        StorageContext[Entities.Role][RoleFields.Id]);
+                    role.Name = reader.GetSafeString(
+                        StorageContext[Entities.Role][RoleFields.Name]);
                 }
             }
             catch (Exception)
@@ -230,7 +229,8 @@ namespace Mark.AspNet.Identity.MySql
                     reader.Close();
                 }
 
-                conn.Close();
+                cmdContext.Dispose();
+                StorageContext.Close();
             }
 
             return role;
@@ -243,7 +243,7 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns a list of roles if found; otherwise, returns empty list.</returns>
         public IList<string> FindRoleNamesByUserId(TKey userId)
         {
-            DbCommand command = StorageContext.Connection.CreateCommand();
+            DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT {2} FROM {0} INNER JOIN {1} ON ({0}.{3} = {1}.{4}) WHERE {5} = @{6};",
                 StorageContext[Entities.Role].TableName,
@@ -256,15 +256,14 @@ namespace Mark.AspNet.Identity.MySql
                 // Parameter names
                 UserRoleFields.UserId);
 
-            DbCommandContext<TRole> cmdContext = new DbCommandContext<TRole>(command);
+            DbCommandContext cmdContext = new DbCommandContext(command);
             cmdContext.Parameters[UserRoleFields.UserId].Value = userId;
 
-            DbConnection conn = StorageContext.Connection;
             DbDataReader reader = null;
             List<string> list = new List<string>();
             string roleName = null;
 
-            conn.Open();
+            StorageContext.Open();
 
             try
             {
@@ -272,8 +271,8 @@ namespace Mark.AspNet.Identity.MySql
 
                 while (reader.Read())
                 {
-                    roleName = reader.GetString(reader.GetOrdinal(
-                        StorageContext[Entities.UserRole][RoleFields.Name]));
+                    roleName = reader.GetSafeString(
+                        StorageContext[Entities.Role][RoleFields.Name]);
 
                     list.Add(roleName);
                 }
@@ -289,7 +288,8 @@ namespace Mark.AspNet.Identity.MySql
                     reader.Close();
                 }
 
-                conn.Close();
+                cmdContext.Dispose();
+                StorageContext.Close();
             }
 
             return list;
