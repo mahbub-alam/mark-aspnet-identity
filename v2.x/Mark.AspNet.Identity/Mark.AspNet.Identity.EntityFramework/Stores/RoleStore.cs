@@ -139,7 +139,7 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             if (String.IsNullOrWhiteSpace(roleName))
             {
-                throw new ArgumentNullException("'roleName' parameter null/empty");
+                throw new ArgumentException("'roleName' parameter cannot be null or empty");
             }
 
             return await this.Roles

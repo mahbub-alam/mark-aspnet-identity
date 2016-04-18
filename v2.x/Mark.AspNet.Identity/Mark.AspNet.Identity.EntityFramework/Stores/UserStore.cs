@@ -205,7 +205,7 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             if (String.IsNullOrWhiteSpace(roleName))
             {
-                throw new ArgumentNullException("'roleName' parameter null/empty");
+                throw new ArgumentException("'roleName' parameter cannot be null or empty");
             }
 
             TRole role = await _roleStore.EntitySet.Where(p => p.Name.ToLower() == roleName.ToLower())
@@ -350,7 +350,7 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             if (String.IsNullOrWhiteSpace(email))
             {
-                throw new ArgumentNullException("'email' parameter null/empty");
+                throw new ArgumentException("'email' parameter cannot be null or empty");
             }
 
             TUser user = await GetUserAggregateAsync(p => p.Email.ToLower() == email.ToLower()).WithCurrentCulture();
@@ -383,7 +383,7 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             if (String.IsNullOrWhiteSpace(userName))
             {
-                throw new ArgumentNullException("'userName' parameter null/empty");
+                throw new ArgumentException("'userName' parameter cannot be null or empty");
             }
 
             TUser user = await GetUserAggregateAsync(p => p.UserName.ToLower() == userName.ToLower())
@@ -686,7 +686,7 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             if (String.IsNullOrWhiteSpace(roleName))
             {
-                throw new ArgumentNullException("'roleName' parameter null/empty");
+                throw new ArgumentException("'roleName' parameter cannot be null or empty");
             }
 
             bool inRole = false;
@@ -757,7 +757,7 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             if (String.IsNullOrWhiteSpace(roleName))
             {
-                throw new ArgumentNullException("'roleName' parameter null/empty");
+                throw new ArgumentException("'roleName' parameter cannot be null or empty");
             }
 
             TRole role = await _roleStore.EntitySet.Where(p => p.Name.ToLower() == roleName.ToLower())
