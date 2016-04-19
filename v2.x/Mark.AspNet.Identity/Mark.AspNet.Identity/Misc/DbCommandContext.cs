@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
+using Mark.AspNet.Identity.Common;
 
-namespace Mark.AspNet.Identity.Common
+namespace Mark.AspNet.Identity
 {
     /// <summary>
     /// Represents command context for ADO.NET style storage context.
