@@ -231,29 +231,20 @@ namespace Mark.AspNet.Identity.MySql
 
         private async Task IncludeLoginsAsync(TUser user)
         {
-            if (!user.Logins.Any())
-            {
-                user.Logins = _userLoginRepo.FindAllByUserId(user.Id);
-                await Task.FromResult(0);
-            }
+            user.Logins = _userLoginRepo.FindAllByUserId(user.Id);
+            await Task.FromResult(0);
         }
 
         private async Task IncludeRolesAsync(TUser user)
         {
-            if (!user.Roles.Any())
-            {
-                user.Roles = _userRoleRepo.FindAllByUserId(user.Id);
-                await Task.FromResult(0);
-            }
+            user.Roles = _userRoleRepo.FindAllByUserId(user.Id);
+            await Task.FromResult(0);
         }
 
         private async Task IncludeClaimsAsync(TUser user)
         {
-            if (!user.Claims.Any())
-            {
-                user.Claims = _userClaimRepo.FindAllByUserId(user.Id);
-                await Task.FromResult(0);
-            }
+            user.Claims = _userClaimRepo.FindAllByUserId(user.Id);
+            await Task.FromResult(0);
         }
 
         private async Task<TUser> GetUserAggregateByIdAsync(TKey userId)
