@@ -16,7 +16,7 @@ namespace Mark.AspNet.Identity
     /// Represents default ADO.NET style storage context.
     /// </summary>
     /// <typeparam name="TConnection">Database connection type.</typeparam>
-    public class DbStorageContext<TConnection> : IDbStorageContext 
+    public class DbStorageContext<TConnection> : Disposable, IDbStorageContext 
         where TConnection : DbConnection, new()
     {
         private string _connString;
@@ -69,6 +69,8 @@ namespace Mark.AspNet.Identity
         /// </summary>
         public void Open()
         {
+            ThrowIfDisposed();
+
             if (_conn != null && _conn.State != System.Data.ConnectionState.Open)
             {
                 _conn.Open();
@@ -87,6 +89,8 @@ namespace Mark.AspNet.Identity
         /// <param name="forceClose">Force closing the connection.</param>
         public void Close(bool forceClose = false)
         {
+            ThrowIfDisposed();
+
             if (_conn != null && (!_isConnOpenAlready || forceClose))
             {
                  _conn.Close();
@@ -99,6 +103,8 @@ namespace Mark.AspNet.Identity
         /// <returns>Returns command.</returns>
         public DbCommand CreateCommand()
         {
+            ThrowIfDisposed();
+
             return _conn.CreateCommand();
         }
 
@@ -109,6 +115,8 @@ namespace Mark.AspNet.Identity
         /// <returns>Returns a new transaction context.</returns>
         public IDbTransactionContext CreateTransactionContext(bool createPrivate = false)
         {
+            ThrowIfDisposed();
+
             Open();
 
             IDbTransactionContext transactionContext = new DbTransactionContext(_conn.BeginTransaction());
@@ -152,6 +160,8 @@ namespace Mark.AspNet.Identity
         {
             get
             {
+                ThrowIfDisposed();
+
                 if (!TransactionExists)
                 {
                     _tContext = CreateTransactionContext();
@@ -181,6 +191,8 @@ namespace Mark.AspNet.Identity
         /// <returns>Returns configuration if found; otherwise, returns null.</returns>
         public EntityConfiguration GetEntityConfiguration(string entityIdentifier)
         {
+            ThrowIfDisposed();
+
             if (_entityConfigs.ContainsKey(entityIdentifier))
             {
                 return _entityConfigs[entityIdentifier];
@@ -208,6 +220,8 @@ namespace Mark.AspNet.Identity
         /// <param name="commandContext">Command to be executed.</param>
         public void AddCommand(IDbCommandContext commandContext)
         {
+            ThrowIfDisposed();
+
             if (commandContext != null)
             {
                 _cmdList.Add(commandContext);
@@ -220,6 +234,8 @@ namespace Mark.AspNet.Identity
         /// <returns>Returns number of objects saved to the storage.</returns>
         public int SaveChanges()
         {
+            ThrowIfDisposed();
+
             int retCount = 0;
             IDbTransactionContext privateTContext = null;
 
@@ -269,65 +285,39 @@ namespace Mark.AspNet.Identity
             return retCount;
         }
 
-        #region IDisposable Support
-        private bool _disposed = false; // To detect redundant calls
-
         /// <summary>
-        /// Dispose managed and unmanaged resources.
+        /// Dispose managed resources. Set large fields to null inside 
+        /// <see cref="DisposeExtra()"/> method since, that method will 
+        /// be called whether the <see cref="Disposable.Dispose()"/> 
+        /// method is called by the finalizer or your code.
         /// </summary>
-        /// <param name="disposing">Whether to dispose managed resources.</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeManaged()
         {
-            if (!_disposed)
+            if (_tContext != null)
             {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects).
-                    if (_tContext != null)
-                    {
-                        _tContext.Dispose();
-                    }
+                _tContext.Dispose();
+            }
 
-                    if (_conn != null)
-                    {
-                        _conn.Close();
-                        _conn.Dispose();
-                    }
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-                _conn = null;
-                _cmdList = null;
-                _tContext = null;
-                _connString = null;
-                _entityConfigs = null;
-                _disposed = true;
+            if (_conn != null)
+            {
+                _conn.Close();
+                _conn.Dispose();
             }
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
         /// <summary>
-        /// Finalizer.
+        /// Dispose unmanaged resources and/or set large fields 
+        /// (managed/unmanaged) to null. This method will be called whether 
+        /// the <see cref="Disposable.Dispose()"/> method is called by the 
+        /// finalizer or your code.
         /// </summary>
-        ~DbStorageContext()
+        protected override void DisposeExtra()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(false);
+            _conn = null;
+            _cmdList = null;
+            _tContext = null;
+            _connString = null;
+            _entityConfigs = null;
         }
-
-        // This code added to correctly implement the disposable pattern.
-        /// <summary>
-        /// Dispose managed and unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
     }
 }

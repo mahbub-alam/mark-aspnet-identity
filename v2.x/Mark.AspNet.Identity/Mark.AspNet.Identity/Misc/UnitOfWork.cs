@@ -52,6 +52,8 @@ namespace Mark.AspNet.Identity.MySql
         /// unit of work during saving the item.</param>
         public void RegisterAdded(IEntity item, IUnitOfWorkHandler handler)
         {
+            ThrowIfDisposed();
+
             _workList.Add(new Work(item, handler, WorkType.Added));
         }
 
@@ -63,6 +65,8 @@ namespace Mark.AspNet.Identity.MySql
         /// unit of work during saving the item.</param>
         public void RegisterChanged(IEntity item, IUnitOfWorkHandler handler)
         {
+            ThrowIfDisposed();
+
             _workList.Add(new Work(item, handler, WorkType.Changed));
         }
 
@@ -74,6 +78,8 @@ namespace Mark.AspNet.Identity.MySql
         /// unit of work during removing the item.</param>
         public void RegisterRemoved(IEntity item, IUnitOfWorkHandler handler)
         {
+            ThrowIfDisposed();
+
             _workList.Add(new Work(item, handler, WorkType.Removed));
         }
 
@@ -83,6 +89,8 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns number of objects saved to the storage.</returns>
         public int SaveChanges()
         {
+            ThrowIfDisposed();
+
             int retCount = 0;
 
             using (ITransactionContext tContext = _storageContext.CreateTransactionContext())

@@ -12,7 +12,7 @@ namespace Mark.AspNet.Identity.Common
     /// <summary>
     /// Represents command context for ADO.NET style storage context.
     /// </summary>
-    public class DbCommandContext : IDbCommandContext
+    public class DbCommandContext : Disposable, IDbCommandContext
     {
         private DbCommand _command;
         private DbParameterCollection _parameters;
@@ -63,6 +63,8 @@ namespace Mark.AspNet.Identity.Common
         /// <param name="setAction">Action that will execute for each entity in the collection.</param>
         public void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction) where TEntity : IEntity
         {
+            ThrowIfDisposed();
+
             _setForEach = new Action<IDbParameterCollection, IEntity>((collection, entity) =>
             {
                 setAction(collection, (TEntity)entity);
@@ -91,6 +93,8 @@ namespace Mark.AspNet.Identity.Common
         /// <returns>Returns the number of rows affected.</returns>
         public int Execute()
         {
+            ThrowIfDisposed();
+
             int retValue = 0;
 
             if (_list != null)
@@ -115,58 +119,35 @@ namespace Mark.AspNet.Identity.Common
         /// <returns>Returns a data reader.</returns>
         public DbDataReader ExecuteReader()
         {
+            ThrowIfDisposed();
+
             return _command.ExecuteReader();
         }
 
-        #region IDisposable Support
-        private bool _disposed = false; // To detect redundant calls
-
         /// <summary>
-        /// Dispose managed and unmanaged resources.
+        /// Dispose managed resources. Set large fields to null inside 
+        /// <see cref="DisposeExtra()"/> method since, that method will 
+        /// be called whether the <see cref="Disposable.Dispose()"/> 
+        /// method is called by the finalizer or your code.
         /// </summary>
-        /// <param name="disposing">Whether to dispose managed resources.</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeManaged()
         {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects).
-                    _command.Dispose();
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-                _command = null;
-                _parameters = null;
-                _list = null;
-                _setForEach = null;
-                _disposed = true;
-            }
+            _command.Dispose();
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
         /// <summary>
-        /// Finalizer.
+        /// Dispose unmanaged resources and/or set large fields 
+        /// (managed/unmanaged) to null. This method will be called whether 
+        /// the <see cref="Disposable.Dispose()"/> method is called by the 
+        /// finalizer or your code.
         /// </summary>
-        ~DbCommandContext()
+        protected override void DisposeExtra()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(false);
+            _command = null;
+            _parameters = null;
+            _list = null;
+            _setForEach = null;
         }
 
-        // This code added to correctly implement the disposable pattern.
-        /// <summary>
-        /// Dispose managed and unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
     }
 }

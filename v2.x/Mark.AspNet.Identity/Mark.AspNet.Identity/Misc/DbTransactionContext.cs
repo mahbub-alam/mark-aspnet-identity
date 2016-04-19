@@ -13,7 +13,7 @@ namespace Mark.AspNet.Identity
     /// <summary>
     /// Represents transaction context for ADO.NET style storage context.
     /// </summary>
-    public class DbTransactionContext : IDbTransactionContext
+    public class DbTransactionContext : Disposable, IDbTransactionContext
     {
         DbTransaction _transaction;
 
@@ -42,6 +42,8 @@ namespace Mark.AspNet.Identity
         /// </summary>
         public void Commit()
         {
+            ThrowIfDisposed();
+
             _transaction.Commit();
         }
 
@@ -50,53 +52,31 @@ namespace Mark.AspNet.Identity
         /// </summary>
         public void Rollback()
         {
+            ThrowIfDisposed();
+
             _transaction.Rollback();
         }
 
-        #region IDisposable Support
-        private bool _disposed = false; // To detect redundant calls
-
         /// <summary>
-        /// Dispose managed and unmanaged resources.
+        /// Dispose managed resources. Set large fields to null inside 
+        /// <see cref="DisposeExtra()"/> method since, that method will 
+        /// be called whether the <see cref="Disposable.Dispose()"/> 
+        /// method is called by the finalizer or your code.
         /// </summary>
-        /// <param name="disposing">Whether to dispose managed resources.</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeManaged()
         {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _transaction.Dispose();
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-                _transaction = null;
-                _disposed = true;
-            }
+            _transaction.Dispose();
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
         /// <summary>
-        /// Finalizer.
+        /// Dispose unmanaged resources and/or set large fields 
+        /// (managed/unmanaged) to null. This method will be called whether 
+        /// the <see cref="Disposable.Dispose()"/> method is called by the 
+        /// finalizer or your code.
         /// </summary>
-        ~DbTransactionContext()
+        protected override void DisposeExtra()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(false);
+            _transaction = null;
         }
-
-        // This code added to correctly implement the disposable pattern.
-        /// <summary>
-        /// Dispose managed and unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            GC.SuppressFinalize(this);
-        }
-        #endregion
     }
 }
