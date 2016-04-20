@@ -63,6 +63,7 @@
     <Compile Include="Data\ITransactionContext.cs" />
     <Compile Include="Data\IUnitOfWork.cs" />
     <Compile Include="Data\IUnitOfWorkHandler.cs" />
+    <Compile Include="Misc\UtilExtensions.cs" />
     <Compile Include="ModelConfiguration\Entities.cs" />
     <Compile Include="ModelConfiguration\EntityConfiguration.cs" />
     <Compile Include="ModelConfiguration\RoleConfiguration.cs" />
