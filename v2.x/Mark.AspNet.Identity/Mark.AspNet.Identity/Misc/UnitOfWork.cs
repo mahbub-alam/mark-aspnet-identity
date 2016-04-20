@@ -92,9 +92,12 @@ namespace Mark.AspNet.Identity.MySql
             ThrowIfDisposed();
 
             int retCount = 0;
+            ITransactionContext tContext = null;
 
-            using (ITransactionContext tContext = _storageContext.CreateTransactionContext())
+            try
             {
+                tContext = _storageContext.CreateTransactionContext();
+            
                 // Execute all unit of work handlers that act upon storage context
                 foreach (Work work in _workList.OrderBy(w => w.EntryDateTime))
                 {
@@ -106,8 +109,25 @@ namespace Mark.AspNet.Identity.MySql
 
                 tContext.Commit();
             }
+            catch (Exception)
+            {
+                if (tContext != null)
+                {
+                    tContext.Rollback();
+                }
 
-            _workList.Clear();
+                throw;
+            }
+            finally
+            {
+                if (tContext != null)
+                {
+                    tContext.Dispose();
+                }
+
+                // Must be cleared
+                _workList.Clear();
+            }
 
             return retCount;
         }
