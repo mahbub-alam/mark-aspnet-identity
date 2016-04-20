@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mark.Core;
 using Mark.Data;
 using Mark.Data.Common;
 using System.Data.Common;
@@ -84,15 +85,15 @@ namespace Mark.AspNet.Identity.MySql
             cmdContext.SetParametersForEach<TUser>((parameters, entity) =>
             {
                 parameters[UserFields.UserName].Value = entity.UserName;
-                parameters[UserFields.PasswordHash].Value = entity.PasswordHash;
-                parameters[UserFields.SecurityStamp].Value = entity.SecurityStamp;
-                parameters[UserFields.Email].Value = entity.Email;
+                parameters[UserFields.PasswordHash].Value = entity.PasswordHash.GetDBNullIfNull();
+                parameters[UserFields.SecurityStamp].Value = entity.SecurityStamp.GetDBNullIfNull();
+                parameters[UserFields.Email].Value = entity.Email.GetDBNullIfNull();
                 parameters[UserFields.EmailConfirmed].Value = entity.EmailConfirmed;
-                parameters[UserFields.PhoneNumber].Value = entity.PhoneNumber;
+                parameters[UserFields.PhoneNumber].Value = entity.PhoneNumber.GetDBNullIfNull();
                 parameters[UserFields.PhoneNumberConfirmed].Value = entity.PhoneNumberConfirmed;
                 parameters[UserFields.TwoFactorEnabled].Value = entity.TwoFactorEnabled;
                 parameters[UserFields.LockoutEnabled].Value = entity.LockoutEnabled;
-                parameters[UserFields.LockoutEndDateUtc].Value = entity.LockoutEndDateUtc;
+                parameters[UserFields.LockoutEndDateUtc].Value = entity.LockoutEndDateUtc.GetDBNullIfNull();
                 parameters[UserFields.AccessFailedCount].Value = entity.AccessFailedCount;
             });
 
@@ -160,15 +161,15 @@ namespace Mark.AspNet.Identity.MySql
             {
                 parameters[UserFields.Id].Value = entity.Id;
                 parameters[UserFields.UserName].Value = entity.UserName;
-                parameters[UserFields.PasswordHash].Value = entity.PasswordHash;
-                parameters[UserFields.SecurityStamp].Value = entity.SecurityStamp;
+                parameters[UserFields.PasswordHash].Value = entity.PasswordHash.GetDBNullIfNull();
+                parameters[UserFields.SecurityStamp].Value = entity.SecurityStamp.GetDBNullIfNull();
                 parameters[UserFields.Email].Value = entity.Email;
                 parameters[UserFields.EmailConfirmed].Value = entity.EmailConfirmed;
-                parameters[UserFields.PhoneNumber].Value = entity.PhoneNumber;
+                parameters[UserFields.PhoneNumber].Value = entity.PhoneNumber.GetDBNullIfNull();
                 parameters[UserFields.PhoneNumberConfirmed].Value = entity.PhoneNumberConfirmed;
                 parameters[UserFields.TwoFactorEnabled].Value = entity.TwoFactorEnabled;
                 parameters[UserFields.LockoutEnabled].Value = entity.LockoutEnabled;
-                parameters[UserFields.LockoutEndDateUtc].Value = entity.LockoutEndDateUtc;
+                parameters[UserFields.LockoutEndDateUtc].Value = entity.LockoutEndDateUtc.GetDBNullIfNull();
                 parameters[UserFields.AccessFailedCount].Value = entity.AccessFailedCount;
             });
 
