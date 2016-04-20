@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.Threading;
 
-namespace Mark.AspNet.Identity
+namespace Mark.Threading.Tasks
 {
     /// <summary>
     /// Represents an awaiter like ConfiguredTaskAwaiter but with thread's cultures preservation support.

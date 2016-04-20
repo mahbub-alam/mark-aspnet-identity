@@ -6,9 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
-using Mark.AspNet.Identity.Common;
 
-namespace Mark.AspNet.Identity
+namespace Mark.Data.Common
 {
     /// <summary>
     /// Represents command parameter collection.

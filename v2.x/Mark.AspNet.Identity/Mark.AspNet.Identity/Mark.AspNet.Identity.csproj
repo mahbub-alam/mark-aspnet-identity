@@ -46,16 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\IDbCommandContext.cs" />
-    <Compile Include="Common\IDbParameterCollection.cs" />
-    <Compile Include="Misc\DataReaderExtensions.cs" />
-    <Compile Include="Misc\DbCommandContext.cs" />
-    <Compile Include="Common\IDbStorageContext.cs" />
-    <Compile Include="Common\IDbTransactionContext.cs" />
-    <Compile Include="Entities\IEntity.cs" />
-    <Compile Include="Misc\DbParameterCollection.cs" />
-    <Compile Include="Misc\DbStorageContext.cs" />
-    <Compile Include="Misc\DbTransactionContext.cs" />
+    <Compile Include="Data\Common\DbCommandContext.cs" />
+    <Compile Include="Data\Common\DbParameterCollection.cs" />
+    <Compile Include="Data\Common\DbStorageContext.cs" />
+    <Compile Include="Data\Common\DbTransactionContext.cs" />
+    <Compile Include="Data\Common\Repository.cs" />
+    <Compile Include="Data\Common\UnitOfWork.cs" />
+    <Compile Include="Data\DataReaderExtensions.cs" />
+    <Compile Include="Data\IDbCommandContext.cs" />
+    <Compile Include="Data\IDbParameterCollection.cs" />
+    <Compile Include="Data\IDbStorageContext.cs" />
+    <Compile Include="Data\IDbTransactionContext.cs" />
+    <Compile Include="Data\IEntity.cs" />
+    <Compile Include="Data\IRepository.cs" />
+    <Compile Include="Data\IStorageContext.cs" />
+    <Compile Include="Data\ITransactionContext.cs" />
+    <Compile Include="Data\IUnitOfWork.cs" />
+    <Compile Include="Data\IUnitOfWorkHandler.cs" />
     <Compile Include="ModelConfiguration\Entities.cs" />
     <Compile Include="ModelConfiguration\EntityConfiguration.cs" />
     <Compile Include="ModelConfiguration\RoleConfiguration.cs" />
@@ -67,14 +74,7 @@
     <Compile Include="ModelConfiguration\UserRoleConfiguration.cs" />
     <Compile Include="ModelConfiguration\UserRoleFields.cs" />
     <Compile Include="Misc\CultureAwaiter.cs" />
-    <Compile Include="Common\IRepository.cs" />
-    <Compile Include="Common\IStorageContext.cs" />
-    <Compile Include="Common\ITransactionContext.cs" />
-    <Compile Include="Common\IUnitOfWork.cs" />
-    <Compile Include="Common\IUnitOfWorkHandler.cs" />
-    <Compile Include="Common\Repository.cs" />
     <Compile Include="ModelConfiguration\RoleFields.cs" />
-    <Compile Include="Misc\UnitOfWork.cs" />
     <Compile Include="ModelConfiguration\UserFields.cs" />
     <Compile Include="Misc\Disposable.cs" />
     <Compile Include="Stores\RoleStoreBase.cs" />
@@ -90,6 +90,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

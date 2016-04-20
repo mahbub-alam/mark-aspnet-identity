@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Mark.AspNet.Identity.Common;
+using Mark.Core;
 using System.Data.Common;
 
-namespace Mark.AspNet.Identity
+namespace Mark.Data.Common
 {
     /// <summary>
     /// Represents transaction context for ADO.NET style storage context.

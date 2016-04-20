@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Data.Common;
 using Mark.AspNet.Identity.ModelConfiguration;
 
-namespace Mark.AspNet.Identity.Common
+namespace Mark.Data
 {
     /// <summary>
     /// Represents storage context with an ADO.NET connection type.

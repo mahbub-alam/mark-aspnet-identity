@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mark.AspNet.Identity.Common
+namespace Mark.Data
 {
     /// <summary>
     /// Represents interface for a unit of work.

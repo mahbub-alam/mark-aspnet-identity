@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mark.AspNet.Identity.Common
+namespace Mark.Data.Common
 {
     /// <summary>
     /// Represents base implementation for repository.
@@ -25,7 +25,7 @@ namespace Mark.AspNet.Identity.Common
         {
             if (unitOfWork == null)
             {
-                throw new ArgumentNullException("UnitOfWork is null");
+                throw new ArgumentNullException("'unitOfWork' parameter null");
             }
 
             _unitOfWork = unitOfWork;

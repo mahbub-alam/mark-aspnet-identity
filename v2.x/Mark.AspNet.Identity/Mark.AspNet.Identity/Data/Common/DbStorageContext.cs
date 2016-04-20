@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Mark.AspNet.Identity.Common;
+using Mark.Core;
 using System.Data.Common;
 using System.Configuration;
 using Mark.AspNet.Identity.ModelConfiguration;
 
-namespace Mark.AspNet.Identity
+namespace Mark.Data.Common
 {
     /// <summary>
     /// Represents default ADO.NET style storage context.

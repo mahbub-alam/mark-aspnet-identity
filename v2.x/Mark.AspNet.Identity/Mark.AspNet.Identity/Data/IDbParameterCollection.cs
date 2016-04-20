@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
 
-namespace Mark.AspNet.Identity.Common
+namespace Mark.Data
 {
     /// <summary>
     /// Represents command parameter collection interface.

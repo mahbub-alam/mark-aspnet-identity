@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 
-namespace Mark.AspNet.Identity
+namespace Mark.Data
 {
     /// <summary>
     /// Represents ADO.NET data reader extensions.

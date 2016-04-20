@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Mark.AspNet.Identity.Common;
+using Mark.Data.Common;
+using Mark.Core;
 
-namespace Mark.AspNet.Identity.MySql
+namespace Mark.Data.Common
 {
     /// <summary>
     /// Represents unit of work.
