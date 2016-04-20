@@ -6,7 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Claims;
-using Mark.AspNet.Identity.Common;
+using Mark.Data;
+using Mark.Data.Common;
 using System.Data.Common;
 using Mark.AspNet.Identity.ModelConfiguration;
 

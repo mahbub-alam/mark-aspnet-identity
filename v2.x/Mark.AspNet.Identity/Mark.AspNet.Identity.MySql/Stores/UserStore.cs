@@ -6,7 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
-using Mark.AspNet.Identity.Common;
+using Mark.Core;
+using Mark.Data;
+using Mark.Threading.Tasks;
 using System.Security.Claims;
 
 namespace Mark.AspNet.Identity.MySql
@@ -58,7 +60,7 @@ namespace Mark.AspNet.Identity.MySql
 
         /// <summary>
         /// Dispose managed resources. Set large fields to null inside 
-        /// <see cref="DisposeExtra()"/> method since, that method will 
+        /// <see cref="Disposable.DisposeExtra()"/> method since, that method will 
         /// be called whether the <see cref="Disposable.Dispose()"/> 
         /// method is called by the finalizer or your code.
         /// </summary>

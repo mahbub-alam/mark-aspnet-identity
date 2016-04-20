@@ -5,10 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Mark.AspNet.Identity;
-using Mark.AspNet.Identity.Common;
+using Mark.Data;
+using Mark.Data.Common;
 using System.Data.Common;
-using MySql.Data.MySqlClient;
 using Mark.AspNet.Identity.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.MySql
