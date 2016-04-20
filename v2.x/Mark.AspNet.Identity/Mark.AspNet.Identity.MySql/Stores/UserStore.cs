@@ -57,9 +57,10 @@ namespace Mark.AspNet.Identity.MySql
         }
 
         /// <summary>
-        /// Dispose managed resources. Set large fields to null inside <see cref="DisposeExtra()"/> method since, 
-        /// that method will be called whether the <see cref="Disposable.Dispose()"/> method is called by the finalizer or 
-        /// your code.
+        /// Dispose managed resources. Set large fields to null inside 
+        /// <see cref="DisposeExtra()"/> method since, that method will 
+        /// be called whether the <see cref="Disposable.Dispose()"/> 
+        /// method is called by the finalizer or your code.
         /// </summary>
         protected override void DisposeManaged()
         {
@@ -67,8 +68,10 @@ namespace Mark.AspNet.Identity.MySql
         }
 
         /// <summary>
-        /// Dispose unmanaged resources and/or set large fields (managed/unmanaged) to null. This method 
-        /// will be called whether the <see cref="Disposable.Dispose()"/> method is called by the finalizer or your code.
+        /// Dispose unmanaged resources and/or set large fields 
+        /// (managed/unmanaged) to null. This method will be called whether 
+        /// the <see cref="Disposable.Dispose()"/> method is called by the 
+        /// finalizer or your code.
         /// </summary>
         protected override void DisposeExtra()
         {
