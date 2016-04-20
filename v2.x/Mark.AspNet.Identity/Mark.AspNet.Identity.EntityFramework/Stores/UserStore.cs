@@ -10,6 +10,8 @@ using Microsoft.AspNet.Identity;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq.Expressions;
+using Mark.Threading.Tasks;
+using Mark.Core;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
@@ -60,7 +62,7 @@ namespace Mark.AspNet.Identity.EntityFramework
 
         /// <summary>
         /// Dispose managed resources. Set large fields to null inside 
-        /// <see cref="DisposeExtra()"/> method since, that method will 
+        /// <see cref="Disposable.DisposeExtra()"/> method since, that method will 
         /// be called whether the <see cref="Disposable.Dispose()"/> 
         /// method is called by the finalizer or your code.
         /// </summary>

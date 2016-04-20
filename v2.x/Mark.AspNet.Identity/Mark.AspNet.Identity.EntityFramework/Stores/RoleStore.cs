@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using Microsoft.AspNet.Identity;
+using Mark.Threading.Tasks;
+using Mark.Core;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
