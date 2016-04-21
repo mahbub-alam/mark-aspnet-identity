@@ -69,7 +69,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="Tests\App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mark.AspNet.Identity.MySql\Mark.AspNet.Identity.MySql.csproj">
