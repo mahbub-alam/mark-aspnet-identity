@@ -20,7 +20,7 @@ namespace Mark.AspNet.Identity.MySql
     internal class UserRoleRepository<TUserRole, TKey>
         : DbRepository<TUserRole> 
         where TUserRole : IdentityUserRole<TKey>, new()
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class with the unit of work reference.
