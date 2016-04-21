@@ -73,8 +73,8 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
 
             IList<Claim> claims = await _userStore.GetClaimsAsync(user).ConfigureAwait(false);
 
-            Claim savedClaim = claims.Where(p => 
-                p.Type == claim.Type && 
+            Claim savedClaim = claims.Where(p =>
+                p.Type == claim.Type &&
                 p.Value == claim.Value).FirstOrDefault();
 
             Assert.That(savedClaim, Is.Not.Null, "Claim not added");
@@ -111,14 +111,16 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
 
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.AddLoginAsync(user, login).ConfigureAwait(false);
 
             _unitOfWork.SaveChanges();
 
             IList<UserLoginInfo> logins = await _userStore.GetLoginsAsync(user).ConfigureAwait(false);
 
-            UserLoginInfo savedLogin = logins.Where(p => 
-                p.LoginProvider == login.LoginProvider && 
+            UserLoginInfo savedLogin = logins.Where(p =>
+                p.LoginProvider == login.LoginProvider &&
                 p.ProviderKey == login.ProviderKey).FirstOrDefault();
 
             Assert.That(savedLogin, Is.Not.Null, "Login not added");
@@ -153,6 +155,8 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             string roleName = "Report User";
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
 
             await _userStore.AddToRoleAsync(user, roleName).ConfigureAwait(false);
 
@@ -307,6 +311,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         {
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             int value = await _userStore.GetAccessFailedCountAsync(user).ConfigureAwait(false);
 
             Assert.That(value, Is.Not.Zero, "AccessFailedCount is zero");
@@ -326,6 +333,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         {
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             IList<Claim> claims = await _userStore.GetClaimsAsync(user).ConfigureAwait(false);
 
             Assert.That(claims.Count, Is.Not.Zero, "Claims not found");
@@ -346,6 +356,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             int userId = 1;
             string expectedValue = "john_doe@exmaple.com";
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             string value = await _userStore.GetEmailAsync(user).ConfigureAwait(false);
 
             Assert.That(value, Is.EqualTo(expectedValue), "User email not found");
@@ -365,6 +378,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         {
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             bool value = await _userStore.GetEmailConfirmedAsync(user).ConfigureAwait(false);
 
             Assert.That(value, Is.True, "User email not confirmed");
@@ -384,6 +400,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         {
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             bool value = await _userStore.GetLockoutEnabledAsync(user).ConfigureAwait(false);
 
             Assert.That(value, Is.True, "User lockout not enabled");
@@ -403,6 +422,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         {
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             DateTimeOffset value = await _userStore.GetLockoutEndDateAsync(user).ConfigureAwait(false);
             DateTimeOffset expectedValue = new DateTimeOffset(DateTime.SpecifyKind(
                 new DateTime(2016, 4, 20, 0, 0, 0), DateTimeKind.Utc));
@@ -424,6 +446,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         {
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             IList<UserLoginInfo> logins = await _userStore.GetLoginsAsync(user).ConfigureAwait(false);
 
             Assert.That(logins.Count, Is.Not.Zero, "Logins not found");
@@ -444,6 +469,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             int userId = 1;
             string expectedValue = "10b8b801768fc884a43f5f319313dd8e";
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             string value = await _userStore.GetPasswordHashAsync(user).ConfigureAwait(false);
 
             Assert.That(value, Is.EqualTo(expectedValue), "User password has is not the same");
@@ -464,6 +492,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             int userId = 1;
             string expectedValue = "+12142521234";
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             string value = await _userStore.GetPhoneNumberAsync(user).ConfigureAwait(false);
 
             Assert.That(value, Is.EqualTo(expectedValue), "User phone number not found");
@@ -483,6 +514,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         {
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             bool value = await _userStore.GetPhoneNumberConfirmedAsync(user).ConfigureAwait(false);
 
             Assert.That(value, Is.True, "User phone number not confirmed");
@@ -502,6 +536,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         {
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             IList<string> roles = await _userStore.GetRolesAsync(user).ConfigureAwait(false);
 
             Assert.That(roles.Count, Is.Not.Zero, "User roles not found");
@@ -522,6 +559,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             int userId = 1;
             string expectedValue = "fake_security_stamp";
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             string value = await _userStore.GetSecurityStampAsync(user).ConfigureAwait(false);
 
             Assert.That(value, Is.EqualTo(expectedValue), "User phone number not found");
@@ -541,6 +581,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         {
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             bool value = await _userStore.GetTwoFactorEnabledAsync(user).ConfigureAwait(false);
 
             Assert.That(value, Is.False, "User two factor enabled");
@@ -560,6 +603,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         {
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             bool value = await _userStore.HasPasswordAsync(user).ConfigureAwait(false);
 
             Assert.That(value, Is.True, "User password not set");
@@ -580,6 +626,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             int userId = 1;
             int expectedValue = 3;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             int value = await _userStore.IncrementAccessFailedCountAsync(user).ConfigureAwait(false);
 
             Assert.That(value, Is.EqualTo(expectedValue), "User password not set");
@@ -614,6 +663,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             string roleName = "System Administrator";
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             bool value = await _userStore.IsInRoleAsync(user, roleName).ConfigureAwait(false);
 
             Assert.That(value, Is.True, "User not in role");
@@ -649,6 +701,8 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             Claim claim = new Claim("Delete All", "Yes");
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
 
             await _userStore.RemoveClaimAsync(user, claim).ConfigureAwait(false);
 
@@ -693,6 +747,8 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
 
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.RemoveFromRoleAsync(user, roleName).ConfigureAwait(false);
 
             _unitOfWork.SaveChanges();
@@ -735,6 +791,8 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
 
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.RemoveLoginAsync(user, login).ConfigureAwait(false);
 
             _unitOfWork.SaveChanges();
@@ -763,6 +821,8 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
             int userId = 1;
             ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
 
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.ResetAccessFailedCountAsync(user).ConfigureAwait(false);
 
             Assert.That(user.AccessFailedCount, Is.Zero, "User access failed count not reset");
@@ -781,8 +841,11 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         public async Task When__UserStore_Set_Email__Expect__Email_Set()
         {
             int userId = 1;
-            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
             string value = "john@doe.com";
+            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.SetEmailAsync(user, value).ConfigureAwait(false);
 
             Assert.That(user.Email, Is.EqualTo(value), "User email not set");
@@ -801,8 +864,11 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         public async Task When__UserStore_Set_Email_Confirmed__Expect__Email_Confirmed_Set()
         {
             int userId = 1;
-            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
             bool value = false;
+            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.SetEmailConfirmedAsync(user, value).ConfigureAwait(false);
 
             Assert.That(user.EmailConfirmed, Is.EqualTo(value), "User email confirmed not set");
@@ -821,8 +887,11 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         public async Task When__UserStore_Set_Lockout_Enabled__Expect__Lockout_Enabled_Set()
         {
             int userId = 1;
-            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
             bool value = false;
+            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.SetLockoutEnabledAsync(user, value).ConfigureAwait(false);
 
             Assert.That(user.LockoutEnabled, Is.EqualTo(value), "User lockout enabled not set");
@@ -841,8 +910,11 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         public async Task When__UserStore_Set_Lockout_End_Date__Expect__Lockout_End_Date_Set()
         {
             int userId = 1;
-            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
             DateTimeOffset value = new DateTimeOffset();
+            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.SetLockoutEndDateAsync(user, value).ConfigureAwait(false);
 
             // Passed default value; so, the property is set null
@@ -862,8 +934,11 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         public async Task When__UserStore_Set_Password_Hash__Expect__Password_Hash_Set()
         {
             int userId = 1;
-            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
             string value = "";
+            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.SetPasswordHashAsync(user, value).ConfigureAwait(false);
 
             Assert.That(user.PasswordHash, Is.EqualTo(value), "User password hash not set");
@@ -882,8 +957,11 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         public async Task When__UserStore_Set_PhoneNumber__Expect__PhoneNumber_Set()
         {
             int userId = 1;
-            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
             string value = "";
+            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.SetPhoneNumberAsync(user, value).ConfigureAwait(false);
 
             Assert.That(user.PhoneNumber, Is.EqualTo(value), "User phone number not set");
@@ -902,8 +980,11 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         public async Task When__UserStore_Set_PhoneNumber_Confirmed__Expect__PhoneNumber_Confirmed_Set()
         {
             int userId = 1;
-            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
             bool value = false;
+            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.SetPhoneNumberConfirmedAsync(user, value).ConfigureAwait(false);
 
             Assert.That(user.PhoneNumberConfirmed, Is.EqualTo(value), "User phone number confirmed not set");
@@ -922,8 +1003,11 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         public async Task When__UserStore_Set_SecurityStamp__Expect__SecurityStamp_Set()
         {
             int userId = 1;
-            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
             string value = "";
+            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.SetSecurityStampAsync(user, value).ConfigureAwait(false);
 
             Assert.That(user.SecurityStamp, Is.EqualTo(value), "User security stamp not set");
@@ -942,8 +1026,11 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         public async Task When__UserStore_Set_TwoFactor_Enabled__Expect__TwoFactor_Enabled_Set()
         {
             int userId = 1;
-            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
             bool value = true;
+            ApplicationUser user = await _userStore.FindByIdAsync(userId).ConfigureAwait(false);
+
+            Assert.That(user, Is.Not.Null, "User not found");
+
             await _userStore.SetTwoFactorEnabledAsync(user, value).ConfigureAwait(false);
 
             Assert.That(user.TwoFactorEnabled, Is.EqualTo(value), "User two factor enabled not set");
@@ -966,7 +1053,7 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
 
             user = await _userStore.FindByIdAsync(user.Id).ConfigureAwait(false);
 
-            Assert.That(user, Is.Not.Null, "User not found for update");
+            Assert.That(user, Is.Not.Null, "User not found");
 
             user.UserName = "james_bond";
 
