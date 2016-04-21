@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mark.AspNet.Identity.SqlSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mark.AspNet.Identity.MySql.Tests", "Mark.AspNet.Identity.MySql.Tests\Mark.AspNet.Identity.MySql.Tests.csproj", "{CE550450-F253-4361-BFCB-636B9D6D0734}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mark.AspNet.Identity.EntityFramework.Tests", "Mark.AspNet.Identity.EntityFramework.Tests\Mark.AspNet.Identity.EntityFramework.Tests.csproj", "{974C8B62-F014-490D-A7A6-BEE2B7F45469}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{CE550450-F253-4361-BFCB-636B9D6D0734}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE550450-F253-4361-BFCB-636B9D6D0734}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE550450-F253-4361-BFCB-636B9D6D0734}.Release|Any CPU.Build.0 = Release|Any CPU
+		{974C8B62-F014-490D-A7A6-BEE2B7F45469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{974C8B62-F014-490D-A7A6-BEE2B7F45469}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{974C8B62-F014-490D-A7A6-BEE2B7F45469}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{974C8B62-F014-490D-A7A6-BEE2B7F45469}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
