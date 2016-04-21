@@ -240,12 +240,10 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         }
 
         [Test]
-        public void When__UserStore_Find_By_Email__Expect__Email_Param_Null_Exception()
+        public async Task When__UserStore_Find_By_Email__Expect__Null_Returned()
         {
-            Assert.ThrowsAsync(typeof(ArgumentException), async () =>
-            {
-                ApplicationUser user = await _userStore.FindByEmailAsync(" ").ConfigureAwait(false);
-            });
+            ApplicationUser user = await _userStore.FindByEmailAsync(" ").ConfigureAwait(false);
+            Assert.That(user, Is.Null, "user not null");
         }
 
         [Test]
@@ -279,12 +277,10 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         }
 
         [Test]
-        public void When__UserStore_Get_Find_By_Name__Expect__UserName_Param_Null_Exception()
+        public async Task When__UserStore_Get_Find_By_Name__Expect__Null_Returned()
         {
-            Assert.ThrowsAsync(typeof(ArgumentException), async () =>
-            {
-                ApplicationUser user = await _userStore.FindByNameAsync(null).ConfigureAwait(false);
-            }, "Exception not thrown");
+            ApplicationUser user = await _userStore.FindByNameAsync(null).ConfigureAwait(false);
+            Assert.That(user, Is.Null, "User not null");
         }
 
         [Test]
@@ -590,9 +586,9 @@ namespace Mark.AspNet.Identity.SqlServer.Tests
         }
 
         [Test]
-        public void When__UserStore_Has_Password__Expect__User_Param_Null_Exception()
+        public void When__UserStore_Has_Password__Expect__User_Null_Exception()
         {
-            Assert.ThrowsAsync(typeof(ArgumentNullException), async () =>
+            Assert.ThrowsAsync(typeof(NullReferenceException), async () =>
             {
                 await _userStore.HasPasswordAsync(null).ConfigureAwait(false);
             }, "Exception not thrown");
