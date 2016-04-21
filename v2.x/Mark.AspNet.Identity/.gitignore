@@ -3,5 +3,6 @@
 /*.Tests
 !/Mark.AspNet.Identity.MySql.Tests
 !/Mark.AspNet.Identity.SqlServer.Tests
+!/Mark.AspNet.Identity.EntityFramework.Tests
 /*.NHibernate
 
