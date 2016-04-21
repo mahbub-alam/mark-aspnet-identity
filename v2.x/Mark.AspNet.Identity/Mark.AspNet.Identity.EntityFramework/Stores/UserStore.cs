@@ -31,7 +31,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TUserRole : IdentityUserRole<TKey>, new()
         where TUserClaim : IdentityUserClaim<TKey>, new()
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         private DbContext _context;
         private EntityStore<TRole, TKey> _roleStore;
@@ -353,12 +353,12 @@ namespace Mark.AspNet.Identity.EntityFramework
         {
             ThrowIfDisposed();
 
-            if (String.IsNullOrWhiteSpace(email))
-            {
-                throw new ArgumentException("'email' parameter cannot be null or empty");
-            }
+            TUser user = null;
 
-            TUser user = await GetUserAggregateAsync(p => p.Email.ToLower() == email.ToLower()).WithCurrentCulture();
+            if (!String.IsNullOrWhiteSpace(email))
+            {
+                user = await GetUserAggregateAsync(p => p.Email.ToLower() == email.ToLower()).WithCurrentCulture();
+            }
 
             return user;
         }
@@ -386,13 +386,13 @@ namespace Mark.AspNet.Identity.EntityFramework
         {
             ThrowIfDisposed();
 
-            if (String.IsNullOrWhiteSpace(userName))
-            {
-                throw new ArgumentException("'userName' parameter cannot be null or empty");
-            }
+            TUser user = null;
 
-            TUser user = await GetUserAggregateAsync(p => p.UserName.ToLower() == userName.ToLower())
+            if (!String.IsNullOrWhiteSpace(userName))
+            {
+                user = await GetUserAggregateAsync(p => p.UserName.ToLower() == userName.ToLower())
                 .WithCurrentCulture();
+            }
 
             return user;
         }
@@ -430,7 +430,7 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             await IncludeClaimsAsync(user).WithCurrentCulture();
 
-            return _userClaims.Select(p => new Claim(p.ClaimType, p.ClaimValue)).ToList();
+            return user.Claims.Select(p => new Claim(p.ClaimType, p.ClaimValue)).ToList();
         }
 
         /// <summary>
@@ -529,7 +529,7 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             await IncludeLoginsAsync(user).WithCurrentCulture();
 
-            return _userLogins.Select(p => new UserLoginInfo(p.LoginProvider, p.ProviderKey)).ToList();
+            return user.Logins.Select(p => new UserLoginInfo(p.LoginProvider, p.ProviderKey)).ToList();
         }
 
         /// <summary>
@@ -647,11 +647,6 @@ namespace Mark.AspNet.Identity.EntityFramework
         public override async Task<bool> HasPasswordAsync(TUser user)
         {
             ThrowIfDisposed();
-
-            if (user == null)
-            {
-                throw new ArgumentNullException("'user' parameter null");
-            }
 
             return await Task.FromResult(user.PasswordHash != null);
         }
@@ -1063,7 +1058,7 @@ namespace Mark.AspNet.Identity.EntityFramework
             IdentityUserRole<TKey>,
             IdentityUserClaim<TKey>>
         where TUser : IdentityUser<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class with the database context.

@@ -21,7 +21,7 @@ namespace Mark.AspNet.Identity.EntityFramework
     public class RoleStore<TRole, TKey, TUserRole> : RoleStoreBase<TRole, TKey, TUserRole>, IQueryableRoleStore<TRole, TKey>
         where TRole : IdentityRole<TKey, TUserRole>
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         private DbContext _context;
         private EntityStore<TRole, TKey> _roleStore;
@@ -139,14 +139,16 @@ namespace Mark.AspNet.Identity.EntityFramework
         {
             ThrowIfDisposed();
 
-            if (String.IsNullOrWhiteSpace(roleName))
+            TRole role = null;
+
+            if (!String.IsNullOrWhiteSpace(roleName))
             {
-                throw new ArgumentException("'roleName' parameter cannot be null or empty");
+                role = await this.Roles
+                    .Where(p => p.Name.ToLower() == roleName.ToLower())
+                    .SingleOrDefaultAsync().WithCurrentCulture();
             }
 
-            return await this.Roles
-                .Where(p => p.Name.ToLower() == roleName.ToLower())
-                .SingleOrDefaultAsync().WithCurrentCulture();
+            return role;
         }
 
         /// <summary>
@@ -203,7 +205,7 @@ namespace Mark.AspNet.Identity.EntityFramework
     /// <typeparam name="TKey">Id type.</typeparam>
     public class RoleStore<TRole, TKey> : RoleStore<TRole, TKey, IdentityUserRole<TKey>>
         where TRole : IdentityRole<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class with the database context.

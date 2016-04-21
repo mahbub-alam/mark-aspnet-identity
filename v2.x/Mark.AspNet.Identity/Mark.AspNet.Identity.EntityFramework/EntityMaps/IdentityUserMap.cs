@@ -25,7 +25,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         where TUserLogin : IdentityUserLogin<TKey>
         where TUserRole : IdentityUserRole<TKey>
         where TUserClaim : IdentityUserClaim<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.
@@ -122,7 +122,7 @@ namespace Mark.AspNet.Identity.EntityFramework
             IdentityUserRole<TKey>, 
             IdentityUserClaim<TKey>>
         where TUser : IdentityUser<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.

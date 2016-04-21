@@ -21,7 +21,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         : EntityMap<TRole>
         where TRole : IdentityRole<TKey, TUserRole>
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.
@@ -73,7 +73,7 @@ namespace Mark.AspNet.Identity.EntityFramework
     public class IdentityRoleMap<TRole, TKey>
         : IdentityRoleMap<TRole, TKey, IdentityUserRole<TKey>>
         where TRole : IdentityRole<TKey, IdentityUserRole<TKey>>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
 
         /// <summary>

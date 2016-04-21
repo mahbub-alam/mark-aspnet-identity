@@ -27,7 +27,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         where TUserLogin : IdentityUserLogin<TKey>
         where TUserRole : IdentityUserRole<TKey>
         where TUserClaim : IdentityUserClaim<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         private IdentityUserMap<TUser, TKey, TUserLogin, TUserRole, TUserClaim> _userMap;
         private IdentityRoleMap<TRole, TKey, TUserRole> _roleMap;
@@ -260,7 +260,7 @@ namespace Mark.AspNet.Identity.EntityFramework
             IdentityUserRole<TKey>, 
             IdentityUserClaim<TKey>>
         where TUser : IdentityUser<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Default constructor which uses the "DefaultConnection" connectionString.
@@ -347,7 +347,7 @@ namespace Mark.AspNet.Identity.EntityFramework
             IdentityUserClaim<TKey>>
         where TRole : IdentityRole<TKey, TUserRole>
         where TUserRole : IdentityUserRole<TKey> 
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Default constructor which uses the "DefaultConnection" connectionString.
@@ -430,7 +430,7 @@ namespace Mark.AspNet.Identity.EntityFramework
             IdentityUserLogin<TKey>,
             IdentityUserRole<TKey>,
             IdentityUserClaim<TKey>>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Default constructor which uses the "DefaultConnection" connectionString.

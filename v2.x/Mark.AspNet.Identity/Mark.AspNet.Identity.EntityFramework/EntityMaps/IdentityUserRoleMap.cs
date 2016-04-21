@@ -16,7 +16,7 @@ namespace Mark.AspNet.Identity.EntityFramework
     /// <typeparam name="TKey">Id type.</typeparam>
     public class IdentityUserRoleMap<TUserRole, TKey> : EntityMap<TUserRole> 
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.

@@ -17,7 +17,7 @@ namespace Mark.AspNet.Identity.EntityFramework
     /// <typeparam name="TKey">Id type.</typeparam>
     internal class EntityStore<TEntity, TKey> : IDisposable
         where TEntity : class
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         private DbContext _context;
 
@@ -86,7 +86,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         public async Task<TEntity> FindByIdAsync(TKey id)
         {
             ThrowIfDisposed();
-            return await this.EntitySet.FindAsync(new object[] { id }).WithCurrentCulture();
+            return await this.EntitySet.FindAsync(new object[] { id });
         }
 
         #region IDisposable Support
