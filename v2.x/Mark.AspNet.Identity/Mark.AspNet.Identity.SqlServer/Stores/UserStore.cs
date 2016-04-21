@@ -29,7 +29,7 @@ namespace Mark.AspNet.Identity.SqlServer
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TUserRole : IdentityUserRole<TKey>, new()
         where TUserClaim : IdentityUserClaim<TKey>, new()
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         private IUnitOfWork _unitOfWork;
         private UserRepository<TUser, TKey, TUserLogin, TUserRole, TUserClaim> _userRepo;
@@ -236,19 +236,43 @@ namespace Mark.AspNet.Identity.SqlServer
 
         private async Task IncludeLoginsAsync(TUser user)
         {
-            user.Logins = _userLoginRepo.FindAllByUserId(user.Id);
+            ICollection<TUserLogin> userLoginList = _userLoginRepo.FindAllByUserId(user.Id);
+
+            user.Logins.Clear();
+
+            foreach (TUserLogin userLogin in userLoginList)
+            {
+                user.Logins.Add(userLogin);
+            }
+
             await Task.FromResult(0);
         }
 
         private async Task IncludeRolesAsync(TUser user)
         {
-            user.Roles = _userRoleRepo.FindAllByUserId(user.Id);
+            ICollection<TUserRole> userRoleList = _userRoleRepo.FindAllByUserId(user.Id);
+
+            user.Roles.Clear();
+
+            foreach (TUserRole userRole in userRoleList)
+            {
+                user.Roles.Add(userRole);
+            }
+
             await Task.FromResult(0);
         }
 
         private async Task IncludeClaimsAsync(TUser user)
         {
-            user.Claims = _userClaimRepo.FindAllByUserId(user.Id);
+            ICollection<TUserClaim> userClaimList = _userClaimRepo.FindAllByUserId(user.Id);
+
+            user.Claims.Clear();
+
+            foreach (TUserClaim userClaim in userClaimList)
+            {
+                user.Claims.Add(userClaim);
+            }
+
             await Task.FromResult(0);
         }
 
@@ -332,12 +356,12 @@ namespace Mark.AspNet.Identity.SqlServer
         {
             ThrowIfDisposed();
 
-            if (String.IsNullOrWhiteSpace(email))
-            {
-                throw new ArgumentException("'email' parameter cannot be null or empty");
-            }
+            TUser user = null;
 
-            TUser user = await GetUserAggregateByEmailAsync(email).WithCurrentCulture();
+            if (!String.IsNullOrWhiteSpace(email))
+            {
+                user = await GetUserAggregateByEmailAsync(email).WithCurrentCulture();
+            }
 
             return user;
         }
@@ -365,12 +389,12 @@ namespace Mark.AspNet.Identity.SqlServer
         {
             ThrowIfDisposed();
 
-            if (String.IsNullOrWhiteSpace(userName))
-            {
-                throw new ArgumentException("'userName' parameter cannot be null or empty");
-            }
+            TUser user = null;
 
-            TUser user = await GetUserAggregateByUserNameAsync(userName).WithCurrentCulture();
+            if (!String.IsNullOrWhiteSpace(userName))
+            {
+                user = await GetUserAggregateByUserNameAsync(userName).WithCurrentCulture();
+            }
 
             return user;
         }
@@ -622,11 +646,6 @@ namespace Mark.AspNet.Identity.SqlServer
         public override async Task<bool> HasPasswordAsync(TUser user)
         {
             ThrowIfDisposed();
-
-            if (user == null)
-            {
-                throw new ArgumentNullException("'user' parameter null");
-            }
 
             return await Task.FromResult(user.PasswordHash != null);
         }
@@ -1013,7 +1032,7 @@ namespace Mark.AspNet.Identity.SqlServer
             IdentityUserRole<TKey>,
             IdentityUserClaim<TKey>>
         where TUser : IdentityUser<TKey>, new()
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class with unit of work.

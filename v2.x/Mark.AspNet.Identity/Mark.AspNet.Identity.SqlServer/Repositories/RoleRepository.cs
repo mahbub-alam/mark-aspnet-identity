@@ -22,7 +22,7 @@ namespace Mark.AspNet.Identity.SqlServer
         : DbRepository<TRole>
         where TRole : IdentityRole<TKey, TUserRole>, new()
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class with the unit of work reference.

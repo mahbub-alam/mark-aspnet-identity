@@ -20,7 +20,7 @@ namespace Mark.AspNet.Identity.SqlServer
     public class RoleStore<TRole, TKey, TUserRole> : RoleStoreBase<TRole, TKey, TUserRole>
         where TRole : IdentityRole<TKey, TUserRole>, new()
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         private IUnitOfWork _unitOfWork;
         private RoleRepository<TRole, TKey, TUserRole> _repo;
@@ -117,12 +117,12 @@ namespace Mark.AspNet.Identity.SqlServer
         {
             ThrowIfDisposed();
 
-            if (String.IsNullOrWhiteSpace(roleName))
-            {
-                throw new ArgumentException("'roleName' parameter cannot be null or empty");
-            }
+            TRole role = null;
 
-            TRole role = _repo.FindByName(roleName);
+            if (!String.IsNullOrWhiteSpace(roleName))
+            {
+                role = _repo.FindByName(roleName);
+            }
 
             return await Task.FromResult(role);
         }

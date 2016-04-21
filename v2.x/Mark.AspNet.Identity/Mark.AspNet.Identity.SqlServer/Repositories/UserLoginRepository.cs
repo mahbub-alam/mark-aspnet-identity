@@ -21,7 +21,7 @@ namespace Mark.AspNet.Identity.SqlServer
     internal class UserLoginRepository<TUserLogin, TKey>
         : DbRepository<TUserLogin>
         where TUserLogin : IdentityUserLogin<TKey>, new()
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class with the unit of work reference.
