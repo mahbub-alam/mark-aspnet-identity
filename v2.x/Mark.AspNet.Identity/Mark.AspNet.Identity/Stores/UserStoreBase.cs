@@ -30,7 +30,7 @@ namespace Mark.AspNet.Identity
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TUserRole : IdentityUserRole<TKey>, new()
         where TUserClaim : IdentityUserClaim<TKey>, new()
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
 
     {
         /// <summary>
@@ -337,7 +337,7 @@ namespace Mark.AspNet.Identity
             IdentityUserRole<TKey>, 
             IdentityUserClaim<TKey>> 
         where TUser : IdentityUser<TKey>
-        where TKey : struct 
+        where TKey : struct, IEquatable<TKey> 
     {
     }
 }

@@ -13,7 +13,7 @@ namespace Mark.AspNet.Identity
     /// EntityType that represents a user belonging to a role.
     /// </summary>
     /// <typeparam name="TKey">Id type.</typeparam>
-    public class IdentityUserRole<TKey> : IEntity where TKey : struct
+    public class IdentityUserRole<TKey> : IEntity where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         ///     RoleId for the role

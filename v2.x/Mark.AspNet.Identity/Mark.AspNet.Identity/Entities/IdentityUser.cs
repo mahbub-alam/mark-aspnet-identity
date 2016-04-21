@@ -21,7 +21,7 @@ namespace Mark.AspNet.Identity
         where TUserLogin : IdentityUserLogin<TKey>
         where TUserRole : IdentityUserRole<TKey>
         where TUserClaim : IdentityUserClaim<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.
@@ -136,7 +136,7 @@ namespace Mark.AspNet.Identity
         /// </summary>
         public virtual ICollection<TUserClaim> Claims
         {
-            get; set;
+            get; private set;
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Mark.AspNet.Identity
         /// </summary>
         public virtual ICollection<TUserLogin> Logins
         {
-            get; set;
+            get; private set;
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Mark.AspNet.Identity
         /// </summary>
         public virtual ICollection<TUserRole> Roles
         {
-            get; set;
+            get; private set;
         }
 
 
@@ -164,7 +164,7 @@ namespace Mark.AspNet.Identity
     /// <typeparam name="TKey">Id type.</typeparam>
     public class IdentityUser<TKey> : 
         IdentityUser<TKey, IdentityUserLogin<TKey>, IdentityUserRole<TKey>, IdentityUserClaim<TKey>>
-         where TKey : struct
+         where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.

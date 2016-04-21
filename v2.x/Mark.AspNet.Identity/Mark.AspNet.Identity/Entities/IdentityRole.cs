@@ -17,7 +17,7 @@ namespace Mark.AspNet.Identity
     /// <typeparam name="TUserRole">User role type.</typeparam>
     public class IdentityRole<TKey, TUserRole> : IRole<TKey>, IEntity 
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.
@@ -48,7 +48,7 @@ namespace Mark.AspNet.Identity
         /// </summary>
         public virtual ICollection<TUserRole> Users
         {
-            get; set;
+            get; private set;
         }
     }
 
@@ -57,7 +57,7 @@ namespace Mark.AspNet.Identity
     /// </summary>
     /// <typeparam name="TKey">Id type.</typeparam>
     public class IdentityRole<TKey> : IdentityRole<TKey, IdentityUserRole<TKey>>
-         where TKey : struct
+         where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.
