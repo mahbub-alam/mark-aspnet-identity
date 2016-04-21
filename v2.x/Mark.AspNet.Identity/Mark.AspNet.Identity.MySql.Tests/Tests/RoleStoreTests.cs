@@ -51,12 +51,10 @@ namespace Mark.AspNet.Identity.MySql.Tests
         }
 
         [Test]
-        public void When__RoleStore_Find_By_Name__Expect__RoleName_Param_Exception()
+        public async Task When__RoleStore_Find_By_Name__Expect__Null_Returned()
         {
-            Assert.ThrowsAsync(typeof(ArgumentException), async () =>
-            {
-                ApplicationRole role = await _roleStore.FindByNameAsync(null).ConfigureAwait(false);
-            }, "Exception not thrown");
+            ApplicationRole role = await _roleStore.FindByNameAsync(null).ConfigureAwait(false);
+            Assert.That(role, Is.Null, "role not null");
         }
 
         [Test]
