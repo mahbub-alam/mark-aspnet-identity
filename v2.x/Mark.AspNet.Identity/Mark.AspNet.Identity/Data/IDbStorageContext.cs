@@ -21,7 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
-using Mark.AspNet.Identity.ModelConfiguration;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.Data
 {
@@ -30,6 +30,15 @@ namespace Mark.Data
     /// </summary>
     public interface IDbStorageContext : IStorageContext
     {
+        /// <summary>
+        /// Get the current global transaction context associated with the storage context. If no 
+        /// transaction context is found, a new one is created and returned.
+        /// </summary>
+        new IDbTransactionContext TransactionContext
+        {
+            get;
+        }
+
         /// <summary>
         /// Open database connection if it is not opened yet.
         /// </summary>
@@ -51,24 +60,22 @@ namespace Mark.Data
         /// <summary>
         /// Get specific entity configuration.
         /// </summary>
-        /// <param name="entityIdentifier">Entity identifier.</param>
+        /// <typeparam name="TEntity">Entity type.</typeparam>
         /// <returns>Returns configuration if found; otherwise, returns null.</returns>
-        EntityConfiguration this[string entityIdentifier]
-        {
-            get;
-        }
+        EntityConfiguration<TEntity> GetEntityConfiguration<TEntity>() where TEntity : IEntity;
 
         /// <summary>
         /// Get specific entity configuration.
         /// </summary>
-        /// <param name="entityIdentifier">Entity identifier.</param>
+        /// <param name="entityType">Entity type.</param>
         /// <returns>Returns configuration if found; otherwise, returns null.</returns>
-        EntityConfiguration GetEntityConfiguration(string entityIdentifier);
+        IEntityConfiguration<IEntity> GetEntityConfiguration(Type entityType);
 
         /// <summary>
         /// Add a command for execution.
         /// </summary>
         /// <param name="commandContext">Command to be executed.</param>
         void AddCommand(IDbCommandContext commandContext);
+
     }
 }

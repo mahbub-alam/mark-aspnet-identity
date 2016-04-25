@@ -46,10 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Common\DbCommandBuilder.cs" />
     <Compile Include="Data\Common\DbCommandContext.cs" />
+    <Compile Include="Data\Common\DbEntityBuilder.cs" />
     <Compile Include="Data\Common\DbParameterCollection.cs" />
+    <Compile Include="Data\Common\DbRepository.cs" />
     <Compile Include="Data\Common\DbStorageContext.cs" />
     <Compile Include="Data\Common\DbTransactionContext.cs" />
+    <Compile Include="Data\ModelConfiguration\EntityConfiguration.cs" />
+    <Compile Include="Data\ModelConfiguration\IEntityConfiguration.cs" />
+    <Compile Include="Misc\IdentityDbStorageContext.cs" />
+    <Compile Include="Data\ModelConfiguration\EntityConfigurationCollection.cs" />
     <Compile Include="Data\Common\Repository.cs" />
     <Compile Include="Data\Common\UnitOfWork.cs" />
     <Compile Include="Data\DataReaderExtensions.cs" />
@@ -65,18 +72,14 @@
     <Compile Include="Data\IUnitOfWorkHandler.cs" />
     <Compile Include="Misc\UtilExtensions.cs" />
     <Compile Include="ModelConfiguration\Entities.cs" />
-    <Compile Include="ModelConfiguration\EntityConfiguration.cs" />
+    <Compile Include="Data\ModelConfiguration\PropertyConfiguration.cs" />
     <Compile Include="ModelConfiguration\RoleConfiguration.cs" />
+    <Compile Include="Data\Common\DbQueryBuilder.cs" />
     <Compile Include="ModelConfiguration\UserClaimConfiguration.cs" />
-    <Compile Include="ModelConfiguration\UserClaimFields.cs" />
     <Compile Include="ModelConfiguration\UserConfiguration.cs" />
     <Compile Include="ModelConfiguration\UserLoginConfiguration.cs" />
-    <Compile Include="ModelConfiguration\UserLoginFields.cs" />
     <Compile Include="ModelConfiguration\UserRoleConfiguration.cs" />
-    <Compile Include="ModelConfiguration\UserRoleFields.cs" />
     <Compile Include="Misc\CultureAwaiter.cs" />
-    <Compile Include="ModelConfiguration\RoleFields.cs" />
-    <Compile Include="ModelConfiguration\UserFields.cs" />
     <Compile Include="Misc\Disposable.cs" />
     <Compile Include="Stores\RoleStoreBase.cs" />
     <Compile Include="Entities\IdentityRole.cs" />

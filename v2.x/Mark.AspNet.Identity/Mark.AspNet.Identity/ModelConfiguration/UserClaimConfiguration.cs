@@ -20,24 +20,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.ModelConfiguration
 {
     /// <summary>
     /// Represents user claim entity configuration.
     /// </summary>
-    public class UserClaimConfiguration : EntityConfiguration
+    /// <typeparam name="TUserClaim">User claim entity type.</typeparam>
+    /// <typeparam name="TKey">Id type.</typeparam>
+    public class UserClaimConfiguration<TUserClaim, TKey> : EntityConfiguration<TUserClaim>
+        where TUserClaim : IdentityUserClaim<TKey>
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Configure entity.
         /// </summary>
         protected override void Configure()
         {
-            TableName = Entities.UserClaim;
-            this[UserClaimFields.Id] = UserClaimFields.Id;
-            this[UserClaimFields.ClaimType] = UserClaimFields.ClaimType;
-            this[UserClaimFields.ClaimValue] = UserClaimFields.ClaimValue;
-            this[UserClaimFields.UserId] = UserClaimFields.UserId;
+            ToTable(Entities.UserClaim);
+            HasKey(p => p.Id);
+            Property(p => p.Id).HasColumnName(UserClaimFields.Id);
+            Property(p => p.ClaimType).HasColumnName(UserClaimFields.ClaimType);
+            Property(p => p.ClaimValue).HasColumnName(UserClaimFields.ClaimValue);
+            Property(p => p.UserId).HasColumnName(UserClaimFields.UserId);
         }
     }
 }

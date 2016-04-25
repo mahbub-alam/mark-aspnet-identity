@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using Mark.Core;
 using System.Data.Common;
 using System.Configuration;
-using Mark.AspNet.Identity.ModelConfiguration;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.Data.Common
 {
@@ -35,7 +35,7 @@ namespace Mark.Data.Common
         where TConnection : DbConnection, new()
     {
         private string _connString;
-        private Dictionary<string, EntityConfiguration> _entityConfigs;
+        private EntityConfigurationCollection _entityConfigs;
         private DbConnection _conn;
         private bool _isConnOpenAlready;
         private IDbTransactionContext _tContext;
@@ -71,7 +71,7 @@ namespace Mark.Data.Common
                 _connString = connNameOrConnString;
             }
 
-            _entityConfigs = new Dictionary<string, EntityConfiguration>();
+            _entityConfigs = new EntityConfigurationCollection();
             _conn = new TConnection();
             _conn.ConnectionString = _connString;
             _cmdList = new List<IDbCommandContext>();
@@ -189,44 +189,33 @@ namespace Mark.Data.Common
         /// <summary>
         /// Get specific entity configuration.
         /// </summary>
-        /// <param name="entityIdentifier">Entity identifier.</param>
+        /// <typeparam name="TEntity">Entity type.</typeparam>
         /// <returns>Returns configuration if found; otherwise, returns null.</returns>
-        public EntityConfiguration this[string entityIdentifier]
+        public EntityConfiguration<TEntity> GetEntityConfiguration<TEntity>() where TEntity : IEntity
         {
-            get
-            {
-                return GetEntityConfiguration(entityIdentifier);
-            }
+            ThrowIfDisposed();
+
+            return _entityConfigs.Get<TEntity>();
         }
 
         /// <summary>
         /// Get specific entity configuration.
         /// </summary>
-        /// <param name="entityIdentifier">Entity identifier.</param>
+        /// <param name="entityType">Entity type.</param>
         /// <returns>Returns configuration if found; otherwise, returns null.</returns>
-        public EntityConfiguration GetEntityConfiguration(string entityIdentifier)
+        public IEntityConfiguration<IEntity> GetEntityConfiguration(Type entityType)
         {
             ThrowIfDisposed();
 
-            if (_entityConfigs.ContainsKey(entityIdentifier))
-            {
-                return _entityConfigs[entityIdentifier];
-            }
-
-            return null;
+            return _entityConfigs.Get(entityType);
         }
 
         /// <summary>
         /// Configure entities.
         /// </summary>
         /// <param name="entityConfigs">Passed entity configuration collection.</param>
-        protected virtual void OnConfiguringEntities(Dictionary<string, EntityConfiguration> entityConfigs)
+        protected virtual void OnConfiguringEntities(EntityConfigurationCollection entityConfigs)
         {
-            entityConfigs.Add(Entities.Role, new RoleConfiguration());
-            entityConfigs.Add(Entities.User, new UserConfiguration());
-            entityConfigs.Add(Entities.UserLogin, new UserLoginConfiguration());
-            entityConfigs.Add(Entities.UserRole, new UserRoleConfiguration());
-            entityConfigs.Add(Entities.UserClaim, new UserClaimConfiguration());
         }
 
         /// <summary>

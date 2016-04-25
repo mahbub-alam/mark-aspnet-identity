@@ -1,7 +1,7 @@
 ﻿//
 // Copyright 2016, Mahbub Alam (mahbub002@ymail.com)
 // 
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the "License"));
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 // 
@@ -20,32 +20,65 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.ModelConfiguration
 {
     /// <summary>
     /// Represents user entity configuration.
     /// </summary>
-    public class UserConfiguration : EntityConfiguration
+    /// <typeparam name="TUser">User entity type.</typeparam>
+    /// <typeparam name="TKey">Id type.</typeparam>
+    /// <typeparam name="TUserLogin">User logins type.</typeparam>
+    /// <typeparam name="TUserRole">User roles type.</typeparam>
+    /// <typeparam name="TUserClaim">User claims type.</typeparam>
+    public class UserConfiguration<TUser, TKey, TUserLogin, TUserRole, TUserClaim> : EntityConfiguration<TUser>
+        where TUser : IdentityUser<TKey, TUserLogin, TUserRole, TUserClaim>
+        where TUserLogin : IdentityUserLogin<TKey>
+        where TUserRole : IdentityUserRole<TKey>
+        where TUserClaim : IdentityUserClaim<TKey>
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Configure entity.
         /// </summary>
         protected override void Configure()
         {
-            TableName = Entities.User;
-            this[UserFields.Id] = UserFields.Id;
-            this[UserFields.UserName] = UserFields.UserName;
-            this[UserFields.PasswordHash] = UserFields.PasswordHash;
-            this[UserFields.SecurityStamp] = UserFields.SecurityStamp;
-            this[UserFields.Email] = UserFields.Email;
-            this[UserFields.EmailConfirmed] = UserFields.EmailConfirmed;
-            this[UserFields.PhoneNumber] = UserFields.PhoneNumber;
-            this[UserFields.PhoneNumberConfirmed] = UserFields.PhoneNumberConfirmed;
-            this[UserFields.TwoFactorEnabled] = UserFields.TwoFactorEnabled;
-            this[UserFields.LockoutEnabled] = UserFields.LockoutEnabled;
-            this[UserFields.LockoutEndDateUtc] = UserFields.LockoutEndDateUtc;
-            this[UserFields.AccessFailedCount] = UserFields.AccessFailedCount;
+            ToTable(Entities.User);
+            HasKey(p => p.Id);
+            Property(p => p.Id).HasColumnName(UserFields.Id);
+            Property(p => p.UserName).HasColumnName(UserFields.UserName);
+            Property(p => p.PasswordHash).HasColumnName(UserFields.PasswordHash);
+            Property(p => p.SecurityStamp).HasColumnName(UserFields.SecurityStamp);
+            Property(p => p.Email).HasColumnName(UserFields.Email);
+            Property(p => p.EmailConfirmed).HasColumnName(UserFields.EmailConfirmed);
+            Property(p => p.PhoneNumber).HasColumnName(UserFields.PhoneNumber);
+            Property(p => p.PhoneNumberConfirmed).HasColumnName(UserFields.PhoneNumberConfirmed);
+            Property(p => p.TwoFactorEnabled).HasColumnName(UserFields.TwoFactorEnabled);
+            Property(p => p.LockoutEnabled).HasColumnName(UserFields.LockoutEnabled);
+            Property(p => p.LockoutEndDateUtc).HasColumnName(UserFields.LockoutEndDateUtc);
+            Property(p => p.AccessFailedCount).HasColumnName(UserFields.AccessFailedCount);
         }
+    }
+
+    /// <summary>
+    /// Represents user entity configuration.
+    /// </summary>
+    /// <typeparam name="TUser">User entity type.</typeparam>
+    /// <typeparam name="TKey">Id type.</typeparam>
+    public class UserConfiguration<TUser, TKey>
+        : UserConfiguration<
+            TUser,
+            TKey,
+            IdentityUserLogin<TKey>, 
+            IdentityUserRole<TKey>, 
+            IdentityUserClaim<TKey>>
+        where TUser : IdentityUser<
+            TKey, 
+            IdentityUserLogin<TKey>, 
+            IdentityUserRole<TKey>, 
+            IdentityUserClaim<TKey>>
+        where TKey : struct, IEquatable<TKey>
+    {
     }
 }

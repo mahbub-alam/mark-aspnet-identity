@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mark.Core;
 
 namespace Mark.Data.Common
 {
@@ -28,7 +29,7 @@ namespace Mark.Data.Common
     /// </summary>
     /// <typeparam name="TEntity">Entity type.</typeparam>
     public abstract class Repository<TEntity> 
-        : IRepository<TEntity>, IUnitOfWorkHandler where TEntity : IEntity
+        : Disposable, IRepository<TEntity>, IUnitOfWorkHandler where TEntity : IEntity
     {
         private IUnitOfWork _unitOfWork;
 
@@ -44,6 +45,28 @@ namespace Mark.Data.Common
             }
 
             _unitOfWork = unitOfWork;
+        }
+
+        /// <summary>
+        /// Dispose managed resources. Set large fields to null inside 
+        /// <see cref="DisposeExtra()"/> method since, that method will 
+        /// be called whether the <see cref="Disposable.Dispose()"/> 
+        /// method is called by the finalizer or your code.
+        /// </summary>
+        protected override void DisposeManaged()
+        {
+            // Nothing
+        }
+
+        /// <summary>
+        /// Dispose unmanaged resources and/or set large fields 
+        /// (managed/unmanaged) to null. This method will be called whether 
+        /// the <see cref="Disposable.Dispose()"/> method is called by the 
+        /// finalizer or your code.
+        /// </summary>
+        protected override void DisposeExtra()
+        {
+            _unitOfWork = null;
         }
 
         /// <summary>

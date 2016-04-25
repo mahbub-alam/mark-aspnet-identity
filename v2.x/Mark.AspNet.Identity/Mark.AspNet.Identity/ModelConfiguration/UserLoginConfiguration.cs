@@ -20,23 +20,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.ModelConfiguration
 {
     /// <summary>
     /// Represents user login entity configuration.
     /// </summary>
-    public class UserLoginConfiguration : EntityConfiguration
+    /// <typeparam name="TUserLogin">User login type.</typeparam>
+    /// <typeparam name="TKey">Id type.</typeparam>
+    public class UserLoginConfiguration<TUserLogin, TKey> : EntityConfiguration<TUserLogin>
+        where TUserLogin : IdentityUserLogin<TKey>
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Configure entity.
         /// </summary>
         protected override void Configure()
         {
-            TableName = Entities.UserLogin;
-            this[UserLoginFields.LoginProvider] = UserLoginFields.LoginProvider;
-            this[UserLoginFields.ProviderKey] = UserLoginFields.ProviderKey;
-            this[UserLoginFields.UserId] = UserLoginFields.UserId;
+            ToTable(Entities.UserLogin);
+            HasKey(p => new
+            {
+                p.LoginProvider,
+                p.ProviderKey,
+                p.UserId
+            });
+            Property(p => p.LoginProvider).HasColumnName(UserLoginFields.LoginProvider);
+            Property(p => p.ProviderKey).HasColumnName(UserLoginFields.ProviderKey);
+            Property(p => p.UserId).HasColumnName(UserLoginFields.UserId);
         }
     }
 }

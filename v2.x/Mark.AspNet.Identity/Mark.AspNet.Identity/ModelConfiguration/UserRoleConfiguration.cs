@@ -20,22 +20,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.ModelConfiguration
 {
     /// <summary>
     /// Represents user role entity configuration.
     /// </summary>
-    public class UserRoleConfiguration : EntityConfiguration
+    /// <typeparam name="TUserRole">User role entity type.</typeparam>
+    /// <typeparam name="TKey">Id type.</typeparam>
+    public class UserRoleConfiguration<TUserRole, TKey> : EntityConfiguration<TUserRole>
+        where TUserRole : IdentityUserRole<TKey>
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Configure entity.
         /// </summary>
         protected override void Configure()
         {
-            TableName = Entities.UserRole;
-            this[UserRoleFields.RoleId] = UserRoleFields.RoleId;
-            this[UserRoleFields.UserId] = UserRoleFields.UserId;
+            ToTable(Entities.UserRole);
+            HasKey(p => new
+            {
+                p.UserId,
+                p.RoleId
+            });
+            Property(p => p.UserId).HasColumnName(UserRoleFields.UserId);
+            Property(p => p.RoleId).HasColumnName(UserRoleFields.RoleId);
         }
     }
 }

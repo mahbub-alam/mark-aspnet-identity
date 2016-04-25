@@ -72,5 +72,20 @@ namespace Mark.Core
 
             return target.Value;
         }
+
+        /// <summary>
+        /// Get default value of the given type.
+        /// </summary>
+        /// <param name="type">Target type.</param>
+        /// <returns>Returns default value.</returns>
+        public static object GetDefault(this Type type)
+        {
+            if (type.IsValueType)
+            {
+                return Activator.CreateInstance(type);
+            }
+
+            return null;
+        }
     }
 }

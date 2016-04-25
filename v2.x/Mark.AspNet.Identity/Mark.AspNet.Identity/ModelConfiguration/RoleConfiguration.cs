@@ -20,22 +20,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.ModelConfiguration
 {
     /// <summary>
     /// Represents role entity configuration.
     /// </summary>
-    public class RoleConfiguration : EntityConfiguration
+    /// <typeparam name="TRole">Role entity type.</typeparam>
+    /// <typeparam name="TKey">Id type.</typeparam>
+    /// <typeparam name="TUserRole">User role entity type.</typeparam>
+    public class RoleConfiguration<TRole, TKey, TUserRole> : EntityConfiguration<TRole>
+        where TRole : IdentityRole<TKey, TUserRole>
+        where TUserRole : IdentityUserRole<TKey>
+        where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
         /// Configure entity.
         /// </summary>
         protected override void Configure()
         {
-            TableName = Entities.Role;
-            this[RoleFields.Id] = RoleFields.Id;
-            this[RoleFields.Name] = RoleFields.Name;
+            ToTable(Entities.Role);
+            HasKey(p => p.Id);
+            Property(p => p.Id).HasColumnName(RoleFields.Id);
+            Property(p => p.Name).HasColumnName(RoleFields.Name);
         }
+    }
+
+    /// <summary>
+    /// Represents role entity configuration.
+    /// </summary>
+    /// <typeparam name="TRole">Role entity type.</typeparam>
+    /// <typeparam name="TKey">Id type.</typeparam>
+    public class RoleConfiguration<TRole, TKey> 
+        : RoleConfiguration<
+            TRole, 
+            TKey, 
+            IdentityUserRole<TKey>>
+        where TRole : IdentityRole<TKey, IdentityUserRole<TKey>>
+        where TKey : struct, IEquatable<TKey>
+    {
     }
 }
