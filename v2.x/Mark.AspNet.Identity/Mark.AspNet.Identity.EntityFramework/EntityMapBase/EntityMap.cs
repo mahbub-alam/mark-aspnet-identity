@@ -21,7 +21,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity.ModelConfiguration;
-using Mark.AspNet.Identity.ModelConfiguration;
+using Mark.Data.ModelConfiguration;
+using Mark.Data;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
@@ -30,15 +31,15 @@ namespace Mark.AspNet.Identity.EntityFramework
     /// </summary>
     /// <typeparam name="TEntity">Entity type.</typeparam>
     public abstract class EntityMap<TEntity> : EntityTypeConfiguration<TEntity> 
-        where TEntity : class
+        where TEntity : class, IEntity
     {
-        EntityConfiguration _configuration;
+        EntityConfiguration<TEntity> _configuration;
 
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
         /// <param name="configuration">Entity configuration.</param>
-        protected EntityMap(EntityConfiguration configuration)
+        protected EntityMap(EntityConfiguration<TEntity> configuration)
         {
             if (configuration == null)
             {
@@ -55,7 +56,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// <summary>
         /// Get configuration.
         /// </summary>
-        protected EntityConfiguration Configuration
+        protected EntityConfiguration<TEntity> Configuration
         {
             get { return _configuration; }
         }

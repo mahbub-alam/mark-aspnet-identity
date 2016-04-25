@@ -22,7 +22,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Mark.AspNet.Identity.ModelConfiguration;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
@@ -46,7 +46,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// Initialize a new instance of the class.
         /// </summary>
         /// <param name="configuration">Entity configuration.</param>
-        public IdentityUserMap(EntityConfiguration configuration) : base(configuration)
+        public IdentityUserMap(EntityConfiguration<TUser> configuration) : base(configuration)
         {
         }
 
@@ -57,7 +57,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         {
             HasKey(p => p.Id);
             Property(p => p.Id)
-                .HasColumnName(Configuration[UserFields.Id]);
+                .HasColumnName(Configuration.Property(p => p.Id).ColumnName);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         protected override void MapFields()
         {
             Property(p => p.UserName)
-                .HasColumnName(Configuration[UserFields.UserName])
+                .HasColumnName(Configuration.Property(p => p.UserName).ColumnName)
                 .IsRequired()
                 .HasMaxLength(32)
                 .HasColumnAnnotation("Index", new IndexAnnotation(
@@ -74,37 +74,37 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             Property(p => p.SecurityStamp)
                 .HasMaxLength(255)
-                .HasColumnName(Configuration[UserFields.SecurityStamp]);
+                .HasColumnName(Configuration.Property(p => p.SecurityStamp).ColumnName);
 
             Property(p => p.PasswordHash)
                 .HasMaxLength(255)
-                .HasColumnName(Configuration[UserFields.PasswordHash]);
+                .HasColumnName(Configuration.Property(p => p.PasswordHash).ColumnName);
 
             Property(p => p.Email)
                 .HasMaxLength(64)
-                .HasColumnName(Configuration[UserFields.Email]);
+                .HasColumnName(Configuration.Property(p => p.Email).ColumnName);
 
             Property(p => p.EmailConfirmed)
-                .HasColumnName(Configuration[UserFields.EmailConfirmed]);
+                .HasColumnName(Configuration.Property(p => p.EmailConfirmed).ColumnName);
 
             Property(p => p.PhoneNumber)
                 .HasMaxLength(16)
-                .HasColumnName(Configuration[UserFields.PhoneNumber]);
+                .HasColumnName(Configuration.Property(p => p.PhoneNumber).ColumnName);
 
             Property(p => p.PhoneNumberConfirmed)
-                .HasColumnName(Configuration[UserFields.PhoneNumberConfirmed]);
+                .HasColumnName(Configuration.Property(p => p.PhoneNumberConfirmed).ColumnName);
 
             Property(p => p.TwoFactorEnabled)
-                .HasColumnName(Configuration[UserFields.TwoFactorEnabled]);
+                .HasColumnName(Configuration.Property(p => p.TwoFactorEnabled).ColumnName);
 
             Property(p => p.LockoutEnabled)
-                .HasColumnName(Configuration[UserFields.LockoutEnabled]);
+                .HasColumnName(Configuration.Property(p => p.LockoutEnabled).ColumnName);
 
             Property(p => p.LockoutEndDateUtc)
-                .HasColumnName(Configuration[UserFields.LockoutEndDateUtc]);
+                .HasColumnName(Configuration.Property(p => p.LockoutEndDateUtc).ColumnName);
 
             Property(p => p.AccessFailedCount)
-                .HasColumnName(Configuration[UserFields.AccessFailedCount]);
+                .HasColumnName(Configuration.Property(p => p.AccessFailedCount).ColumnName);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// Initialize a new instance of the class.
         /// </summary>
         /// <param name="configuration">Entity configuration.</param>
-        public IdentityUserMap(EntityConfiguration configuration) : base(configuration)
+        public IdentityUserMap(EntityConfiguration<TUser> configuration) : base(configuration)
         {
         }
     }

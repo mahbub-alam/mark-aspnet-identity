@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Mark.AspNet.Identity.ModelConfiguration;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
@@ -37,7 +37,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// Initialize a new instance of the class.
         /// </summary>
         /// <param name="configuration">Entity configuration.</param>
-        public IdentityUserLoginMap(EntityConfiguration configuration) : base(configuration)
+        public IdentityUserLoginMap(EntityConfiguration<TUserLogin> configuration) : base(configuration)
         {
         }
 
@@ -55,14 +55,14 @@ namespace Mark.AspNet.Identity.EntityFramework
 
             Property(p => p.LoginProvider)
                 .HasMaxLength(128)
-                .HasColumnName(Configuration[UserLoginFields.LoginProvider]);
+                .HasColumnName(Configuration.Property(p => p.LoginProvider).ColumnName);
 
             Property(p => p.ProviderKey)
                 .HasMaxLength(128)
-                .HasColumnName(Configuration[UserLoginFields.ProviderKey]);
+                .HasColumnName(Configuration.Property(p => p.ProviderKey).ColumnName);
 
             Property(p => p.UserId)
-                .HasColumnName(Configuration[UserLoginFields.UserId]);
+                .HasColumnName(Configuration.Property(p => p.UserId).ColumnName);
         }
     }
 }

@@ -22,7 +22,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Mark.AspNet.Identity.ModelConfiguration;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
@@ -42,7 +42,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// Initialize a new instance of the class.
         /// </summary>
         /// <param name="configuration">Entity configuration.</param>
-        public IdentityRoleMap(EntityConfiguration configuration) : base(configuration)
+        public IdentityRoleMap(EntityConfiguration<TRole> configuration) : base(configuration)
         {
         }
 
@@ -53,7 +53,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         {
             HasKey(p => p.Id);
             Property(p => p.Id)
-                .HasColumnName(Configuration[RoleFields.Id]);
+                .HasColumnName(Configuration.Property(p => p.Id).ColumnName);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         protected override void MapFields()
         {
             Property(p => p.Name)
-                .HasColumnName(Configuration[RoleFields.Name])
+                .HasColumnName(Configuration.Property(p => p.Name).ColumnName)
                 .IsRequired()
                 .HasMaxLength(64)
                 .HasColumnAnnotation("Index", new IndexAnnotation(
@@ -95,7 +95,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// Initialize a new instance of the class.
         /// </summary>
         /// <param name="configuration">Entity configuration.</param>
-        public IdentityRoleMap(EntityConfiguration configuration) : base(configuration)
+        public IdentityRoleMap(EntityConfiguration<TRole> configuration) : base(configuration)
         {
         }
     }

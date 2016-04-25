@@ -192,7 +192,7 @@ namespace Mark.AspNet.Identity.EntityFramework
             else
             {
                 _userMap = new IdentityUserMap<TUser, TKey, TUserLogin, TUserRole, TUserClaim>(
-                    new UserConfiguration());
+                    new UserConfiguration<TUser, TKey, TUserLogin, TUserRole, TUserClaim>());
             }
         }
 
@@ -208,7 +208,8 @@ namespace Mark.AspNet.Identity.EntityFramework
             }
             else
             {
-                _roleMap = new IdentityRoleMap<TRole, TKey, TUserRole>(new RoleConfiguration());
+                _roleMap = new IdentityRoleMap<TRole, TKey, TUserRole>(
+                    new RoleConfiguration<TRole, TKey, TUserRole>());
             }
         }
 
@@ -224,7 +225,8 @@ namespace Mark.AspNet.Identity.EntityFramework
             }
             else
             {
-                _userLoginMap = new IdentityUserLoginMap<TUserLogin, TKey>(new UserLoginConfiguration());
+                _userLoginMap = new IdentityUserLoginMap<TUserLogin, TKey>(
+                    new UserLoginConfiguration<TUserLogin, TKey>());
             }
         }
 
@@ -240,7 +242,8 @@ namespace Mark.AspNet.Identity.EntityFramework
             }
             else
             {
-                _userRoleMap = new IdentityUserRoleMap<TUserRole, TKey>(new UserRoleConfiguration());
+                _userRoleMap = new IdentityUserRoleMap<TUserRole, TKey>(
+                    new UserRoleConfiguration<TUserRole, TKey>());
             }
         }
 
@@ -256,7 +259,8 @@ namespace Mark.AspNet.Identity.EntityFramework
             }
             else
             {
-                _userClaimMap = new IdentityUserClaimMap<TUserClaim, TKey>(new UserClaimConfiguration());
+                _userClaimMap = new IdentityUserClaimMap<TUserClaim, TKey>(
+                    new UserClaimConfiguration<TUserClaim, TKey>());
             }
         }
     }

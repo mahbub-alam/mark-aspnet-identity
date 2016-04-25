@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Mark.AspNet.Identity.ModelConfiguration;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {
@@ -37,7 +37,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         /// Initialize a new instance of the class.
         /// </summary>
         /// <param name="configuration">Entity configuration.</param>
-        public IdentityUserClaimMap(EntityConfiguration configuration) : base(configuration)
+        public IdentityUserClaimMap(EntityConfiguration<TUserClaim> configuration) : base(configuration)
         {
         }
 
@@ -48,7 +48,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         {
             HasKey(p => p.Id);
             Property(p => p.Id)
-                .HasColumnName(Configuration[UserClaimFields.Id]);
+                .HasColumnName(Configuration.Property(p => p.Id).ColumnName);
         }
 
         /// <summary>
@@ -57,15 +57,15 @@ namespace Mark.AspNet.Identity.EntityFramework
         protected override void MapFields()
         {
             Property(p => p.UserId)
-                .HasColumnName(Configuration[UserClaimFields.UserId]);
+                .HasColumnName(Configuration.Property(p => p.UserId).ColumnName);
 
             Property(p => p.ClaimType)
                 .HasMaxLength(255)
-                .HasColumnName(Configuration[UserClaimFields.ClaimType]);
+                .HasColumnName(Configuration.Property(p => p.ClaimType).ColumnName);
 
             Property(p => p.ClaimValue)
                 .HasMaxLength(255)
-                .HasColumnName(Configuration[UserClaimFields.ClaimValue]);
+                .HasColumnName(Configuration.Property(p => p.ClaimValue).ColumnName);
         }
     }
 }
