@@ -25,7 +25,15 @@ using System.Data.SqlClient;
 
 namespace Mark.AspNet.Identity.SqlServer.Tests
 {
-    public class SqlStorageContext : DbStorageContext<SqlConnection>
+    public class SqlStorageContext 
+        : IdentityDbStorageContext<
+            SqlConnection, 
+            ApplicationUser, 
+            ApplicationRole, 
+            int, 
+            ApplicationUserLogin, 
+            ApplicationUserRole, 
+            ApplicationUserClaim>	
     {
         public SqlStorageContext() : base("DbConnectionString")
         {
