@@ -24,7 +24,7 @@ using Microsoft.AspNet.Identity;
 using Mark.Data;
 using Mark.Data.Common;
 using System.Data.Common;
-using Mark.AspNet.Identity.ModelConfiguration;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.SqlServer
 {
@@ -33,8 +33,8 @@ namespace Mark.AspNet.Identity.SqlServer
     /// </summary>
     /// <typeparam name="TUserLogin">User login entity type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
-    internal class UserLoginRepository<TUserLogin, TKey>
-        : DbRepository<TUserLogin>
+    public class UserLoginRepository<TUserLogin, TKey>
+        : SqlRepository<TUserLogin>
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TKey : struct, IEquatable<TKey>
     {
@@ -52,33 +52,8 @@ namespace Mark.AspNet.Identity.SqlServer
         /// <param name="item">Entity item.</param>
         protected override void SaveAddedItem(TUserLogin item)
         {
-            DbCommand command = StorageContext.CreateCommand();
-            command.CommandText = String.Format(
-                @"INSERT INTO {0} ({1}, {2}, {3}) VALUES (@{4}, @{5}, @{6});",
-                StorageContext[Entities.UserLogin].TableName,
-                // Configured field names
-                StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider],
-                StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey],
-                StorageContext[Entities.UserLogin][UserLoginFields.UserId],
-                // Parameter names
-                UserLoginFields.LoginProvider,
-                UserLoginFields.ProviderKey,
-                UserLoginFields.UserId);
-
-            if (StorageContext.TransactionExists)
-            {
-                command.Transaction = StorageContext.TransactionContext.Transaction;
-            }
-
-            DbCommandContext cmdContext = new DbCommandContext(command,
-                new List<IEntity> { item });
-
-            cmdContext.SetParametersForEach<TUserLogin>((parameters, entity) =>
-            {
-                parameters[UserLoginFields.LoginProvider].Value = entity.LoginProvider;
-                parameters[UserLoginFields.ProviderKey].Value =  entity.ProviderKey;
-                parameters[UserLoginFields.UserId].Value = entity.UserId;
-            });
+            DbCommandContext cmdContext = CommandBuilder.GetInsertCommand(
+                new List<TUserLogin> { item });
 
             StorageContext.AddCommand(cmdContext);
         }
@@ -98,33 +73,8 @@ namespace Mark.AspNet.Identity.SqlServer
         /// <param name="item">Entity item.</param>
         protected override void SaveRemovedItem(TUserLogin item)
         {
-            DbCommand command = StorageContext.CreateCommand();
-            command.CommandText = String.Format(
-                @"DELETE FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
-                StorageContext[Entities.UserLogin].TableName,
-                // Configured field names
-                StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider],
-                StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey],
-                StorageContext[Entities.UserLogin][UserLoginFields.UserId],
-                // Parameter names
-                UserLoginFields.LoginProvider,
-                UserLoginFields.ProviderKey,
-                UserLoginFields.UserId);
-
-            if (StorageContext.TransactionExists)
-            {
-                command.Transaction = StorageContext.TransactionContext.Transaction;
-            }
-
-            DbCommandContext cmdContext = new DbCommandContext(command,
-                new List<IEntity> { item });
-
-            cmdContext.SetParametersForEach<TUserLogin>((parameters, entity) =>
-            {
-                parameters[UserLoginFields.LoginProvider].Value = entity.LoginProvider;
-                parameters[UserLoginFields.ProviderKey].Value = entity.ProviderKey;
-                parameters[UserLoginFields.UserId].Value = entity.UserId;
-            });
+            DbCommandContext cmdContext = CommandBuilder.GetDeleteCommand(
+                new List<TUserLogin> { item });
 
             StorageContext.AddCommand(cmdContext);
         }
@@ -136,41 +86,33 @@ namespace Mark.AspNet.Identity.SqlServer
         /// <returns>Returns the user login if found; otherwise, returns null.</returns>
         public TUserLogin Find(UserLoginInfo loginInfo)
         {
+            PropertyConfiguration loginProviderPropCfg = Configuration.Property(p => p.LoginProvider);
+            PropertyConfiguration providerKeyPropCfg = Configuration.Property(p => p.ProviderKey);
             DbCommand command = StorageContext.CreateCommand();
+
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{3} AND {2} = @{4};",
-                StorageContext[Entities.UserLogin].TableName,
+                QueryBuilder.GetQuotedIdentifier(Configuration.TableName),
                 // Configured field names
-                StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider],
-                StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey],
+                QueryBuilder.GetQuotedIdentifier(loginProviderPropCfg.ColumnName),
+                QueryBuilder.GetQuotedIdentifier(providerKeyPropCfg.ColumnName),
                 // Parameter names
-                UserLoginFields.LoginProvider,
-                UserLoginFields.ProviderKey);
+                loginProviderPropCfg.PropertyName,
+                providerKeyPropCfg.PropertyName);
 
             DbCommandContext cmdContext = new DbCommandContext(command);
-            cmdContext.Parameters[UserLoginFields.LoginProvider].Value = loginInfo.LoginProvider;
-            cmdContext.Parameters[UserLoginFields.ProviderKey].Value = loginInfo.ProviderKey;
+            cmdContext.Parameters[loginProviderPropCfg.PropertyName].Value = loginInfo.LoginProvider;
+            cmdContext.Parameters[providerKeyPropCfg.PropertyName].Value = loginInfo.ProviderKey;
 
             DbDataReader reader = null;
-            TUserLogin UserLogin = default(TUserLogin);
+            TUserLogin userLogin = default(TUserLogin);
 
             StorageContext.Open();
 
             try
             {
                 reader = cmdContext.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    UserLogin = new TUserLogin();
-
-                    UserLogin.LoginProvider = reader.GetSafeString(
-                        StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider]);
-                    UserLogin.ProviderKey = reader.GetSafeString(
-                        StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey]);
-                    UserLogin.UserId = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.UserLogin][UserLoginFields.UserId]);
-                }
+                userLogin = EntityBuilder.Build(reader);
             }
             catch (Exception)
             {
@@ -187,7 +129,7 @@ namespace Mark.AspNet.Identity.SqlServer
                 StorageContext.Close();
             }
 
-            return UserLogin;
+            return userLogin;
         }
 
         /// <summary>
@@ -198,44 +140,37 @@ namespace Mark.AspNet.Identity.SqlServer
         /// <returns>Returns the user login if found; otherwise, returns null.</returns>
         public TUserLogin Find(TKey userId, UserLoginInfo loginInfo)
         {
+            PropertyConfiguration loginProviderPropCfg = Configuration.Property(p => p.LoginProvider);
+            PropertyConfiguration providerKeyPropCfg = Configuration.Property(p => p.ProviderKey);
+            PropertyConfiguration userIdPropCfg = Configuration.Property(p => p.UserId);
             DbCommand command = StorageContext.CreateCommand();
+
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
-                StorageContext[Entities.UserLogin].TableName,
+                QueryBuilder.GetQuotedIdentifier(Configuration.TableName),
                 // Configured field names
-                StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider],
-                StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey],
-                StorageContext[Entities.UserLogin][UserLoginFields.UserId],
+                QueryBuilder.GetQuotedIdentifier(loginProviderPropCfg.ColumnName),
+                QueryBuilder.GetQuotedIdentifier(providerKeyPropCfg.ColumnName),
+                QueryBuilder.GetQuotedIdentifier(userIdPropCfg.ColumnName),
                 // Parameter names
-                UserLoginFields.LoginProvider,
-                UserLoginFields.ProviderKey,
-                UserLoginFields.UserId);
+                loginProviderPropCfg.PropertyName,
+                providerKeyPropCfg.PropertyName,
+                userIdPropCfg.PropertyName);
 
             DbCommandContext cmdContext = new DbCommandContext(command);
-            cmdContext.Parameters[UserLoginFields.LoginProvider].Value = loginInfo.LoginProvider;
-            cmdContext.Parameters[UserLoginFields.ProviderKey].Value = loginInfo.ProviderKey;
-            cmdContext.Parameters[UserLoginFields.UserId].Value = userId;
+            cmdContext.Parameters[loginProviderPropCfg.PropertyName].Value = loginInfo.LoginProvider;
+            cmdContext.Parameters[providerKeyPropCfg.PropertyName].Value = loginInfo.ProviderKey;
+            cmdContext.Parameters[userIdPropCfg.PropertyName].Value = userId;
 
             DbDataReader reader = null;
-            TUserLogin UserLogin = default(TUserLogin);
+            TUserLogin userLogin = default(TUserLogin);
 
             StorageContext.Open();
 
             try
             {
                 reader = cmdContext.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    UserLogin = new TUserLogin();
-
-                    UserLogin.LoginProvider = reader.GetSafeString(
-                        StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider]);
-                    UserLogin.ProviderKey = reader.GetSafeString(
-                        StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey]);
-                    UserLogin.UserId = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.UserLogin][UserLoginFields.UserId]);
-                }
+                userLogin = EntityBuilder.Build(reader);
             }
             catch (Exception)
             {
@@ -252,7 +187,7 @@ namespace Mark.AspNet.Identity.SqlServer
                 StorageContext.Close();
             }
 
-            return UserLogin;
+            return userLogin;
         }
 
         /// <summary>
@@ -262,41 +197,28 @@ namespace Mark.AspNet.Identity.SqlServer
         /// <returns>Returns a list of user UserLogins if found; otherwise, returns empty list.</returns>
         public ICollection<TUserLogin> FindAllByUserId(TKey userId)
         {
+            PropertyConfiguration userIdPropCfg = Configuration.Property(p => p.UserId);
             DbCommand command = StorageContext.CreateCommand();
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{2};",
-                StorageContext[Entities.UserLogin].TableName,
+                QueryBuilder.GetQuotedIdentifier(Configuration.TableName),
                 // Configured field names
-                StorageContext[Entities.UserLogin][UserLoginFields.UserId],
+                userIdPropCfg.ColumnName,
                 // Parameter names
-                UserLoginFields.UserId);
+                userIdPropCfg.PropertyName);
 
             DbCommandContext cmdContext = new DbCommandContext(command);
-            cmdContext.Parameters[UserLoginFields.UserId].Value = userId;
+            cmdContext.Parameters[userIdPropCfg.PropertyName].Value = userId;
 
             DbDataReader reader = null;
-            List<TUserLogin> list = new List<TUserLogin>();
-            TUserLogin UserLogin = default(TUserLogin);
+            ICollection<TUserLogin> list = null;
 
             StorageContext.Open();
 
             try
             {
                 reader = cmdContext.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    UserLogin = new TUserLogin();
-
-                    UserLogin.LoginProvider = reader.GetSafeString(
-                        StorageContext[Entities.UserLogin][UserLoginFields.LoginProvider]);
-                    UserLogin.ProviderKey = reader.GetSafeString(
-                        StorageContext[Entities.UserLogin][UserLoginFields.ProviderKey]);
-                    UserLogin.UserId = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.UserLogin][UserLoginFields.UserId]);
-
-                    list.Add(UserLogin);
-                }
+                list = EntityBuilder.BuildAll(reader);
             }
             catch (Exception)
             {

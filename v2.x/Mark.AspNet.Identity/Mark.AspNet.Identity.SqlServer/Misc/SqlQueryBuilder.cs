@@ -22,40 +22,32 @@ using System.Text;
 using System.Threading.Tasks;
 using Mark.Data;
 using Mark.Data.Common;
-using Mark.AspNet.Identity;
-using System.Data.SqlClient;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.SqlServer
 {
     /// <summary>
-    /// Represents base class for database repository.
+    /// Represents MS SQL Server query builder that generates SQL query from entity configuration.
     /// </summary>
-    /// <typeparam name="TEntity">Entity type.</typeparam>
-    internal abstract class DbRepository<TEntity> : Repository<TEntity> 
-        where TEntity : IEntity
+    /// <typeparam name="TEntity"></typeparam>
+    public class SqlQueryBuilder<TEntity> : DbQueryBuilder<TEntity> where TEntity : IEntity
     {
-        private DbStorageContext<SqlConnection> _storageContext;
-
         /// <summary>
-        /// Initialize a new instance of the class with the unit of work reference.
+        /// Initialize a new instance of the class.
         /// </summary>
-        /// <param name="unitOfWork">Unit of work reference to be used.</param>
-        public DbRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
+        /// <param name="configuration">Entity configuration.</param>
+        public SqlQueryBuilder(EntityConfiguration<TEntity> configuration) : base(configuration)
         {
-            _storageContext = this.UnitOfWork.StorageContext as DbStorageContext<SqlConnection>;
-
-            if (_storageContext == null)
-            {
-                throw new InvalidCastException("Wrong storage context");
-            }
         }
 
         /// <summary>
-        /// Get database context.
+        /// Get the quoted identifier of the given identifier.
         /// </summary>
-        protected DbStorageContext<SqlConnection> StorageContext
+        /// <param name="identifier">Identifier to be quoted.</param>
+        /// <returns>Returns quoted identifier.</returns>
+        public override string GetQuotedIdentifier(string identifier)
         {
-            get { return _storageContext; }
+            return String.Format("[{0}]", identifier);
         }
     }
 }

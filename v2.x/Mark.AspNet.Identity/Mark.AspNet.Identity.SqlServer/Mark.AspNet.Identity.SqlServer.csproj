@@ -44,8 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Misc\SqlQueryBuilder.cs" />
+    <Compile Include="Misc\SqlRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\DbRepository.cs" />
     <Compile Include="Repositories\RoleRepository.cs" />
     <Compile Include="Repositories\UserClaimRepository.cs" />
     <Compile Include="Repositories\UserLoginRepository.cs" />
@@ -57,9 +58,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Misc\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Mark.AspNet.Identity\Mark.AspNet.Identity.csproj">
       <Project>{d77bb5ad-50c4-42fc-b7da-9a77274ccb52}</Project>

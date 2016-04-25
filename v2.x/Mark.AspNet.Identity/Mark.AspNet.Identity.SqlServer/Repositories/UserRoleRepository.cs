@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using Mark.Data;
 using Mark.Data.Common;
 using System.Data.Common;
-using Mark.AspNet.Identity.ModelConfiguration;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.SqlServer
 {
@@ -32,8 +32,8 @@ namespace Mark.AspNet.Identity.SqlServer
     /// </summary>
     /// <typeparam name="TUserRole">User role entity type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
-    internal class UserRoleRepository<TUserRole, TKey>
-        : DbRepository<TUserRole> 
+    public class UserRoleRepository<TUserRole, TKey>
+        : SqlRepository<TUserRole> 
         where TUserRole : IdentityUserRole<TKey>, new()
         where TKey : struct, IEquatable<TKey>
     {
@@ -51,30 +51,8 @@ namespace Mark.AspNet.Identity.SqlServer
         /// <param name="item">Entity item.</param>
         protected override void SaveAddedItem(TUserRole item)
         {
-            DbCommand command = StorageContext.CreateCommand();
-            command.CommandText = String.Format(
-                @"INSERT INTO {0} ({1}, {2}) VALUES (@{3}, @{4});",
-                StorageContext[Entities.UserRole].TableName,
-                // Configured field names
-                StorageContext[Entities.UserRole][UserRoleFields.UserId],
-                StorageContext[Entities.UserRole][UserRoleFields.RoleId],
-                // Parameter names
-                UserRoleFields.UserId,
-                UserRoleFields.RoleId);
-
-            if (StorageContext.TransactionExists)
-            {
-                command.Transaction = StorageContext.TransactionContext.Transaction;
-            }
-
-            DbCommandContext cmdContext = new DbCommandContext(command,
-                new List<IEntity> { item });
-
-            cmdContext.SetParametersForEach<TUserRole>((parameters, entity) =>
-            {
-                parameters[UserRoleFields.UserId].Value = entity.UserId;
-                parameters[UserRoleFields.RoleId].Value = entity.RoleId;
-            });
+            DbCommandContext cmdContext = CommandBuilder.GetInsertCommand(
+                new List<TUserRole> { item });
 
             StorageContext.AddCommand(cmdContext);
         }
@@ -94,30 +72,8 @@ namespace Mark.AspNet.Identity.SqlServer
         /// <param name="item">Entity item.</param>
         protected override void SaveRemovedItem(TUserRole item)
         {
-            DbCommand command = StorageContext.CreateCommand();
-            command.CommandText = String.Format(
-                @"DELETE FROM {0} WHERE {1} = @{3} AND {2} = @{4};",
-                StorageContext[Entities.UserRole].TableName,
-                // Configured field names
-                StorageContext[Entities.UserRole][UserRoleFields.UserId],
-                StorageContext[Entities.UserRole][UserRoleFields.RoleId], 
-                // Parameter names
-                UserRoleFields.UserId, 
-                UserRoleFields.RoleId);
-
-            if (StorageContext.TransactionExists)
-            {
-                command.Transaction = StorageContext.TransactionContext.Transaction;
-            }
-
-            DbCommandContext cmdContext = new DbCommandContext(command,
-                new List<IEntity> { item });
-
-            cmdContext.SetParametersForEach<TUserRole>((parameters, entity) =>
-            {
-                parameters[UserRoleFields.UserId].Value = entity.UserId;
-                parameters[UserRoleFields.RoleId].Value = entity.RoleId;
-            });
+            DbCommandContext cmdContext = CommandBuilder.GetDeleteCommand(
+                new List<TUserRole> { item });
 
             StorageContext.AddCommand(cmdContext);
         }
@@ -129,38 +85,29 @@ namespace Mark.AspNet.Identity.SqlServer
         /// <returns>Returns a list of user roles if found; otherwise, returns empty list.</returns>
         public ICollection<TUserRole> FindAllByUserId(TKey userId)
         {
+            PropertyConfiguration userIdPropCfg = Configuration.Property(p => p.UserId);
             DbCommand command = StorageContext.CreateCommand();
+
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{2};",
-                StorageContext[Entities.UserRole].TableName,
+                QueryBuilder.GetQuotedIdentifier(Configuration.TableName),
                 // Configured field names
-                StorageContext[Entities.UserRole][UserRoleFields.UserId],
+                QueryBuilder.GetQuotedIdentifier(userIdPropCfg.ColumnName),
                 // Parameter names
-                UserRoleFields.UserId);
+                userIdPropCfg.PropertyName);
 
             DbCommandContext cmdContext = new DbCommandContext(command);
-            cmdContext.Parameters[UserRoleFields.UserId].Value = userId;
+            cmdContext.Parameters[userIdPropCfg.PropertyName].Value = userId;
 
             DbDataReader reader = null;
-            List<TUserRole> list = new List<TUserRole>();
-            TUserRole userRole = default(TUserRole);
+            ICollection<TUserRole> list = null;
 
             StorageContext.Open();
 
             try
             {
                 reader = cmdContext.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    userRole = new TUserRole();
-                    userRole.UserId = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.UserRole][UserRoleFields.UserId]);
-                    userRole.RoleId = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.UserRole][UserRoleFields.RoleId]);
-
-                    list.Add(userRole);
-                }
+                list = EntityBuilder.BuildAll(reader);
             }
             catch (Exception)
             {
@@ -178,62 +125,5 @@ namespace Mark.AspNet.Identity.SqlServer
 
             return list;
         }
-
-        /// <summary>
-        /// Check whether the user belongs to the given role.
-        /// </summary>
-        /// <param name="userId">Target user id.</param>
-        /// <param name="roleName">Target role name.</param>
-        /// <returns>Returns true if belongs; otherwise, returns false.</returns>
-        public bool IsInRole(TKey userId, string roleName)
-        {
-            DbCommand command = StorageContext.CreateCommand();
-            command.CommandText = String.Format(
-                @"SELECT {2} FROM {0} INNER JOIN {1} ON ({0}.{2} = {1}.{3}) 
-                    WHERE {4} = @{6} AND LOWER({5}) = LOWER(@{7});",
-                StorageContext[Entities.UserRole].TableName,
-                StorageContext[Entities.Role].TableName,
-                // Configured field names
-                StorageContext[Entities.UserRole][UserRoleFields.RoleId],
-                StorageContext[Entities.Role][RoleFields.Id],
-                StorageContext[Entities.UserRole][UserRoleFields.UserId],
-                StorageContext[Entities.Role][RoleFields.Name],
-                // Parameter names
-                UserRoleFields.UserId, 
-                RoleFields.Name);
-
-            DbCommandContext cmdContext = new DbCommandContext(command);
-            cmdContext.Parameters[UserRoleFields.UserId].Value = userId;
-            cmdContext.Parameters[RoleFields.Name].Value = roleName;
-
-            DbDataReader reader = null;
-            bool inRole = false;
-
-            StorageContext.Open();
-
-            try
-            {
-                reader = cmdContext.ExecuteReader();
-
-                inRole = reader.Read();
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                if (reader != null)
-                {
-                    reader.Close();
-                }
-
-                StorageContext.Close();
-            }
-
-            return inRole;
-        }
-
     }
 }
