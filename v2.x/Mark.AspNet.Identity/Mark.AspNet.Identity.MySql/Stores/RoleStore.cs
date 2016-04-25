@@ -180,7 +180,7 @@ namespace Mark.AspNet.Identity.MySql
         /// </summary>
         protected override void DisposeManaged()
         {
-            // Nothing
+            _repo.Dispose();
         }
     }
 }

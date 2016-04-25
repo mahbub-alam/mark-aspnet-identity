@@ -81,7 +81,11 @@ namespace Mark.AspNet.Identity.MySql
         /// </summary>
         protected override void DisposeManaged()
         {
-            // Do nothing
+            _userRepo.Dispose();
+            _roleRepo.Dispose();
+            _userLoginRepo.Dispose();
+            _userRepo.Dispose();
+            _userClaimRepo.Dispose();
         }
 
         /// <summary>
@@ -703,7 +707,7 @@ namespace Mark.AspNet.Identity.MySql
                 throw new ArgumentException("'roleName' parameter cannot be null or empty");
             }
 
-            bool inRole = _userRoleRepo.IsInRole(user.Id, roleName);
+            bool inRole = _roleRepo.IsInRole(user.Id, roleName);
 
             return await Task.FromResult(inRole);
         }

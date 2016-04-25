@@ -24,7 +24,7 @@ using Mark.Core;
 using Mark.Data;
 using Mark.Data.Common;
 using System.Data.Common;
-using Mark.AspNet.Identity.ModelConfiguration;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.MySql
 {
@@ -36,8 +36,8 @@ namespace Mark.AspNet.Identity.MySql
     /// <typeparam name="TUserLogin">User login entity type.</typeparam>
     /// <typeparam name="TUserRole">User role entity type.</typeparam>
     /// <typeparam name="TUserClaim">User claim entity type.</typeparam>
-    internal class UserRepository<TUser, TKey, TUserLogin, TUserRole, TUserClaim>
-        : DbRepository<TUser>
+    public class UserRepository<TUser, TKey, TUserLogin, TUserRole, TUserClaim>
+        : MySqlRepository<TUser>
         where TUser : IdentityUser<TKey, TUserLogin, TUserRole, TUserClaim>, new()
         where TUserLogin : IdentityUserLogin<TKey>
         where TUserRole : IdentityUserRole<TKey>
@@ -58,59 +58,8 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveAddedItem(TUser item)
         {
-            DbCommand command = StorageContext.CreateCommand();
-            command.CommandText = String.Format(
-                @"INSERT INTO {0} ({1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}) 
-                    VALUES (@{12}, @{13}, @{14}, @{15}, @{16}, @{17}, @{18}, @{19}, @{20}, 
-                @{21}, @{22});",
-                StorageContext[Entities.User].TableName,
-                // Configured field names
-                StorageContext[Entities.User][UserFields.UserName],
-                StorageContext[Entities.User][UserFields.PasswordHash],
-                StorageContext[Entities.User][UserFields.SecurityStamp],
-                StorageContext[Entities.User][UserFields.Email],
-                StorageContext[Entities.User][UserFields.EmailConfirmed],
-                StorageContext[Entities.User][UserFields.PhoneNumber],
-                StorageContext[Entities.User][UserFields.PhoneNumberConfirmed],
-                StorageContext[Entities.User][UserFields.TwoFactorEnabled],
-                StorageContext[Entities.User][UserFields.LockoutEnabled],
-                StorageContext[Entities.User][UserFields.LockoutEndDateUtc],
-                StorageContext[Entities.User][UserFields.AccessFailedCount],
-                // Parameter names
-                UserFields.UserName,
-                UserFields.PasswordHash,
-                UserFields.SecurityStamp,
-                UserFields.Email,
-                UserFields.EmailConfirmed,
-                UserFields.PhoneNumber,
-                UserFields.PhoneNumberConfirmed,
-                UserFields.TwoFactorEnabled,
-                UserFields.LockoutEnabled,
-                UserFields.LockoutEndDateUtc,
-                UserFields.AccessFailedCount);
-
-            if (StorageContext.TransactionExists)
-            {
-                command.Transaction = StorageContext.TransactionContext.Transaction;
-            }
-
-            DbCommandContext cmdContext = new DbCommandContext(command,
-                new List<IEntity> { item });
-
-            cmdContext.SetParametersForEach<TUser>((parameters, entity) =>
-            {
-                parameters[UserFields.UserName].Value = entity.UserName;
-                parameters[UserFields.PasswordHash].Value = entity.PasswordHash.GetDBNullIfNull();
-                parameters[UserFields.SecurityStamp].Value = entity.SecurityStamp.GetDBNullIfNull();
-                parameters[UserFields.Email].Value = entity.Email.GetDBNullIfNull();
-                parameters[UserFields.EmailConfirmed].Value = entity.EmailConfirmed;
-                parameters[UserFields.PhoneNumber].Value = entity.PhoneNumber.GetDBNullIfNull();
-                parameters[UserFields.PhoneNumberConfirmed].Value = entity.PhoneNumberConfirmed;
-                parameters[UserFields.TwoFactorEnabled].Value = entity.TwoFactorEnabled;
-                parameters[UserFields.LockoutEnabled].Value = entity.LockoutEnabled;
-                parameters[UserFields.LockoutEndDateUtc].Value = entity.LockoutEndDateUtc.GetDBNullIfNull();
-                parameters[UserFields.AccessFailedCount].Value = entity.AccessFailedCount;
-            });
+            DbCommandContext cmdContext = CommandBuilder.GetInsertCommand(
+                new List<TUser> { item });
 
             StorageContext.AddCommand(cmdContext);
         }
@@ -121,72 +70,8 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveChangedItem(TUser item)
         {
-            DbCommand command = StorageContext.CreateCommand();
-            command.CommandText = String.Format(
-                @"UPDATE {0} SET 
-                {1} = @{13}, 
-                {2} = @{14}, 
-                {3} = @{15}, 
-                {4} = @{16}, 
-                {5} = @{17}, 
-                {6} = @{18}, 
-                {7} = @{19}, 
-                {8} = @{20}, 
-                {9} = @{21}, 
-                {10} = @{22},  
-                {11} = @{23}
-                WHERE {12} = @{24};",
-                StorageContext[Entities.User].TableName,
-                // Configured field names
-                StorageContext[Entities.User][UserFields.UserName],
-                StorageContext[Entities.User][UserFields.PasswordHash],
-                StorageContext[Entities.User][UserFields.SecurityStamp],
-                StorageContext[Entities.User][UserFields.Email],
-                StorageContext[Entities.User][UserFields.EmailConfirmed],
-                StorageContext[Entities.User][UserFields.PhoneNumber],
-                StorageContext[Entities.User][UserFields.PhoneNumberConfirmed],
-                StorageContext[Entities.User][UserFields.TwoFactorEnabled],
-                StorageContext[Entities.User][UserFields.LockoutEnabled],
-                StorageContext[Entities.User][UserFields.LockoutEndDateUtc],
-                StorageContext[Entities.User][UserFields.AccessFailedCount],
-                StorageContext[Entities.User][UserFields.Id],
-                // Parameter names
-                UserFields.UserName,
-                UserFields.PasswordHash,
-                UserFields.SecurityStamp,
-                UserFields.Email,
-                UserFields.EmailConfirmed,
-                UserFields.PhoneNumber,
-                UserFields.PhoneNumberConfirmed,
-                UserFields.TwoFactorEnabled,
-                UserFields.LockoutEnabled,
-                UserFields.LockoutEndDateUtc,
-                UserFields.AccessFailedCount,
-                UserFields.Id);
-
-            if (StorageContext.TransactionExists)
-            {
-                command.Transaction = StorageContext.TransactionContext.Transaction;
-            }
-
-            DbCommandContext cmdContext = new DbCommandContext(command,
-                new List<IEntity> { item });
-
-            cmdContext.SetParametersForEach<TUser>((parameters, entity) =>
-            {
-                parameters[UserFields.Id].Value = entity.Id;
-                parameters[UserFields.UserName].Value = entity.UserName;
-                parameters[UserFields.PasswordHash].Value = entity.PasswordHash.GetDBNullIfNull();
-                parameters[UserFields.SecurityStamp].Value = entity.SecurityStamp.GetDBNullIfNull();
-                parameters[UserFields.Email].Value = entity.Email;
-                parameters[UserFields.EmailConfirmed].Value = entity.EmailConfirmed;
-                parameters[UserFields.PhoneNumber].Value = entity.PhoneNumber.GetDBNullIfNull();
-                parameters[UserFields.PhoneNumberConfirmed].Value = entity.PhoneNumberConfirmed;
-                parameters[UserFields.TwoFactorEnabled].Value = entity.TwoFactorEnabled;
-                parameters[UserFields.LockoutEnabled].Value = entity.LockoutEnabled;
-                parameters[UserFields.LockoutEndDateUtc].Value = entity.LockoutEndDateUtc.GetDBNullIfNull();
-                parameters[UserFields.AccessFailedCount].Value = entity.AccessFailedCount;
-            });
+            DbCommandContext cmdContext = CommandBuilder.GetUpdateCommand(
+                new List<TUser> { item });
 
             StorageContext.AddCommand(cmdContext);
         }
@@ -197,27 +82,8 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveRemovedItem(TUser item)
         {
-            DbCommand command = StorageContext.CreateCommand();
-            command.CommandText = String.Format(
-                @"DELETE FROM {0} WHERE {1} = @{2};",
-                StorageContext[Entities.User].TableName,
-                // Configured field names
-                StorageContext[Entities.User][UserFields.Id],
-                // Parameter names
-                UserFields.Id);
-
-            if (StorageContext.TransactionExists)
-            {
-                command.Transaction = StorageContext.TransactionContext.Transaction;
-            }
-
-            DbCommandContext cmdContext = new DbCommandContext(command,
-                new List<IEntity> { item });
-
-            cmdContext.SetParametersForEach<TUser>((parameters, entity) =>
-            {
-                parameters[UserFields.Id].Value = entity.Id;
-            });
+            DbCommandContext cmdContext = CommandBuilder.GetDeleteCommand(
+                new List<TUser> { item });
 
             StorageContext.AddCommand(cmdContext);
         }
@@ -229,17 +95,19 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the user if found; otherwise, returns null.</returns>
         public TUser FindById(TKey id)
         {
+            PropertyConfiguration idPropCfg = Configuration.Property(p => p.Id);
             DbCommand command = StorageContext.CreateCommand();
+
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{2};",
-                StorageContext[Entities.User].TableName,
+                QueryBuilder.GetQuotedIdentifier(Configuration.TableName),
                 // Configured field names
-                StorageContext[Entities.User][UserFields.Id],
+                QueryBuilder.GetQuotedIdentifier(idPropCfg.ColumnName),
                 // Parameter names
-                UserFields.Id);
+                idPropCfg.PropertyName);
 
             DbCommandContext cmdContext = new DbCommandContext(command);
-            cmdContext.Parameters[UserFields.Id].Value = id;
+            cmdContext.Parameters[idPropCfg.PropertyName].Value = id;
 
             DbDataReader reader = null;
             TUser user = default(TUser);
@@ -249,36 +117,7 @@ namespace Mark.AspNet.Identity.MySql
             try
             {
                 reader = cmdContext.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    user = new TUser();
-
-                    user.Id = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.User][UserFields.Id]);
-                    user.UserName = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.UserName]);
-                    user.PasswordHash = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.PasswordHash]);
-                    user.SecurityStamp = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.SecurityStamp]);
-                    user.Email = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.Email]);
-                    user.EmailConfirmed = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.EmailConfirmed]);
-                    user.PhoneNumber = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.PhoneNumber]);
-                    user.PhoneNumberConfirmed = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.PhoneNumberConfirmed]);
-                    user.TwoFactorEnabled = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.TwoFactorEnabled]);
-                    user.LockoutEnabled = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.LockoutEnabled]);
-                    user.LockoutEndDateUtc = reader.GetSafeDateTime(
-                        StorageContext[Entities.User][UserFields.LockoutEndDateUtc]);
-                    user.AccessFailedCount = reader.GetSafeInt32(
-                        StorageContext[Entities.User][UserFields.AccessFailedCount]);
-                }
+                user = EntityBuilder.Build(reader);
             }
             catch (Exception)
             {
@@ -305,17 +144,19 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the user if found; otherwise, returns null.</returns>
         public TUser FindByUserName(string userName)
         {
+            PropertyConfiguration userNamePropCfg = Configuration.Property(p => p.UserName);
             DbCommand command = StorageContext.CreateCommand();
+
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE LOWER({1}) = LOWER(@{2});",
-                StorageContext[Entities.User].TableName,
+                QueryBuilder.GetQuotedIdentifier(Configuration.TableName),
                 // Configured field names
-                StorageContext[Entities.User][UserFields.UserName],
+                QueryBuilder.GetQuotedIdentifier(userNamePropCfg.ColumnName),
                 // Parameter names
-                UserFields.UserName);
+                userNamePropCfg.PropertyName);
 
             DbCommandContext cmdContext = new DbCommandContext(command);
-            cmdContext.Parameters[UserFields.UserName].Value = userName;
+            cmdContext.Parameters[userNamePropCfg.PropertyName].Value = userName;
 
             DbDataReader reader = null;
             TUser user = default(TUser);
@@ -325,36 +166,7 @@ namespace Mark.AspNet.Identity.MySql
             try
             {
                 reader = cmdContext.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    user = new TUser();
-
-                    user.Id = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.User][UserFields.Id]);
-                    user.UserName = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.UserName]);
-                    user.PasswordHash = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.PasswordHash]);
-                    user.SecurityStamp = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.SecurityStamp]);
-                    user.Email = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.Email]);
-                    user.EmailConfirmed = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.EmailConfirmed]);
-                    user.PhoneNumber = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.PhoneNumber]);
-                    user.PhoneNumberConfirmed = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.PhoneNumberConfirmed]);
-                    user.TwoFactorEnabled = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.TwoFactorEnabled]);
-                    user.LockoutEnabled = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.LockoutEnabled]);
-                    user.LockoutEndDateUtc = reader.GetSafeDateTime(
-                        StorageContext[Entities.User][UserFields.LockoutEndDateUtc]);
-                    user.AccessFailedCount = reader.GetSafeInt32(
-                        StorageContext[Entities.User][UserFields.AccessFailedCount]);
-                }
+                user = EntityBuilder.Build(reader);
             }
             catch (Exception)
             {
@@ -381,17 +193,19 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns the user if found; otherwise, returns null.</returns>
         public TUser FindByEmail(string email)
         {
+            PropertyConfiguration emailPropCfg = Configuration.Property(p => p.Email);
             DbCommand command = StorageContext.CreateCommand();
+
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE LOWER({1}) = LOWER(@{2});",
-                StorageContext[Entities.User].TableName,
+                QueryBuilder.GetQuotedIdentifier(Configuration.TableName),
                 // Configured field names
-                StorageContext[Entities.User][UserFields.Email],
+                QueryBuilder.GetQuotedIdentifier(emailPropCfg.ColumnName),
                 // Parameter names
-                UserFields.Email);
+                emailPropCfg.PropertyName);
 
             DbCommandContext cmdContext = new DbCommandContext(command);
-            cmdContext.Parameters[UserFields.Email].Value = email;
+            cmdContext.Parameters[emailPropCfg.PropertyName].Value = email;
 
             DbDataReader reader = null;
             TUser user = default(TUser);
@@ -401,36 +215,7 @@ namespace Mark.AspNet.Identity.MySql
             try
             {
                 reader = cmdContext.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    user = new TUser();
-
-                    user.Id = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.User][UserFields.Id]);
-                    user.UserName = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.UserName]);
-                    user.PasswordHash = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.PasswordHash]);
-                    user.SecurityStamp = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.SecurityStamp]);
-                    user.Email = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.Email]);
-                    user.EmailConfirmed = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.EmailConfirmed]);
-                    user.PhoneNumber = reader.GetSafeString(
-                        StorageContext[Entities.User][UserFields.PhoneNumber]);
-                    user.PhoneNumberConfirmed = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.PhoneNumberConfirmed]);
-                    user.TwoFactorEnabled = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.TwoFactorEnabled]);
-                    user.LockoutEnabled = reader.GetSafeBoolean(
-                        StorageContext[Entities.User][UserFields.LockoutEnabled]);
-                    user.LockoutEndDateUtc = reader.GetSafeDateTime(
-                        StorageContext[Entities.User][UserFields.LockoutEndDateUtc]);
-                    user.AccessFailedCount = reader.GetSafeInt32(
-                        StorageContext[Entities.User][UserFields.AccessFailedCount]);
-                }
+                user = EntityBuilder.Build(reader);
             }
             catch (Exception)
             {

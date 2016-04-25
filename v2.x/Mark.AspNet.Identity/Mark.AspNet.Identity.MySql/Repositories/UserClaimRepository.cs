@@ -25,6 +25,7 @@ using Mark.Data;
 using Mark.Data.Common;
 using System.Data.Common;
 using Mark.AspNet.Identity.ModelConfiguration;
+using Mark.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.MySql
 {
@@ -34,7 +35,7 @@ namespace Mark.AspNet.Identity.MySql
     /// <typeparam name="TUserClaim">User claim entity type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
     internal class UserClaimRepository<TUserClaim, TKey>
-        : DbRepository<TUserClaim>
+        : MySqlRepository<TUserClaim>
         where TUserClaim : IdentityUserClaim<TKey>, new()
         where TKey : struct, IEquatable<TKey>
     {
@@ -52,33 +53,8 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveAddedItem(TUserClaim item)
         {
-            DbCommand command = StorageContext.CreateCommand();
-            command.CommandText = String.Format(
-                @"INSERT INTO {0} ({1}, {2}, {3}) VALUES (@{4}, @{5}, @{6});",
-                StorageContext[Entities.UserClaim].TableName,
-                // Configured field names
-                StorageContext[Entities.UserClaim][UserClaimFields.ClaimType],
-                StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue],
-                StorageContext[Entities.UserClaim][UserClaimFields.UserId],
-                // Parameter names
-                UserClaimFields.ClaimType,
-                UserClaimFields.ClaimValue,
-                UserClaimFields.UserId);
-
-            if (StorageContext.TransactionExists)
-            {
-                command.Transaction = StorageContext.TransactionContext.Transaction;
-            }
-
-            DbCommandContext cmdContext = new DbCommandContext(command,
-                new List<IEntity> { item });
-
-            cmdContext.SetParametersForEach<TUserClaim>((parameters, entity) =>
-            {
-                parameters[UserClaimFields.ClaimType].Value = entity.ClaimType;
-                parameters[UserClaimFields.ClaimValue].Value = entity.ClaimValue;
-                parameters[UserClaimFields.UserId].Value = entity.UserId;
-            });
+            DbCommandContext cmdContext = CommandBuilder.GetInsertCommand(
+                new List<TUserClaim> { item });
 
             StorageContext.AddCommand(cmdContext);
         }
@@ -98,33 +74,8 @@ namespace Mark.AspNet.Identity.MySql
         /// <param name="item">Entity item.</param>
         protected override void SaveRemovedItem(TUserClaim item)
         {
-            DbCommand command = StorageContext.CreateCommand();
-            command.CommandText = String.Format(
-                @"DELETE FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
-                StorageContext[Entities.UserClaim].TableName,
-                // Configured field names
-                StorageContext[Entities.UserClaim][UserClaimFields.ClaimType],
-                StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue],
-                StorageContext[Entities.UserClaim][UserClaimFields.UserId],
-                // Parameter names
-                UserClaimFields.ClaimType,
-                UserClaimFields.ClaimValue,
-                UserClaimFields.UserId);
-
-            if (StorageContext.TransactionExists)
-            {
-                command.Transaction = StorageContext.TransactionContext.Transaction;
-            }
-
-            DbCommandContext cmdContext = new DbCommandContext(command,
-                new List<IEntity> { item });
-
-            cmdContext.SetParametersForEach<TUserClaim>((parameters, entity) =>
-            {
-                parameters[UserClaimFields.ClaimType].Value = entity.ClaimType;
-                parameters[UserClaimFields.ClaimValue].Value = entity.ClaimValue;
-                parameters[UserClaimFields.UserId].Value = entity.UserId;
-            });
+            DbCommandContext cmdContext = CommandBuilder.GetDeleteCommand(
+                new List<TUserClaim> { item });
 
             StorageContext.AddCommand(cmdContext);
         }
@@ -136,42 +87,29 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns a list of user claims if found; otherwise, returns empty list.</returns>
         public ICollection<TUserClaim> FindAllByUserId(TKey userId)
         {
+            PropertyConfiguration userIdPropCfg = Configuration.Property(p => p.UserId);
             DbCommand command = StorageContext.CreateCommand();
-            command.CommandText = String.Format(
+            
+			command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{2};",
-                StorageContext[Entities.UserClaim].TableName,
+                QueryBuilder.GetQuotedIdentifier(Configuration.TableName),
                 // Configured field names
-                StorageContext[Entities.UserClaim][UserClaimFields.UserId],
+                QueryBuilder.GetQuotedIdentifier(userIdPropCfg.ColumnName),
                 // Parameter names
-                UserClaimFields.UserId);
+                userIdPropCfg.PropertyName);
 
             DbCommandContext cmdContext = new DbCommandContext(command);
-            cmdContext.Parameters[UserClaimFields.UserId].Value = userId;
+            cmdContext.Parameters[userIdPropCfg.PropertyName].Value = userId;
 
             DbDataReader reader = null;
-            List<TUserClaim> list = new List<TUserClaim>();
-            TUserClaim userClaim = default(TUserClaim);
+            ICollection<TUserClaim> list = null;
 
             StorageContext.Open();
 
             try
             {
                 reader = cmdContext.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    userClaim = new TUserClaim();
-                    userClaim.Id = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.UserClaim][UserClaimFields.Id]);
-                    userClaim.ClaimType = reader.GetSafeString(
-                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimType]);
-                    userClaim.ClaimValue = reader.GetSafeString(
-                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue]);
-                    userClaim.UserId = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.UserClaim][UserClaimFields.UserId]);
-
-                    list.Add(userClaim);
-                }
+                list = EntityBuilder.BuildAll(reader);
             }
             catch (Exception)
             {
@@ -199,48 +137,37 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns a list of user claims if found; otherwise, returns empty list.</returns>
         public ICollection<TUserClaim> FindAllByUserId(TKey userId, Claim claim)
         {
+            PropertyConfiguration userIdPropCfg = Configuration.Property(p => p.UserId);
+            PropertyConfiguration claimTypePropCfg = Configuration.Property(p => p.ClaimType);
+            PropertyConfiguration claimValuePropCfg = Configuration.Property(p => p.ClaimValue);
             DbCommand command = StorageContext.CreateCommand();
+
             command.CommandText = String.Format(
                 @"SELECT * FROM {0} WHERE {1} = @{4} AND {2} = @{5} AND {3} = @{6};",
-                StorageContext[Entities.UserClaim].TableName,
+                QueryBuilder.GetQuotedIdentifier(Configuration.TableName),
                 // Configured field names
-                StorageContext[Entities.UserClaim][UserClaimFields.UserId],
-                StorageContext[Entities.UserClaim][UserClaimFields.ClaimType],
-                StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue],
+                QueryBuilder.GetQuotedIdentifier(userIdPropCfg.ColumnName),
+                QueryBuilder.GetQuotedIdentifier(claimTypePropCfg.ColumnName),
+                QueryBuilder.GetQuotedIdentifier(claimValuePropCfg.ColumnName),
                 // Parameter names
-                UserClaimFields.UserId,
-                UserClaimFields.ClaimType,
-                UserClaimFields.ClaimValue);
+                userIdPropCfg.PropertyName,
+                claimTypePropCfg.PropertyName,
+                claimValuePropCfg.PropertyName);
 
             DbCommandContext cmdContext = new DbCommandContext(command);
-            cmdContext.Parameters[UserClaimFields.UserId].Value = userId;
-            cmdContext.Parameters[UserClaimFields.ClaimType].Value = claim.Type;
-            cmdContext.Parameters[UserClaimFields.ClaimValue].Value = claim.Value;
+            cmdContext.Parameters[userIdPropCfg.PropertyName].Value = userId;
+            cmdContext.Parameters[claimTypePropCfg.PropertyName].Value = claim.Type;
+            cmdContext.Parameters[claimValuePropCfg.PropertyName].Value = claim.Value;
 
             DbDataReader reader = null;
-            List<TUserClaim> list = new List<TUserClaim>();
-            TUserClaim userClaim = default(TUserClaim);
+            ICollection<TUserClaim> list = null;
 
             StorageContext.Open();
 
             try
             {
                 reader = cmdContext.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    userClaim = new TUserClaim();
-                    userClaim.Id = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.UserClaim][UserClaimFields.Id]);
-                    userClaim.ClaimType = reader.GetSafeString(
-                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimType]);
-                    userClaim.ClaimValue = reader.GetSafeString(
-                        StorageContext[Entities.UserClaim][UserClaimFields.ClaimValue]);
-                    userClaim.UserId = (TKey)reader.GetSafeValue(
-                        StorageContext[Entities.UserClaim][UserClaimFields.UserId]);
-
-                    list.Add(userClaim);
-                }
+                list = EntityBuilder.BuildAll(reader);
             }
             catch (Exception)
             {
