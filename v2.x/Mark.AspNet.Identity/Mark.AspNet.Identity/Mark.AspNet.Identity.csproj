@@ -46,12 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AspNet.Identity\Entities\IdentityRole.cs" />
-    <Compile Include="AspNet.Identity\Entities\IdentityUser.cs" />
-    <Compile Include="AspNet.Identity\Entities\IdentityUserClaim.cs" />
-    <Compile Include="AspNet.Identity\Entities\IdentityUserLogin.cs" />
-    <Compile Include="AspNet.Identity\Entities\IdentityUserRole.cs" />
-    <Compile Include="AspNet.Identity\Misc\IdentityDbStorageContext.cs" />
+    <Compile Include="AspNet.Identity\IdentityDbStorageContext.cs" />
+    <Compile Include="AspNet.Identity\IdentityRole.cs" />
+    <Compile Include="AspNet.Identity\IdentityUser.cs" />
+    <Compile Include="AspNet.Identity\IdentityUserClaim.cs" />
+    <Compile Include="AspNet.Identity\IdentityUserLogin.cs" />
+    <Compile Include="AspNet.Identity\IdentityUserRole.cs" />
     <Compile Include="AspNet.Identity\ModelConfiguration\Entities.cs" />
     <Compile Include="AspNet.Identity\ModelConfiguration\RoleConfiguration.cs" />
     <Compile Include="AspNet.Identity\ModelConfiguration\RoleFields.cs" />
@@ -63,8 +63,8 @@
     <Compile Include="AspNet.Identity\ModelConfiguration\UserLoginFields.cs" />
     <Compile Include="AspNet.Identity\ModelConfiguration\UserRoleConfiguration.cs" />
     <Compile Include="AspNet.Identity\ModelConfiguration\UserRoleFields.cs" />
-    <Compile Include="AspNet.Identity\Stores\RoleStoreBase.cs" />
-    <Compile Include="AspNet.Identity\Stores\UserStoreBase.cs" />
+    <Compile Include="AspNet.Identity\RoleStoreBase.cs" />
+    <Compile Include="AspNet.Identity\UserStoreBase.cs" />
     <Compile Include="DotNet\Data\Common\DbCommandBuilder.cs" />
     <Compile Include="DotNet\Data\Common\DbCommandContext.cs" />
     <Compile Include="DotNet\Data\Common\DbEntityBuilder.cs" />
@@ -90,10 +90,10 @@
     <Compile Include="DotNet\Data\ModelConfiguration\EntityConfigurationCollection.cs" />
     <Compile Include="DotNet\Data\ModelConfiguration\IEntityConfiguration.cs" />
     <Compile Include="DotNet\Data\ModelConfiguration\PropertyConfiguration.cs" />
-    <Compile Include="DotNet\Misc\Disposable.cs" />
-    <Compile Include="DotNet\Misc\UtilExtensions.cs" />
+    <Compile Include="DotNet\Disposable.cs" />
     <Compile Include="DotNet\Threading\Tasks\CultureAwaiter.cs" />
     <Compile Include="DotNet\Threading\Tasks\TaskExtensions.cs" />
+    <Compile Include="DotNet\UtilExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
