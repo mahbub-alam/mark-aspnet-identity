@@ -7,7 +7,7 @@
     <ProjectGuid>{D77BB5AD-50C4-42FC-B7DA-9A77274CCB52}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mark.AspNet.Identity</RootNamespace>
+    <RootNamespace>Mark</RootNamespace>
     <AssemblyName>Mark.AspNet.Identity</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -46,50 +46,55 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Common\DbCommandBuilder.cs" />
-    <Compile Include="Data\Common\DbCommandContext.cs" />
-    <Compile Include="Data\Common\DbEntityBuilder.cs" />
-    <Compile Include="Data\Common\DbParameterCollection.cs" />
-    <Compile Include="Data\Common\DbRepository.cs" />
-    <Compile Include="Data\Common\DbStorageContext.cs" />
-    <Compile Include="Data\Common\DbTransactionContext.cs" />
-    <Compile Include="Data\ModelConfiguration\EntityConfiguration.cs" />
-    <Compile Include="Data\ModelConfiguration\IEntityConfiguration.cs" />
-    <Compile Include="Misc\IdentityDbStorageContext.cs" />
-    <Compile Include="Data\ModelConfiguration\EntityConfigurationCollection.cs" />
-    <Compile Include="Data\Common\Repository.cs" />
-    <Compile Include="Data\Common\UnitOfWork.cs" />
-    <Compile Include="Data\DataReaderExtensions.cs" />
-    <Compile Include="Data\IDbCommandContext.cs" />
-    <Compile Include="Data\IDbParameterCollection.cs" />
-    <Compile Include="Data\IDbStorageContext.cs" />
-    <Compile Include="Data\IDbTransactionContext.cs" />
-    <Compile Include="Data\IEntity.cs" />
-    <Compile Include="Data\IRepository.cs" />
-    <Compile Include="Data\IStorageContext.cs" />
-    <Compile Include="Data\ITransactionContext.cs" />
-    <Compile Include="Data\IUnitOfWork.cs" />
-    <Compile Include="Data\IUnitOfWorkHandler.cs" />
-    <Compile Include="Misc\UtilExtensions.cs" />
-    <Compile Include="ModelConfiguration\Entities.cs" />
-    <Compile Include="Data\ModelConfiguration\PropertyConfiguration.cs" />
-    <Compile Include="ModelConfiguration\RoleConfiguration.cs" />
-    <Compile Include="Data\Common\DbQueryBuilder.cs" />
-    <Compile Include="ModelConfiguration\UserClaimConfiguration.cs" />
-    <Compile Include="ModelConfiguration\UserConfiguration.cs" />
-    <Compile Include="ModelConfiguration\UserLoginConfiguration.cs" />
-    <Compile Include="ModelConfiguration\UserRoleConfiguration.cs" />
-    <Compile Include="Misc\CultureAwaiter.cs" />
-    <Compile Include="Misc\Disposable.cs" />
-    <Compile Include="Stores\RoleStoreBase.cs" />
-    <Compile Include="Entities\IdentityRole.cs" />
-    <Compile Include="Entities\IdentityUser.cs" />
-    <Compile Include="Entities\IdentityUserClaim.cs" />
-    <Compile Include="Entities\IdentityUserLogin.cs" />
-    <Compile Include="Entities\IdentityUserRole.cs" />
+    <Compile Include="AspNet.Identity\Entities\IdentityRole.cs" />
+    <Compile Include="AspNet.Identity\Entities\IdentityUser.cs" />
+    <Compile Include="AspNet.Identity\Entities\IdentityUserClaim.cs" />
+    <Compile Include="AspNet.Identity\Entities\IdentityUserLogin.cs" />
+    <Compile Include="AspNet.Identity\Entities\IdentityUserRole.cs" />
+    <Compile Include="AspNet.Identity\Misc\IdentityDbStorageContext.cs" />
+    <Compile Include="AspNet.Identity\ModelConfiguration\Entities.cs" />
+    <Compile Include="AspNet.Identity\ModelConfiguration\RoleConfiguration.cs" />
+    <Compile Include="AspNet.Identity\ModelConfiguration\RoleFields.cs" />
+    <Compile Include="AspNet.Identity\ModelConfiguration\UserClaimConfiguration.cs" />
+    <Compile Include="AspNet.Identity\ModelConfiguration\UserClaimFields.cs" />
+    <Compile Include="AspNet.Identity\ModelConfiguration\UserConfiguration.cs" />
+    <Compile Include="AspNet.Identity\ModelConfiguration\UserFields.cs" />
+    <Compile Include="AspNet.Identity\ModelConfiguration\UserLoginConfiguration.cs" />
+    <Compile Include="AspNet.Identity\ModelConfiguration\UserLoginFields.cs" />
+    <Compile Include="AspNet.Identity\ModelConfiguration\UserRoleConfiguration.cs" />
+    <Compile Include="AspNet.Identity\ModelConfiguration\UserRoleFields.cs" />
+    <Compile Include="AspNet.Identity\Stores\RoleStoreBase.cs" />
+    <Compile Include="AspNet.Identity\Stores\UserStoreBase.cs" />
+    <Compile Include="DotNet\Data\Common\DbCommandBuilder.cs" />
+    <Compile Include="DotNet\Data\Common\DbCommandContext.cs" />
+    <Compile Include="DotNet\Data\Common\DbEntityBuilder.cs" />
+    <Compile Include="DotNet\Data\Common\DbParameterCollection.cs" />
+    <Compile Include="DotNet\Data\Common\DbQueryBuilder.cs" />
+    <Compile Include="DotNet\Data\Common\DbRepository.cs" />
+    <Compile Include="DotNet\Data\Common\DbStorageContext.cs" />
+    <Compile Include="DotNet\Data\Common\DbTransactionContext.cs" />
+    <Compile Include="DotNet\Data\Common\Repository.cs" />
+    <Compile Include="DotNet\Data\Common\UnitOfWork.cs" />
+    <Compile Include="DotNet\Data\DataReaderExtensions.cs" />
+    <Compile Include="DotNet\Data\IDbCommandContext.cs" />
+    <Compile Include="DotNet\Data\IDbParameterCollection.cs" />
+    <Compile Include="DotNet\Data\IDbStorageContext.cs" />
+    <Compile Include="DotNet\Data\IDbTransactionContext.cs" />
+    <Compile Include="DotNet\Data\IEntity.cs" />
+    <Compile Include="DotNet\Data\IRepository.cs" />
+    <Compile Include="DotNet\Data\IStorageContext.cs" />
+    <Compile Include="DotNet\Data\ITransactionContext.cs" />
+    <Compile Include="DotNet\Data\IUnitOfWork.cs" />
+    <Compile Include="DotNet\Data\IUnitOfWorkHandler.cs" />
+    <Compile Include="DotNet\Data\ModelConfiguration\EntityConfiguration.cs" />
+    <Compile Include="DotNet\Data\ModelConfiguration\EntityConfigurationCollection.cs" />
+    <Compile Include="DotNet\Data\ModelConfiguration\IEntityConfiguration.cs" />
+    <Compile Include="DotNet\Data\ModelConfiguration\PropertyConfiguration.cs" />
+    <Compile Include="DotNet\Misc\Disposable.cs" />
+    <Compile Include="DotNet\Misc\UtilExtensions.cs" />
+    <Compile Include="DotNet\Threading\Tasks\CultureAwaiter.cs" />
+    <Compile Include="DotNet\Threading\Tasks\TaskExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Stores\UserStoreBase.cs" />
-    <Compile Include="Misc\TaskExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

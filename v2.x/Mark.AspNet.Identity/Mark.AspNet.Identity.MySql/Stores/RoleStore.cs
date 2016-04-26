@@ -20,9 +20,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Mark.Core;
-using Mark.Data;
-using Mark.Threading.Tasks;
+using Mark.DotNet;
+using Mark.DotNet.Data;
+using Mark.DotNet.Threading.Tasks;
 
 namespace Mark.AspNet.Identity.MySql
 {

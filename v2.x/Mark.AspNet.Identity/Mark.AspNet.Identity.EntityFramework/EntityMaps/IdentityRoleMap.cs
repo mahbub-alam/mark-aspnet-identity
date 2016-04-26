@@ -22,7 +22,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Mark.Data.ModelConfiguration;
+using Mark.DotNet.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {

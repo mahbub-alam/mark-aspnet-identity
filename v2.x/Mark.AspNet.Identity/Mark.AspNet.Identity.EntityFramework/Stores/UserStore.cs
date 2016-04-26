@@ -25,8 +25,8 @@ using Microsoft.AspNet.Identity;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq.Expressions;
-using Mark.Threading.Tasks;
-using Mark.Core;
+using Mark.DotNet.Threading.Tasks;
+using Mark.DotNet;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {

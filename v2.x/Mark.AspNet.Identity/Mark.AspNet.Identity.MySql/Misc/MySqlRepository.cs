@@ -20,8 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Mark.Data;
-using Mark.Data.Common;
+using Mark.DotNet.Data;
+using Mark.DotNet.Data.Common;
 using MySql.Data.MySqlClient;
 
 namespace Mark.AspNet.Identity.MySql

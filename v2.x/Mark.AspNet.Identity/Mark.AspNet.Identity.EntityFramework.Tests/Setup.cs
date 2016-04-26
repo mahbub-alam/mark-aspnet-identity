@@ -26,7 +26,7 @@ using System.Data.SqlClient;
 using System.Reflection;
 using System.IO;
 using System.Configuration;
-using Mark.Data.Common;
+using Mark.DotNet.Data.Common;
 
 namespace Mark.AspNet.Identity.EntityFramework.Tests
 {

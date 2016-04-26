@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using NUnit.Framework;
 using Microsoft.AspNet.Identity;
-using Mark.Data.Common;
+using Mark.DotNet.Data.Common;
 
 namespace Mark.AspNet.Identity.SqlServer.Tests
 {

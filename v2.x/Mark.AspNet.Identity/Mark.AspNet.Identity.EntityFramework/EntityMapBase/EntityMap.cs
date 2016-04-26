@@ -21,8 +21,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity.ModelConfiguration;
-using Mark.Data.ModelConfiguration;
-using Mark.Data;
+using Mark.DotNet.Data.ModelConfiguration;
+using Mark.DotNet.Data;
 
 namespace Mark.AspNet.Identity.EntityFramework
 {

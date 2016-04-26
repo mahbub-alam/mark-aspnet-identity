@@ -21,9 +21,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
-using Mark.Core;
-using Mark.Data;
-using Mark.Threading.Tasks;
+using Mark.DotNet;
+using Mark.DotNet.Data;
+using Mark.DotNet.Threading.Tasks;
 using System.Security.Claims;
 
 namespace Mark.AspNet.Identity.SqlServer

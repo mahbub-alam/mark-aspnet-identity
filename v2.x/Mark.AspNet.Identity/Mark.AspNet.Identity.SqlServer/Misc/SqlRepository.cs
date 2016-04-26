@@ -20,9 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Mark.Data;
-using Mark.Data.Common;
-using Mark.AspNet.Identity;
+using Mark.DotNet.Data;
+using Mark.DotNet.Data.Common;
 using System.Data.SqlClient;
 
 namespace Mark.AspNet.Identity.SqlServer

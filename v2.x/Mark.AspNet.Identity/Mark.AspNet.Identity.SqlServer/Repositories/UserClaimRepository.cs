@@ -21,11 +21,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Claims;
-using Mark.Data;
-using Mark.Data.Common;
 using System.Data.Common;
-using Mark.AspNet.Identity.ModelConfiguration;
-using Mark.Data.ModelConfiguration;
+using Mark.DotNet.Data;
+using Mark.DotNet.Data.Common;
+using Mark.DotNet.Data.ModelConfiguration;
 
 namespace Mark.AspNet.Identity.SqlServer
 {

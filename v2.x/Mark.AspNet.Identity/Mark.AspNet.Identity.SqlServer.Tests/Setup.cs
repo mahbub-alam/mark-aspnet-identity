@@ -25,7 +25,7 @@ using System.Data.Common;
 using System.Configuration;
 using System.Reflection;
 using System.IO;
-using Mark.Data.Common;
+using Mark.DotNet.Data.Common;
 
 namespace Mark.AspNet.Identity.SqlServer.Tests
 {
