@@ -26,7 +26,7 @@ namespace Mark.DotNet.Data.Common
     /// <summary>
     /// Represents unit of work.
     /// </summary>
-    public class UnitOfWork : Disposable, IUnitOfWork
+    public sealed class UnitOfWork : Disposable, IUnitOfWork
     {
         private IStorageContext _storageContext;
         private List<Work> _workList;
@@ -39,7 +39,7 @@ namespace Mark.DotNet.Data.Common
         {
             if (storageContext == null)
             {
-                throw new ArgumentNullException("Persistent context is null");
+                throw new ArgumentNullException("Storage context is null");
             }
 
             _storageContext = storageContext;
@@ -54,6 +54,8 @@ namespace Mark.DotNet.Data.Common
         {
             get
             {
+                ThrowIfDisposed();
+
                 return _storageContext;
             }
         }

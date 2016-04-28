@@ -54,11 +54,19 @@ namespace Mark.DotNet.Data.Common
         }
 
         /// <summary>
+        /// Get entity configuration.
+        /// </summary>
+        protected EntityConfiguration<TEntity> Configuration
+        {
+            get { return _configuration; }
+        }
+
+        /// <summary>
         /// Build a list of entities.
         /// </summary>
         /// <param name="reader">Data reader from database command execute reader.</param>
         /// <returns>Returns a list of entities if found; otherwise, returns empty list.</returns>
-        public ICollection<TEntity> BuildAll(DbDataReader reader)
+        public virtual ICollection<TEntity> BuildAll(DbDataReader reader)
         {
             ICollection<TEntity> entityList = new List<TEntity>();
             TEntity entity = default(TEntity);
@@ -83,7 +91,7 @@ namespace Mark.DotNet.Data.Common
         /// </summary>
         /// <param name="reader">Data reader from database command execute reader.</param>
         /// <returns>Return an entity if found; otherwise, returns null.</returns>
-        public TEntity Build(DbDataReader reader)
+        public virtual TEntity Build(DbDataReader reader)
         {
             TEntity entity = default(TEntity);
 

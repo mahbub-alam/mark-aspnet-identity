@@ -27,7 +27,7 @@ namespace Mark.DotNet.Data.Common
     /// <summary>
     /// Represents command context for ADO.NET style storage context.
     /// </summary>
-    public class DbCommandContext : Disposable, IDbCommandContext
+    public sealed class DbCommandContext : Disposable, IDbCommandContext
     {
         private DbCommand _command;
         private DbParameterCollection _parameters;
@@ -76,7 +76,8 @@ namespace Mark.DotNet.Data.Common
         /// Set command parameters for each entity in the given entity collection.
         /// </summary>
         /// <param name="setAction">Action that will execute for each entity in the collection.</param>
-        public void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction) where TEntity : IEntity
+        public void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction) 
+            where TEntity : IEntity
         {
             ThrowIfDisposed();
 
@@ -91,7 +92,11 @@ namespace Mark.DotNet.Data.Common
         /// </summary>
         public DbCommand Command
         {
-            get { return _command; }
+            get
+            {
+                ThrowIfDisposed();
+                return _command;
+            }
         }
 
         /// <summary>
@@ -99,7 +104,11 @@ namespace Mark.DotNet.Data.Common
         /// </summary>
         public IDbParameterCollection Parameters
         {
-            get { return _parameters; }
+            get
+            {
+                ThrowIfDisposed();
+                return _parameters;
+            }
         }
 
         /// <summary>

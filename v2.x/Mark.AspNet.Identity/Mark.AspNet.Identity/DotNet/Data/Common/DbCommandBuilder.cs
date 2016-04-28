@@ -48,11 +48,27 @@ namespace Mark.DotNet.Data.Common
         }
 
         /// <summary>
+        /// Get entity configuration.
+        /// </summary>
+        protected EntityConfiguration<TEntity> Configuration
+        {
+            get { return _configuration; }
+        }
+
+        /// <summary>
         /// Get the underlying query builder.
         /// </summary>
-        public DbQueryBuilder<TEntity> QueryBuilder
+        protected DbQueryBuilder<TEntity> QueryBuilder
         {
             get { return _queryBuilder; }
+        }
+
+        /// <summary>
+        /// Get the underlying storage context.
+        /// </summary>
+        protected IDbStorageContext StorageContext
+        {
+            get { return _storageContext; }
         }
 
         private object GetPropertyValue(TEntity entity, PropertyConfiguration pc)
@@ -86,7 +102,7 @@ namespace Mark.DotNet.Data.Common
         /// </summary>
         /// <param name="entities">A collection of entities.</param>
         /// <returns>Returns command.</returns>
-        public DbCommandContext GetInsertCommand(ICollection<TEntity> entities)
+        public virtual DbCommandContext GetInsertCommand(ICollection<TEntity> entities)
         {
             DbCommand command = _storageContext.CreateCommand();
             command.CommandText = _queryBuilder.GetInsertSql();
@@ -119,7 +135,7 @@ namespace Mark.DotNet.Data.Common
         /// </summary>
         /// <param name="entities">A collection of entities.</param>
         /// <returns>Returns command.</returns>
-        public DbCommandContext GetUpdateCommand(ICollection<TEntity> entities)
+        public virtual DbCommandContext GetUpdateCommand(ICollection<TEntity> entities)
         {
             DbCommand command = _storageContext.CreateCommand();
             command.CommandText = _queryBuilder.GetUpdateSql();
@@ -147,7 +163,7 @@ namespace Mark.DotNet.Data.Common
         /// </summary>
         /// <param name="entities">A collection of entities.</param>
         /// <returns>Returns command.</returns>
-        public DbCommandContext GetDeleteCommand(ICollection<TEntity> entities)
+        public virtual DbCommandContext GetDeleteCommand(ICollection<TEntity> entities)
         {
             DbCommand command = _storageContext.CreateCommand();
             command.CommandText = _queryBuilder.GetDeleteSql();

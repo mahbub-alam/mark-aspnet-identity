@@ -48,6 +48,14 @@ namespace Mark.DotNet.Data.Common
         }
 
         /// <summary>
+        /// Get entity configuration.
+        /// </summary>
+        protected EntityConfiguration<TEntity> Configuration
+        {
+            get { return _configuration; }
+        }
+
+        /// <summary>
         /// Get the quoted identifier of the given identifier.
         /// </summary>
         /// <param name="identifier">Identifier to be quoted.</param>
@@ -58,7 +66,7 @@ namespace Mark.DotNet.Data.Common
         /// Get insert SQL query. 
         /// </summary>
         /// <returns>Returns sql query.</returns>
-        public string GetInsertSql()
+        public virtual string GetInsertSql()
         {
             StringBuilder sql = new StringBuilder("INSERT INTO ");
             StringBuilder colNames = new StringBuilder("(");
@@ -100,7 +108,7 @@ namespace Mark.DotNet.Data.Common
         /// Get update SQL query. 
         /// </summary>
         /// <returns>Returns sql query.</returns>
-        public string GetUpdateSql()
+        public virtual string GetUpdateSql()
         {
             StringBuilder sql = new StringBuilder("UPDATE ");
             StringBuilder setClause = new StringBuilder("SET ");
@@ -155,7 +163,7 @@ namespace Mark.DotNet.Data.Common
         /// Get delete SQL query. 
         /// </summary>
         /// <returns>Returns sql query.</returns>
-        public string GetDeleteSql()
+        public virtual string GetDeleteSql()
         {
             StringBuilder sql = new StringBuilder("DELETE FROM ");
             StringBuilder whereClause = new StringBuilder("WHERE ");

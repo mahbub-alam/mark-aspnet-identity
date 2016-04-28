@@ -26,7 +26,7 @@ namespace Mark.DotNet.Data.ModelConfiguration
     /// <summary>
     /// Represents property configuration for entity configuration.
     /// </summary>
-    public class PropertyConfiguration
+    public sealed class PropertyConfiguration
     {
         private string _propertyName;
         private string _columnName;

@@ -79,6 +79,14 @@ namespace Mark.DotNet.Data.Common
         }
 
         /// <summary>
+        /// Get the underlying database connection.
+        /// </summary>
+        protected DbConnection Connection
+        {
+            get { return _conn; }
+        }
+
+        /// <summary>
         /// Open database connection if not opened yet.
         /// </summary>
         public void Open()
@@ -131,9 +139,7 @@ namespace Mark.DotNet.Data.Common
         {
             ThrowIfDisposed();
 
-            Open();
-
-            IDbTransactionContext transactionContext = new DbTransactionContext(_conn.BeginTransaction());
+            IDbTransactionContext transactionContext = NewTransactionContext();
 
             if (!createPrivate)
             {
@@ -141,6 +147,16 @@ namespace Mark.DotNet.Data.Common
             }
 
             return transactionContext;
+        }
+
+        /// <summary>
+        /// Create a new transaction context.
+        /// </summary>
+        /// <returns>Returns a new transaction context.</returns>
+        protected virtual IDbTransactionContext NewTransactionContext()
+        {
+            Open();
+            return new DbTransactionContext(_conn.BeginTransaction());
         }
 
         /// <summary>
