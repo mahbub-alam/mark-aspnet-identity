@@ -62,10 +62,11 @@ namespace Mark.DotNet.Data.Common
                 throw new NullReferenceException("Entity configuration null");
             }
 
-            _queryBuilder = (TQueryBuilder)Activator.CreateInstance(typeof(TQueryBuilder), 
-                new object[] { _configuration });
-            _cmdBuilder = new DbCommandBuilder<TEntity>(_queryBuilder, _storageContext);
-            _entityBuilder = new DbEntityBuilder<TEntity>(_configuration);
+            DbRepositoryComponentFactory factory = GetComponentFactory();
+
+            _queryBuilder = (TQueryBuilder)factory.CreateQueryBuilder<TEntity, TQueryBuilder>(_storageContext);
+            _cmdBuilder = factory.CreateCommandBuilder<TEntity>(_queryBuilder, _storageContext);
+            _entityBuilder = factory.CreateEntityBuilder<TEntity>(_storageContext);
         }
 
         /// <summary>
@@ -82,6 +83,15 @@ namespace Mark.DotNet.Data.Common
             _queryBuilder = null;
             _cmdBuilder = null;
             _entityBuilder = null;
+        }
+
+        /// <summary>
+        /// Get component factory for the repository.
+        /// </summary>
+        /// <returns>Returns a new instance of the component factory.</returns>
+        protected virtual DbRepositoryComponentFactory GetComponentFactory()
+        {
+            return new DbRepositoryComponentFactoryImpl();
         }
 
         /// <summary>
