@@ -23,6 +23,9 @@ using System.Threading.Tasks;
 
 namespace Mark.DotNet.Data.Common
 {
+    /// <summary>
+    /// Represents factory implementation for building component related to database repository.
+    /// </summary>
     internal class DbRepositoryComponentFactoryImpl : DbRepositoryComponentFactory
     {
         /// <summary>
