@@ -34,13 +34,6 @@ namespace Mark.DotNet.Data
         /// Set command parameters for each entity in the given entity collection.
         /// </summary>
         /// <param name="setAction">Action that will execute for each entity in the collection.</param>
-        void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction)
-            where TEntity : IEntity;
-
-        /// <summary>
-        /// Set command parameters for each entity in the given entity collection.
-        /// </summary>
-        /// <param name="setAction">Action that will execute for each entity in the collection.</param>
         /// <param name="idPropertyConfig">Optional property configuration for 
         /// entity id property (database generated) that will be populated.</param>
         void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction,

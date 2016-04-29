@@ -21,7 +21,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
-using System.Linq.Expressions;
 using System.Reflection;
 using Mark.DotNet.Data.ModelConfiguration;
 
@@ -49,7 +48,7 @@ namespace Mark.DotNet.Data.Common
             {
                 throw new ArgumentNullException("Command parameter null");
             }
-            
+
             _command = command;
             _parameters = new DbParameterCollection(_command);
             _list = null;
@@ -71,7 +70,7 @@ namespace Mark.DotNet.Data.Common
             {
                 throw new ArgumentNullException("List parameter null/empty");
             }
-            
+
             _command = command;
             _parameters = new DbParameterCollection(_command);
             _list = list;
@@ -81,16 +80,6 @@ namespace Mark.DotNet.Data.Common
         {
             value = Convert.ChangeType(value, _idPropInfo.PropertyType);
             _idPropInfo.SetValue(entity, value);
-        }
-
-        /// <summary>
-        /// Set command parameters for each entity in the given entity collection.
-        /// </summary>
-        /// <param name="setAction">Action that will execute for each entity in the collection.</param>
-        public void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction)
-            where TEntity : IEntity
-        {
-            SetParametersForEach<TEntity>(setAction, null);
         }
 
         /// <summary>
@@ -171,8 +160,8 @@ namespace Mark.DotNet.Data.Common
                     {
                         _setForEach(_parameters, entity);
                         idValue = _command.ExecuteScalar();
-                        ++retValue;
                         SetValue(entity, idValue);
+                        ++retValue;
                     }
                 }
                 else
