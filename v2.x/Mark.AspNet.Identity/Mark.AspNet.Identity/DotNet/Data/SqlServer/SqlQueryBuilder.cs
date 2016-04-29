@@ -24,19 +24,19 @@ using Mark.DotNet.Data;
 using Mark.DotNet.Data.Common;
 using Mark.DotNet.Data.ModelConfiguration;
 
-namespace Mark.AspNet.Identity.MySql
+namespace Mark.DotNet.Data.SqlServer
 {
     /// <summary>
-    /// Represents MySQL query builder that generates SQL query from entity configuration.
+    /// Represents MS SQL Server query builder that generates SQL query from entity configuration.
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public class MySqlQueryBuilder<TEntity> : DbQueryBuilder<TEntity> where TEntity : IEntity
+    public class SqlQueryBuilder<TEntity> : DbQueryBuilder<TEntity> where TEntity : IEntity
     {
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
         /// <param name="configuration">Entity configuration.</param>
-        public MySqlQueryBuilder(EntityConfiguration<TEntity> configuration) : base(configuration)
+        public SqlQueryBuilder(EntityConfiguration<TEntity> configuration) : base(configuration)
         {
         }
 
@@ -47,7 +47,16 @@ namespace Mark.AspNet.Identity.MySql
         /// <returns>Returns quoted identifier.</returns>
         public override string GetQuotedIdentifier(string identifier)
         {
-            return String.Format("`{0}`", identifier);
+            return String.Format("[{0}]", identifier);
+        }
+
+        /// <summary>
+        /// Get SQL for retrieving database generated id of the last inserted entity.
+        /// </summary>
+        /// <returns>Returns SQL query.</returns>
+        public override string GetLastInsertedIdSql()
+        {
+            return "SELECT SCOPE_IDENTITY();";
         }
     }
 }

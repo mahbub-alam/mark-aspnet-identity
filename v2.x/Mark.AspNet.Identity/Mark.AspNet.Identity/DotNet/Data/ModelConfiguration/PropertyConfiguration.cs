@@ -33,6 +33,7 @@ namespace Mark.DotNet.Data.ModelConfiguration
         private Type _propertyType;
         private bool _isNullable;
         private bool _isKey;
+        private bool _isIntegerKey;
         private int _keyColumnOrder;
         private object _defaultValue;
 
@@ -65,8 +66,11 @@ namespace Mark.DotNet.Data.ModelConfiguration
         public PropertyConfiguration(string propertyName, Type propertyType, 
             bool isKey, int keyColumnOrder = SingleKeyColumnOrder) : this(propertyName, propertyType)
         {
-            _isKey = isKey;
-            _keyColumnOrder = keyColumnOrder;
+            if (isKey)
+            {
+                _keyColumnOrder = keyColumnOrder;
+                AsKeyInternal(keyColumnOrder);
+            }
         }
 
         private void ParsePropertyType(Type type)
@@ -114,11 +118,20 @@ namespace Mark.DotNet.Data.ModelConfiguration
         /// Set the property as a key.
         /// </summary>
         /// <param name="columnOrder">Zero based column order in a composite key.</param>
-        /// <returns></returns>
+        /// <returns>Returns property configuration.</returns>
         internal PropertyConfiguration AsKeyInternal(int columnOrder = SingleKeyColumnOrder)
         {
             _isKey = true;
             _keyColumnOrder = columnOrder;
+            _isIntegerKey = (_propertyType == typeof(int) ||
+                _propertyType == typeof(uint) ||
+                _propertyType == typeof(long) ||
+                _propertyType == typeof(ulong) ||
+                _propertyType == typeof(short) ||
+                _propertyType == typeof(ushort) ||
+                _propertyType == typeof(sbyte) ||
+                _propertyType == typeof(byte));
+
             return this;
         }
 
@@ -168,6 +181,14 @@ namespace Mark.DotNet.Data.ModelConfiguration
         public bool IsKey
         {
             get { return _isKey; }
+        }
+
+        /// <summary>
+        /// Whether the property is a key with integer type.
+        /// </summary>
+        public bool IsIntegerKey
+        {
+            get { return _isIntegerKey; }
         }
 
         /// <summary>

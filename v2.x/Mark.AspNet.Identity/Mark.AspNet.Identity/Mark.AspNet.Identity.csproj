@@ -92,6 +92,8 @@
     <Compile Include="DotNet\Data\ModelConfiguration\EntityConfigurationCollection.cs" />
     <Compile Include="DotNet\Data\ModelConfiguration\IEntityConfiguration.cs" />
     <Compile Include="DotNet\Data\ModelConfiguration\PropertyConfiguration.cs" />
+    <Compile Include="DotNet\Data\MySql\MySqlQueryBuilder.cs" />
+    <Compile Include="DotNet\Data\SqlServer\SqlQueryBuilder.cs" />
     <Compile Include="DotNet\Misc\Disposable.cs" />
     <Compile Include="DotNet\Misc\UtilExtensions.cs" />
     <Compile Include="DotNet\Threading\Tasks\CultureAwaiter.cs" />

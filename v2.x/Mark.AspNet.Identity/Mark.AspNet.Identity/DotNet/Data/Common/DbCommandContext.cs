@@ -21,6 +21,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
+using System.Linq.Expressions;
+using System.Reflection;
+using Mark.DotNet.Data.ModelConfiguration;
 
 namespace Mark.DotNet.Data.Common
 {
@@ -33,6 +36,8 @@ namespace Mark.DotNet.Data.Common
         private DbParameterCollection _parameters;
         private ICollection<IEntity> _list;
         private Action<IDbParameterCollection, IEntity> _setForEach;
+        private PropertyInfo _idPropInfo = null;
+        private bool _readLastInsertedId = false;
         
         /// <summary>
         /// Initialize a new instance of the class.
@@ -44,7 +49,7 @@ namespace Mark.DotNet.Data.Common
             {
                 throw new ArgumentNullException("Command parameter null");
             }
-
+            
             _command = command;
             _parameters = new DbParameterCollection(_command);
             _list = null;
@@ -66,17 +71,36 @@ namespace Mark.DotNet.Data.Common
             {
                 throw new ArgumentNullException("List parameter null/empty");
             }
-
+            
             _command = command;
             _parameters = new DbParameterCollection(_command);
             _list = list;
+        }
+
+        private void SetValue(IEntity entity, object value)
+        {
+            value = Convert.ChangeType(value, _idPropInfo.PropertyType);
+            _idPropInfo.SetValue(entity, value);
         }
 
         /// <summary>
         /// Set command parameters for each entity in the given entity collection.
         /// </summary>
         /// <param name="setAction">Action that will execute for each entity in the collection.</param>
-        public void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction) 
+        public void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction)
+            where TEntity : IEntity
+        {
+            SetParametersForEach<TEntity>(setAction, null);
+        }
+
+        /// <summary>
+        /// Set command parameters for each entity in the given entity collection.
+        /// </summary>
+        /// <param name="setAction">Action that will execute for each entity in the collection.</param>
+        /// <param name="idPropertyConfig">Optional property configuration for 
+        /// entity id property (database generated) that will be populated.</param>
+        public void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction,
+            PropertyConfiguration idPropertyConfig = null)
             where TEntity : IEntity
         {
             ThrowIfDisposed();
@@ -85,6 +109,22 @@ namespace Mark.DotNet.Data.Common
             {
                 setAction(collection, (TEntity)entity);
             });
+
+            // For last inserted id
+            if (idPropertyConfig != null)
+            {
+                if (!idPropertyConfig.IsKey)
+                {
+                    throw new ArgumentException(
+                        "Passed property configuration is not the configuration of a key property");
+                }
+
+                _idPropInfo = typeof(TEntity).GetProperty(idPropertyConfig.PropertyName);
+
+                _readLastInsertedId = _command.CommandText.IndexOf("INSERT", 
+                    StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    idPropertyConfig.IsIntegerKey;
+            }
         }
 
         /// <summary>
@@ -123,10 +163,25 @@ namespace Mark.DotNet.Data.Common
 
             if (_list != null)
             {
-                foreach (IEntity entity in _list)
+                if (_readLastInsertedId)
                 {
-                    _setForEach(_parameters, entity);
-                    retValue += _command.ExecuteNonQuery();
+                    object idValue;
+
+                    foreach (IEntity entity in _list)
+                    {
+                        _setForEach(_parameters, entity);
+                        idValue = _command.ExecuteScalar();
+                        ++retValue;
+                        SetValue(entity, idValue);
+                    }
+                }
+                else
+                {
+                    foreach (IEntity entity in _list)
+                    {
+                        _setForEach(_parameters, entity);
+                        retValue += _command.ExecuteNonQuery();
+                    }
                 }
             }
             else

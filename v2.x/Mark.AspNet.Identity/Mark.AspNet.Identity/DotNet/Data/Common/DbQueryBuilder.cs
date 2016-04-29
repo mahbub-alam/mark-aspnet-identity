@@ -63,6 +63,12 @@ namespace Mark.DotNet.Data.Common
         public abstract string GetQuotedIdentifier(string identifier);
 
         /// <summary>
+        /// Get SQL for retrieving database generated id of the last inserted entity.
+        /// </summary>
+        /// <returns>Returns SQL query.</returns>
+        public abstract string GetLastInsertedIdSql();
+
+        /// <summary>
         /// Get insert SQL query. 
         /// </summary>
         /// <returns>Returns sql query.</returns>
@@ -100,6 +106,12 @@ namespace Mark.DotNet.Data.Common
 
             sql.Append(colNames);
             sql.Append(values);
+
+            // For retrieving last inserted id
+            if (_configuration.KeyPropertyConfigurations[0].IsIntegerKey)
+            {
+                sql.Append(GetLastInsertedIdSql());
+            }
 
             return sql.ToString();
         }

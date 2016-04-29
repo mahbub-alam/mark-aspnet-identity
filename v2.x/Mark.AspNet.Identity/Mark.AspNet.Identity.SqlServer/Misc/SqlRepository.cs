@@ -22,6 +22,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Mark.DotNet.Data;
 using Mark.DotNet.Data.Common;
+using Mark.DotNet.Data.SqlServer;
 using System.Data.SqlClient;
 
 namespace Mark.AspNet.Identity.SqlServer

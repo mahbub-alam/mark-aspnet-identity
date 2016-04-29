@@ -22,6 +22,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Mark.DotNet.Data;
 using Mark.DotNet.Data.Common;
+using Mark.DotNet.Data.MySql;
 using MySql.Data.MySqlClient;
 
 namespace Mark.AspNet.Identity.MySql

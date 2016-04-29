@@ -125,7 +125,10 @@ namespace Mark.DotNet.Data.Common
 
                     parameters[pc.PropertyName].Value = GetPropertyValue(entity, pc);
                 }
-            });
+            }, 
+            // For retrieving last inserted id
+            (_configuration.KeyPropertyConfigurations[0].IsIntegerKey) ? 
+            _configuration.KeyPropertyConfigurations[0] : null);
 
             return cmdContext;
         }

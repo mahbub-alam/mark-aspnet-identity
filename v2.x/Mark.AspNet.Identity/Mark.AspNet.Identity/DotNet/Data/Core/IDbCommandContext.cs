@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
+using Mark.DotNet.Data.ModelConfiguration;
 
 namespace Mark.DotNet.Data
 {
@@ -33,7 +34,18 @@ namespace Mark.DotNet.Data
         /// Set command parameters for each entity in the given entity collection.
         /// </summary>
         /// <param name="setAction">Action that will execute for each entity in the collection.</param>
-        void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction) where TEntity : IEntity;
+        void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction)
+            where TEntity : IEntity;
+
+        /// <summary>
+        /// Set command parameters for each entity in the given entity collection.
+        /// </summary>
+        /// <param name="setAction">Action that will execute for each entity in the collection.</param>
+        /// <param name="idPropertyConfig">Optional property configuration for 
+        /// entity id property (database generated) that will be populated.</param>
+        void SetParametersForEach<TEntity>(Action<IDbParameterCollection, TEntity> setAction,
+            PropertyConfiguration idPropertyConfig = null)
+            where TEntity : IEntity;
 
         /// <summary>
         /// Get the underlying command.
