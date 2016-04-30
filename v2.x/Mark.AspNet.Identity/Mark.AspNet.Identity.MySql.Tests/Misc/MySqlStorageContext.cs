@@ -20,13 +20,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MySql.Data.MySqlClient;
 
 namespace Mark.AspNet.Identity.MySql.Tests
 {
     public class MySqlStorageContext 
         : IdentityDbStorageContext<
-            MySqlConnection, 
             ApplicationUser, 
             ApplicationRole, 
             int, 

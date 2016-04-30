@@ -29,11 +29,8 @@ namespace Mark.DotNet.Data.Common
     /// <summary>
     /// Represents default ADO.NET style storage context.
     /// </summary>
-    /// <typeparam name="TConnection">Database connection type.</typeparam>
-    public class DbStorageContext<TConnection> : Disposable, IDbStorageContext 
-        where TConnection : DbConnection, new()
+    public class DbStorageContext : Disposable, IDbStorageContext 
     {
-        private string _connString;
         private EntityConfigurationCollection _entityConfigs;
         private DbConnection _conn;
         private bool _isConnOpenAlready;
@@ -41,41 +38,84 @@ namespace Mark.DotNet.Data.Common
         private List<IDbCommandContext> _cmdList;
 
         /// <summary>
-        /// Initialize a new instance of the class which uses the "DefaultConnection" connectionString.
+        /// Initialize a new instance of the class which uses the "DefaultConnection" connection string name.
         /// </summary>
-        public DbStorageContext()
+        public DbStorageContext() : this("DefaultConnection")
         {
-            Init("DefaultConnection");
         }
 
         /// <summary>
-        /// Initialize a new instance of the class with the given connection name or connection string.
+        /// Initialize a new instance of the class with the given connection string name.
         /// </summary>
-        /// <param name="connNameOrConnString">Connection name or connection string.</param>
-        public DbStorageContext(string connNameOrConnString)
+        /// <param name="connectionStringName">Connection string name.</param>
+        public DbStorageContext(string connectionStringName)
         {
-            Init(connNameOrConnString);
+            string connectionString = "";
+            string providerName = "";
+
+            connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
+            providerName = ConfigurationManager.ConnectionStrings[connectionStringName].ProviderName;
+
+            if (String.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new ConfigurationErrorsException(
+                    "'connectionString' attribute is missing or has invalid value " +
+                    "in the database connection string entry");
+            }
+
+            if (String.IsNullOrWhiteSpace(providerName))
+            {
+                throw new ConfigurationErrorsException(
+                    "'providerName' attribute is missing or has invalid value " +
+                    "in the database connection string entry");
+            }
+
+            Init(connectionString, providerName);
         }
 
-        private void Init(string connNameOrConnString)
+        /// <summary>
+        /// Initialize a new instance of the class with the given connection string and provider name.
+        /// </summary>
+        /// <param name="connectionString">Connection string.</param>
+        /// <param name="providerName">Provider name.</param>
+        public DbStorageContext(string connectionString, string providerName)
         {
-            try
+            if (String.IsNullOrWhiteSpace(connectionString))
             {
-                // As connection name
-                _connString = ConfigurationManager.ConnectionStrings[connNameOrConnString].ConnectionString;
-            }
-            catch (Exception)
-            {
-                // As connection string
-                _connString = connNameOrConnString;
+                throw new ArgumentException(
+                    "'connectionString' parameter is null or has invalid value");
             }
 
+            if (String.IsNullOrWhiteSpace(providerName))
+            {
+                throw new ArgumentException(
+                    "'providerName' parameter is null or has invalid value");
+            }
+
+            Init(connectionString, providerName);
+        }
+
+        private void Init(string connectionString, string providerName)
+        {
             _entityConfigs = new EntityConfigurationCollection();
-            _conn = new TConnection();
-            _conn.ConnectionString = _connString;
+            _conn = CreateConnection(providerName);
+            _conn.ConnectionString = connectionString;
             _cmdList = new List<IDbCommandContext>();
 
             OnConfiguringEntities(_entityConfigs);
+        }
+
+        private DbConnection CreateConnection(string providerName)
+        {
+            DbProviderFactory factory = DbProviderFactories.GetFactory(providerName);
+
+            if (factory == null)
+            {
+                throw new NullReferenceException(
+                    String.Format("Database provider with the name [{0}] not found in the system", providerName));
+            }
+
+            return factory.CreateConnection();
         }
 
         /// <summary>
@@ -335,7 +375,6 @@ namespace Mark.DotNet.Data.Common
             _conn = null;
             _cmdList = null;
             _tContext = null;
-            _connString = null;
             _entityConfigs = null;
         }
     }

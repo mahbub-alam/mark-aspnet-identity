@@ -79,8 +79,8 @@ namespace Mark.AspNet.Identity.EntityFramework.Tests
                 throw new Exception("Failed to load SQL seed script");
             }
 
-            DbStorageContext<SqlConnection> sContext = 
-                new DbStorageContext<SqlConnection>("DbConnectionString");
+            DbStorageContext sContext = 
+                new DbStorageContext("DbConnectionString");
             DbCommand command = sContext.CreateCommand();
 
             command.CommandText = script;

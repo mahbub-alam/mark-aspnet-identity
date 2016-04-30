@@ -28,15 +28,13 @@ namespace Mark.DotNet.Data.Common
     /// <summary>
     /// Represents base class for database repository.
     /// </summary>
-    /// <typeparam name="TConnection">Database connection type.</typeparam>
     /// <typeparam name="TEntity">Entity type.</typeparam>
     /// <typeparam name="TQueryBuilder">SQL query builder type.</typeparam>
-    public abstract class DbRepository<TConnection, TEntity, TQueryBuilder> : Repository<TEntity>
+    public abstract class DbRepository<TEntity, TQueryBuilder> : Repository<TEntity>
         where TEntity : IEntity, new()
-        where TConnection : DbConnection, new() 
         where TQueryBuilder : DbQueryBuilder<TEntity>
     {
-        private DbStorageContext<TConnection> _storageContext;
+        private DbStorageContext _storageContext;
         private EntityConfiguration<TEntity> _configuration;
         private TQueryBuilder _queryBuilder;
         private DbCommandBuilder<TEntity> _cmdBuilder;
@@ -48,7 +46,7 @@ namespace Mark.DotNet.Data.Common
         /// <param name="unitOfWork">Unit of work reference to be used.</param>
         public DbRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            _storageContext = this.UnitOfWork.StorageContext as DbStorageContext<TConnection>;
+            _storageContext = this.UnitOfWork.StorageContext as DbStorageContext;
 
             if (_storageContext == null)
             {
@@ -97,7 +95,7 @@ namespace Mark.DotNet.Data.Common
         /// <summary>
         /// Get database context.
         /// </summary>
-        protected DbStorageContext<TConnection> StorageContext
+        protected DbStorageContext StorageContext
         {
             get { return _storageContext; }
         }

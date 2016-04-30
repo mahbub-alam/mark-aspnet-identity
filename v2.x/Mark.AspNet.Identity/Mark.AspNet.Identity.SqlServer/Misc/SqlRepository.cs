@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 using Mark.DotNet.Data;
 using Mark.DotNet.Data.Common;
 using Mark.DotNet.Data.SqlServer;
-using System.Data.SqlClient;
 
 namespace Mark.AspNet.Identity.SqlServer
 {
@@ -32,7 +31,7 @@ namespace Mark.AspNet.Identity.SqlServer
     /// </summary>
     /// <typeparam name="TEntity">Entity type.</typeparam>
     public abstract class SqlRepository<TEntity>
-        : DbRepository<SqlConnection, TEntity, SqlQueryBuilder<TEntity>> 
+        : DbRepository<TEntity, SqlQueryBuilder<TEntity>> 
         where TEntity : IEntity, new()
     {
         /// <summary>

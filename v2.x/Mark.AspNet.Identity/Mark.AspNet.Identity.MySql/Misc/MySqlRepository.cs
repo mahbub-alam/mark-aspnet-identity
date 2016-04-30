@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 using Mark.DotNet.Data;
 using Mark.DotNet.Data.Common;
 using Mark.DotNet.Data.MySql;
-using MySql.Data.MySqlClient;
 
 namespace Mark.AspNet.Identity.MySql
 {
@@ -32,7 +31,7 @@ namespace Mark.AspNet.Identity.MySql
     /// </summary>
     /// <typeparam name="TEntity">Entity type.</typeparam>
     public abstract class MySqlRepository<TEntity> 
-        : DbRepository<MySqlConnection, TEntity, MySqlQueryBuilder<TEntity>> 
+        : DbRepository<TEntity, MySqlQueryBuilder<TEntity>> 
         where TEntity : IEntity, new()
     {
         /// <summary>

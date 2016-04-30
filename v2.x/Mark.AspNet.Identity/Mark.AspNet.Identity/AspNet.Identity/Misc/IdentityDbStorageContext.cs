@@ -30,16 +30,14 @@ namespace Mark.AspNet.Identity
     /// <summary>
     /// Represents default ADO.NET style storage context.
     /// </summary>
-    /// <typeparam name="TConnection">Database connection type.</typeparam>
     /// <typeparam name="TUser">User entity type.</typeparam>
     /// <typeparam name="TRole">Role entity type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
     /// <typeparam name="TUserLogin">User login entity type.</typeparam>
     /// <typeparam name="TUserRole">User role entity type.</typeparam>
     /// <typeparam name="TUserClaim">User claim entity type.</typeparam>
-    public class IdentityDbStorageContext<TConnection,
-        TUser, TRole, TKey, TUserLogin, TUserRole, TUserClaim> : DbStorageContext<TConnection>
-        where TConnection : DbConnection, new()
+    public class IdentityDbStorageContext< 
+        TUser, TRole, TKey, TUserLogin, TUserRole, TUserClaim> : DbStorageContext
         where TUser : IdentityUser<TKey, TUserLogin, TUserRole, TUserClaim>
         where TRole : IdentityRole<TKey, TUserRole>
         where TUserLogin : IdentityUserLogin<TKey>
@@ -48,17 +46,27 @@ namespace Mark.AspNet.Identity
         where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
-        /// Initialize a new instance of the class which uses the "DefaultConnection" connectionString.
+        /// Initialize a new instance of the class which uses the "DefaultConnection" connection string name.
         /// </summary>
         public IdentityDbStorageContext()
         {
         }
 
         /// <summary>
-        /// Initialize a new instance of the class with the given connection name or connection string.
+        /// Initialize a new instance of the class with the given Connection string name.
         /// </summary>
-        /// <param name="connNameOrConnString">Connection name or connection string.</param>
-        public IdentityDbStorageContext(string connNameOrConnString) : base(connNameOrConnString)
+        /// <param name="connectionStringName">Connection string name.</param>
+        public IdentityDbStorageContext(string connectionStringName) : base(connectionStringName)
+        {
+        }
+
+        /// <summary>
+        /// Initialize a new instance of the class with the given connection string and provider name.
+        /// </summary>
+        /// <param name="connectionString">Connection string.</param>
+        /// <param name="providerName">Provider name.</param>
+        public IdentityDbStorageContext(string connectionString, string providerName) 
+            : base(connectionString, providerName)
         {
         }
 
@@ -79,34 +87,41 @@ namespace Mark.AspNet.Identity
     /// <summary>
     /// Represents default ADO.NET style storage context.
     /// </summary>
-    /// <typeparam name="TConnection">Database connection type.</typeparam>
     /// <typeparam name="TUser">User entity type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
-    public class IdentityDbStorageContext<TConnection, TUser, TKey>
+    public class IdentityDbStorageContext<TUser, TKey>
         : IdentityDbStorageContext<
-            TConnection,
             TUser,
             IdentityRole<TKey>,
             TKey,
             IdentityUserLogin<TKey>,
             IdentityUserRole<TKey>,
             IdentityUserClaim<TKey>>
-        where TConnection : DbConnection, new()
         where TUser : IdentityUser<TKey>
         where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
-        /// Initialize a new instance of the class which uses the "DefaultConnection" connectionString.
+        /// Initialize a new instance of the class which uses the "DefaultConnection" connection string name.
         /// </summary>
         public IdentityDbStorageContext()
         {
         }
 
         /// <summary>
-        /// Initialize a new instance of the class with the given connection name or connection string.
+        /// Initialize a new instance of the class with the given Connection string name.
         /// </summary>
-        /// <param name="connNameOrConnString">Connection name or connection string.</param>
-        public IdentityDbStorageContext(string connNameOrConnString) : base(connNameOrConnString)
+        /// <param name="connectionStringName">Connection string name.</param>
+        public IdentityDbStorageContext(string connectionStringName) : base(connectionStringName)
+        {
+        }
+
+        /// <summary>
+        /// Initialize a new instance of the class with the given connection string and provider name.
+        /// </summary>
+        /// <param name="connectionString">Connection string.</param>
+        /// <param name="providerName">Provider name.</param>
+        public IdentityDbStorageContext(string connectionString, string providerName)
+            : base(connectionString, providerName)
         {
         }
     }
@@ -114,36 +129,43 @@ namespace Mark.AspNet.Identity
     /// <summary>
     /// Represents default ADO.NET style storage context.
     /// </summary>
-    /// <typeparam name="TConnection">Database connection type.</typeparam>
     /// <typeparam name="TRole">Role entity type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
     /// <typeparam name="TUserRole">User role entity type.</typeparam>
-    public class IdentityDbStorageContext<TConnection, TRole, TKey, TUserRole>
+    public class IdentityDbStorageContext<TRole, TKey, TUserRole>
         : IdentityDbStorageContext<
-            TConnection,
             IdentityUser<TKey, IdentityUserLogin<TKey>, TUserRole, IdentityUserClaim<TKey>>,
             TRole,
             TKey,
             IdentityUserLogin<TKey>,
             TUserRole,
             IdentityUserClaim<TKey>>
-        where TConnection : DbConnection, new()
         where TRole : IdentityRole<TKey, TUserRole> 
         where TUserRole : IdentityUserRole<TKey>
         where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
-        /// Initialize a new instance of the class which uses the "DefaultConnection" connectionString.
+        /// Initialize a new instance of the class which uses the "DefaultConnection" connection string name.
         /// </summary>
         public IdentityDbStorageContext()
         {
         }
 
         /// <summary>
-        /// Initialize a new instance of the class with the given connection name or connection string.
+        /// Initialize a new instance of the class with the given Connection string name.
         /// </summary>
-        /// <param name="connNameOrConnString">Connection name or connection string.</param>
-        public IdentityDbStorageContext(string connNameOrConnString) : base(connNameOrConnString)
+        /// <param name="connectionStringName">Connection string name.</param>
+        public IdentityDbStorageContext(string connectionStringName) : base(connectionStringName)
+        {
+        }
+
+        /// <summary>
+        /// Initialize a new instance of the class with the given connection string and provider name.
+        /// </summary>
+        /// <param name="connectionString">Connection string.</param>
+        /// <param name="providerName">Provider name.</param>
+        public IdentityDbStorageContext(string connectionString, string providerName)
+            : base(connectionString, providerName)
         {
         }
     }
@@ -151,32 +173,39 @@ namespace Mark.AspNet.Identity
     /// <summary>
     /// Represents default ADO.NET style storage context.
     /// </summary>
-    /// <typeparam name="TConnection">Database connection type.</typeparam>
     /// <typeparam name="TKey">Id type.</typeparam>
-    public class IdentityDbStorageContext<TConnection, TKey>
+    public class IdentityDbStorageContext<TKey>
         : IdentityDbStorageContext<
-            TConnection,
             IdentityUser<TKey>,
             IdentityRole<TKey>,
             TKey,
             IdentityUserLogin<TKey>,
             IdentityUserRole<TKey>,
             IdentityUserClaim<TKey>>
-        where TConnection : DbConnection, new()
         where TKey : struct, IEquatable<TKey>
     {
         /// <summary>
-        /// Initialize a new instance of the class which uses the "DefaultConnection" connectionString.
+        /// Initialize a new instance of the class which uses the "DefaultConnection" connection string name.
         /// </summary>
         public IdentityDbStorageContext()
         {
         }
 
         /// <summary>
-        /// Initialize a new instance of the class with the given connection name or connection string.
+        /// Initialize a new instance of the class with the given Connection string name.
         /// </summary>
-        /// <param name="connNameOrConnString">Connection name or connection string.</param>
-        public IdentityDbStorageContext(string connNameOrConnString) : base(connNameOrConnString)
+        /// <param name="connectionStringName">Connection string name.</param>
+        public IdentityDbStorageContext(string connectionStringName) : base(connectionStringName)
+        {
+        }
+
+        /// <summary>
+        /// Initialize a new instance of the class with the given connection string and provider name.
+        /// </summary>
+        /// <param name="connectionString">Connection string.</param>
+        /// <param name="providerName">Provider name.</param>
+        public IdentityDbStorageContext(string connectionString, string providerName)
+            : base(connectionString, providerName)
         {
         }
     }
