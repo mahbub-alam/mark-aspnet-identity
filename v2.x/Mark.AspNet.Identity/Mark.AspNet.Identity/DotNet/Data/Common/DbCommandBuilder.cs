@@ -26,7 +26,7 @@ using System.Data.Common;
 namespace Mark.DotNet.Data.Common
 {
     /// <summary>
-    /// Represents database command builder for CRUD operation.
+    /// Represents database command builder for SQL operation.
     /// </summary>
     /// <typeparam name="TEntity">Entity type.</typeparam>
     public class DbCommandBuilder<TEntity> where TEntity : IEntity
@@ -81,9 +81,7 @@ namespace Mark.DotNet.Data.Common
                 // For nullable struct type with default value
                 if (value != null)
                 {
-                    object defaultValue = value.GetType().GetDefault();
-
-                    if (value.Equals(defaultValue))
+                    if (value.Equals(pc.DefaultValue))
                     {
                         value = DBNull.Value;
                     }

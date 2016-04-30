@@ -76,8 +76,14 @@ namespace Mark.DotNet.Data.Common
             _list = list;
         }
 
-        private void SetValue(IEntity entity, object value)
+        private void SetIdValue(IEntity entity, object value)
         {
+            // Means, no id value was generated in the database
+            if (value.GetType() == typeof(DBNull))
+            {
+                return;
+            }
+
             value = Convert.ChangeType(value, _idPropInfo.PropertyType);
             _idPropInfo.SetValue(entity, value);
         }
@@ -160,7 +166,7 @@ namespace Mark.DotNet.Data.Common
                     {
                         _setForEach(_parameters, entity);
                         idValue = _command.ExecuteScalar();
-                        SetValue(entity, idValue);
+                        SetIdValue(entity, idValue);
                         ++retValue;
                     }
                 }

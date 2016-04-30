@@ -36,6 +36,7 @@ namespace Mark.DotNet.Data.ModelConfiguration
         private bool _isIntegerKey;
         private int _keyColumnOrder;
         private object _defaultValue;
+        private Func<object> _generateDefaultValue;
 
         /// <summary>
         /// Column order for single key.
@@ -115,6 +116,17 @@ namespace Mark.DotNet.Data.ModelConfiguration
         }
 
         /// <summary>
+        /// Set a delegate for generating default value for the property.
+        /// </summary>
+        /// <param name="valueGenerator">Default value generator.</param>
+        /// <returns>Returns property configuration.</returns>
+        public PropertyConfiguration HasDefaultValue<T>(Func<T> valueGenerator)
+        {
+            _generateDefaultValue = () => valueGenerator;
+            return this;
+        }
+
+        /// <summary>
         /// Set the property as a key.
         /// </summary>
         /// <param name="columnOrder">Zero based column order in a composite key.</param>
@@ -148,7 +160,17 @@ namespace Mark.DotNet.Data.ModelConfiguration
         /// </summary>
         public object DefaultValue
         {
-            get { return _defaultValue; }
+            get
+            {
+                if (_generateDefaultValue != null)
+                {
+                    return _generateDefaultValue();
+                }
+                else
+                {
+                    return _defaultValue;
+                }
+            }
         }
 
         /// <summary>
