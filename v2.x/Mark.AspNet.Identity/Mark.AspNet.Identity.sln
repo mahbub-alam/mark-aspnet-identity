@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mark.AspNet.Identity", "Mark.AspNet.Identity\Mark.AspNet.Identity.csproj", "{D77BB5AD-50C4-42FC-B7DA-9A77274CCB52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mark.AspNet.Identity.Core", "Mark.AspNet.Identity.Core\Mark.AspNet.Identity.Core.csproj", "{D77BB5AD-50C4-42FC-B7DA-9A77274CCB52}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mark.AspNet.Identity.EntityFramework", "Mark.AspNet.Identity.EntityFramework\Mark.AspNet.Identity.EntityFramework.csproj", "{F440DA35-7C2D-4843-B02D-F0EB7B11447E}"
 EndProject

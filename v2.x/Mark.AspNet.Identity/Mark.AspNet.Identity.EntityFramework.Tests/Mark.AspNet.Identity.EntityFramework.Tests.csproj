@@ -83,9 +83,9 @@
       <Project>{f440da35-7c2d-4843-b02d-f0eb7b11447e}</Project>
       <Name>Mark.AspNet.Identity.EntityFramework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Mark.AspNet.Identity\Mark.AspNet.Identity.csproj">
+    <ProjectReference Include="..\Mark.AspNet.Identity.Core\Mark.AspNet.Identity.Core.csproj">
       <Project>{d77bb5ad-50c4-42fc-b7da-9a77274ccb52}</Project>
-      <Name>Mark.AspNet.Identity</Name>
+      <Name>Mark.AspNet.Identity.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

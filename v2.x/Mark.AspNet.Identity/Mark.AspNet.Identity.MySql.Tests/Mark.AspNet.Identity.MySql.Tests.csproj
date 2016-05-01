@@ -75,9 +75,9 @@
       <Project>{3abe8744-f52a-4491-96b6-0df1cfe385c3}</Project>
       <Name>Mark.AspNet.Identity.MySql</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Mark.AspNet.Identity\Mark.AspNet.Identity.csproj">
+    <ProjectReference Include="..\Mark.AspNet.Identity.Core\Mark.AspNet.Identity.Core.csproj">
       <Project>{d77bb5ad-50c4-42fc-b7da-9a77274ccb52}</Project>
-      <Name>Mark.AspNet.Identity</Name>
+      <Name>Mark.AspNet.Identity.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
