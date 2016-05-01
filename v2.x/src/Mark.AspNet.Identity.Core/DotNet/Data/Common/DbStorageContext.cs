@@ -133,14 +133,14 @@ namespace Mark.DotNet.Data.Common
         {
             ThrowIfDisposed();
 
-            if (_conn != null && _conn.State != System.Data.ConnectionState.Open)
+            if (_conn.State == System.Data.ConnectionState.Open)
             {
-                _conn.Open();
-                _isConnOpenAlready = false;
+                _isConnOpenAlready = true;
             }
             else
             {
-                _isConnOpenAlready = true;
+                _conn.Open();
+                _isConnOpenAlready = false;
             }
         }
 
@@ -153,7 +153,7 @@ namespace Mark.DotNet.Data.Common
         {
             ThrowIfDisposed();
 
-            if (_conn != null && (!_isConnOpenAlready || forceClose))
+            if (!_isConnOpenAlready || forceClose)
             {
                  _conn.Close();
             }
