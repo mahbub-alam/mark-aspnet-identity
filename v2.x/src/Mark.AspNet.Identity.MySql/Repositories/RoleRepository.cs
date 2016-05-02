@@ -37,7 +37,7 @@ namespace Mark.AspNet.Identity.MySql
         : MySqlRepository<TRole>
         where TRole : IdentityRole<TKey, TUserRole>, new()
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class with the unit of work reference.

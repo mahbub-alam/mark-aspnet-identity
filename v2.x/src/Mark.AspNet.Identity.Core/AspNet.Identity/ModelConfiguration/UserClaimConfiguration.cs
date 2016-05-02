@@ -31,7 +31,7 @@ namespace Mark.AspNet.Identity.ModelConfiguration
     /// <typeparam name="TKey">Id type.</typeparam>
     public class UserClaimConfiguration<TUserClaim, TKey> : EntityConfiguration<TUserClaim>
         where TUserClaim : IdentityUserClaim<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Configure entity.

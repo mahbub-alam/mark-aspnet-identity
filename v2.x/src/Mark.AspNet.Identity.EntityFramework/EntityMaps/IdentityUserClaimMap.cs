@@ -68,4 +68,47 @@ namespace Mark.AspNet.Identity.EntityFramework
                 .HasColumnName(Configuration.Property(p => p.ClaimValue).ColumnName);
         }
     }
+
+    /// <summary>
+    /// Represents entity mapping user claim entity.
+    /// </summary>
+    /// <typeparam name="TUserClaim">User claim type.</typeparam>
+    public class IdentityUserClaimMap<TUserClaim> : EntityMap<TUserClaim>
+        where TUserClaim : IdentityUserClaim
+    {
+        /// <summary>
+        /// Initialize a new instance of the class.
+        /// </summary>
+        /// <param name="configuration">Entity configuration.</param>
+        public IdentityUserClaimMap(EntityConfiguration<TUserClaim> configuration) : base(configuration)
+        {
+        }
+
+        /// <summary>
+        /// Map primary key.
+        /// </summary>
+        protected override void MapPrimaryKey()
+        {
+            HasKey(p => p.Id);
+            Property(p => p.Id)
+                .HasColumnName(Configuration.Property(p => p.Id).ColumnName);
+        }
+
+        /// <summary>
+        /// Map all non-key fields.
+        /// </summary>
+        protected override void MapFields()
+        {
+            Property(p => p.UserId)
+                .HasColumnName(Configuration.Property(p => p.UserId).ColumnName);
+
+            Property(p => p.ClaimType)
+                .HasMaxLength(255)
+                .HasColumnName(Configuration.Property(p => p.ClaimType).ColumnName);
+
+            Property(p => p.ClaimValue)
+                .HasMaxLength(255)
+                .HasColumnName(Configuration.Property(p => p.ClaimValue).ColumnName);
+        }
+    }
 }

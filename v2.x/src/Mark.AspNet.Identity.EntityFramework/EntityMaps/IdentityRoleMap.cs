@@ -84,13 +84,12 @@ namespace Mark.AspNet.Identity.EntityFramework
     /// Represents entity mapping for role entity.
     /// </summary>
     /// <typeparam name="TRole">Role type.</typeparam>
-    /// <typeparam name="TKey">Id type.</typeparam>
-    public class IdentityRoleMap<TRole, TKey>
-        : IdentityRoleMap<TRole, TKey, IdentityUserRole<TKey>>
-        where TRole : IdentityRole<TKey, IdentityUserRole<TKey>>
-        where TKey : struct, IEquatable<TKey>
+    /// <typeparam name="TUserRole">User role type.</typeparam>
+    public class IdentityRoleMap<TRole, TUserRole>
+        : EntityMap<TRole>
+        where TRole : IdentityRole<string, TUserRole>
+        where TUserRole : IdentityUserRole
     {
-
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
@@ -98,5 +97,39 @@ namespace Mark.AspNet.Identity.EntityFramework
         public IdentityRoleMap(EntityConfiguration<TRole> configuration) : base(configuration)
         {
         }
+
+        /// <summary>
+        /// Map primary key.
+        /// </summary>
+        protected override void MapPrimaryKey()
+        {
+            HasKey(p => p.Id);
+            Property(p => p.Id)
+                .HasColumnName(Configuration.Property(p => p.Id).ColumnName);
+        }
+
+        /// <summary>
+        /// Map all non-key fields.
+        /// </summary>
+        protected override void MapFields()
+        {
+            Property(p => p.Name)
+                .HasColumnName(Configuration.Property(p => p.Name).ColumnName)
+                .IsRequired()
+                .HasMaxLength(64)
+                .HasColumnAnnotation("Index", new IndexAnnotation(
+                    new IndexAttribute("UK_Role_Name") { IsUnique = true }));
+        }
+
+        /// <summary>
+        /// Map relationship among entities.
+        /// </summary>
+        protected override void MapRelationships()
+        {
+            HasMany(p => p.Users)
+                .WithRequired()
+                .HasForeignKey(p => p.RoleId);
+        }
     }
+
 }

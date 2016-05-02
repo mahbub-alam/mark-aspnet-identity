@@ -34,7 +34,7 @@ namespace Mark.AspNet.Identity
     public abstract class RoleStoreBase<TRole, TKey, TUserRole> : Disposable, IRoleStore<TRole, TKey>
         where TRole : IdentityRole<TKey, TUserRole>
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Create new role.
@@ -80,7 +80,16 @@ namespace Mark.AspNet.Identity
     /// <typeparam name="TKey">Id type.</typeparam>
     public abstract class RoleStoreBase<TRole, TKey> : RoleStoreBase<TRole, TKey, IdentityUserRole<TKey>>
         where TRole : IdentityRole<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
+    {
+    }
+
+    /// <summary>
+    /// Represents base storage class for 'Role' management.
+    /// </summary>
+    /// <typeparam name="TRole">Role type.</typeparam>
+    public abstract class RoleStoreBase<TRole> : RoleStoreBase<TRole, string, IdentityUserRole>
+        where TRole : IdentityRole
     {
     }
 }

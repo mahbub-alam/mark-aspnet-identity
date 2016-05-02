@@ -65,4 +65,44 @@ namespace Mark.AspNet.Identity.EntityFramework
                 .HasColumnName(Configuration.Property(p => p.UserId).ColumnName);
         }
     }
+
+    /// <summary>
+    /// Represents entity mapping user login entity.
+    /// </summary>
+    /// <typeparam name="TUserLogin">User login type.</typeparam>
+    public class IdentityUserLoginMap<TUserLogin> : EntityMap<TUserLogin>
+        where TUserLogin : IdentityUserLogin
+    {
+        /// <summary>
+        /// Initialize a new instance of the class.
+        /// </summary>
+        /// <param name="configuration">Entity configuration.</param>
+        public IdentityUserLoginMap(EntityConfiguration<TUserLogin> configuration) : base(configuration)
+        {
+        }
+
+        /// <summary>
+        /// Map primary key.
+        /// </summary>
+        protected override void MapPrimaryKey()
+        {
+            HasKey(p => new
+            {
+                p.LoginProvider,
+                p.ProviderKey,
+                p.UserId
+            });
+
+            Property(p => p.LoginProvider)
+                .HasMaxLength(128)
+                .HasColumnName(Configuration.Property(p => p.LoginProvider).ColumnName);
+
+            Property(p => p.ProviderKey)
+                .HasMaxLength(128)
+                .HasColumnName(Configuration.Property(p => p.ProviderKey).ColumnName);
+
+            Property(p => p.UserId)
+                .HasColumnName(Configuration.Property(p => p.UserId).ColumnName);
+        }
+    }
 }

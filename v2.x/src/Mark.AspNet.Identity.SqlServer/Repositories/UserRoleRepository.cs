@@ -35,7 +35,7 @@ namespace Mark.AspNet.Identity.SqlServer
     public class UserRoleRepository<TUserRole, TKey>
         : SqlRepository<TUserRole> 
         where TUserRole : IdentityUserRole<TKey>, new()
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class with the unit of work reference.

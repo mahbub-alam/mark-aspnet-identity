@@ -35,7 +35,7 @@ namespace Mark.AspNet.Identity.MySql
     public class RoleStore<TRole, TKey, TUserRole> : RoleStoreBase<TRole, TKey, TUserRole>
         where TRole : IdentityRole<TKey, TUserRole>, new()
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         private IUnitOfWork _unitOfWork;
         private RoleRepository<TRole, TKey, TUserRole> _repo;
@@ -181,6 +181,40 @@ namespace Mark.AspNet.Identity.MySql
         protected override void DisposeManaged()
         {
             _repo.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Represents default storage class for 'Role' management.
+    /// </summary>
+    /// <typeparam name="TRole">Role type.</typeparam>
+    /// <typeparam name="TKey">Id type.</typeparam>
+    public class RoleStore<TRole, TKey> : RoleStore<TRole, TKey, IdentityUserRole<TKey>>
+        where TRole : IdentityRole<TKey, IdentityUserRole<TKey>>, new()
+        where TKey : IEquatable<TKey>
+    {
+        /// <summary>
+        /// Initialize a new instance of the class with unit of work.
+        /// </summary>
+        /// <param name="unitOfWork">Unit of work reference.</param>
+        public RoleStore(IUnitOfWork unitOfWork) : base(unitOfWork)
+        {
+        }
+    }
+
+    /// <summary>
+    /// Represents default storage class for 'Role' management.
+    /// </summary>
+    /// <typeparam name="TRole">Role type.</typeparam>
+    public class RoleStore<TRole> : RoleStore<TRole, string, IdentityUserRole>
+        where TRole : IdentityRole, new()
+    {
+        /// <summary>
+        /// Initialize a new instance of the class with unit of work.
+        /// </summary>
+        /// <param name="unitOfWork">Unit of work reference.</param>
+        public RoleStore(IUnitOfWork unitOfWork) : base(unitOfWork)
+        {
         }
     }
 }

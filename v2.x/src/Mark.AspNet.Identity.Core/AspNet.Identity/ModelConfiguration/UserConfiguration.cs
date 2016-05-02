@@ -37,7 +37,7 @@ namespace Mark.AspNet.Identity.ModelConfiguration
         where TUserLogin : IdentityUserLogin<TKey>
         where TUserRole : IdentityUserRole<TKey>
         where TUserClaim : IdentityUserClaim<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Configure entity.

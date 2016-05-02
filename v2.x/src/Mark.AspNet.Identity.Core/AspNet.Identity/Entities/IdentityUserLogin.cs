@@ -28,7 +28,7 @@ namespace Mark.AspNet.Identity
     /// Entity type for a user's login (i.e. facebook, google).
     /// </summary>
     /// <typeparam name="TKey">Id type.</typeparam>
-    public class IdentityUserLogin<TKey> : IEntity where TKey : struct, IEquatable<TKey>
+    public class IdentityUserLogin<TKey> : IEntity where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// The login provider for the login (i.e. facebook, google).
@@ -53,5 +53,12 @@ namespace Mark.AspNet.Identity
         {
             get; set;
         }
+    }
+
+    /// <summary>
+    /// Entity type for a user's login (i.e. facebook, google).
+    /// </summary>
+    public class IdentityUserLogin : IdentityUserLogin<string>
+    {
     }
 }

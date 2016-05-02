@@ -189,7 +189,7 @@ namespace Mark.DotNet.Data.ModelConfiguration
         /// <typeparam name="T">Property type.</typeparam>
         /// <param name="expr">Entity property expression.</param>
         /// <returns>Returns configuration if found; otherwise, returns null.</returns>
-        public PropertyConfiguration Property<T>(Expression<Func<TEntity, T>> expr) where T : struct
+        public PropertyConfiguration Property<T>(Expression<Func<TEntity, T>> expr) where T : IEquatable<T>
         {
             return GetPropertyConfigurationInternal(expr);
         }

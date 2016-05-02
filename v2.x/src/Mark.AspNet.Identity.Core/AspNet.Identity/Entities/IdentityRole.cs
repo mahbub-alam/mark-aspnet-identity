@@ -30,9 +30,9 @@ namespace Mark.AspNet.Identity
     /// </summary>
     /// <typeparam name="TKey">Id type.</typeparam>
     /// <typeparam name="TUserRole">User role type.</typeparam>
-    public class IdentityRole<TKey, TUserRole> : IRole<TKey>, IEntity 
+    public class IdentityRole<TKey, TUserRole> : IRole<TKey>, IEntity
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.
@@ -72,13 +72,35 @@ namespace Mark.AspNet.Identity
     /// </summary>
     /// <typeparam name="TKey">Id type.</typeparam>
     public class IdentityRole<TKey> : IdentityRole<TKey, IdentityUserRole<TKey>>
-         where TKey : struct, IEquatable<TKey>
+         where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
         public IdentityRole()
         {
+        }
+
+        /// <summary>
+        /// Initialize a new instance of the class with the given role name.
+        /// </summary>
+        public IdentityRole(string roleName) : this()
+        {
+            this.Name = roleName;
+        }
+    }
+
+    /// <summary>
+    /// Entity type that represents role for the user.
+    /// </summary>
+    public class IdentityRole : IdentityRole<string, IdentityUserRole>
+    {
+        /// <summary>
+        /// Initialize a new instance of the class.
+        /// </summary>
+        public IdentityRole()
+        {
+            this.Id = Guid.NewGuid().ToString();
         }
 
         /// <summary>

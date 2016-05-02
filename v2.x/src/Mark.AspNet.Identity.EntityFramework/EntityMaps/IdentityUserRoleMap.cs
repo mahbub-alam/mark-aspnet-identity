@@ -61,4 +61,41 @@ namespace Mark.AspNet.Identity.EntityFramework
                 .IsRequired();
         }
     }
+
+    /// <summary>
+    /// Represents mapping configuration for 'UserRole' table.
+    /// </summary>
+    /// <typeparam name="TUserRole">User role type.</typeparam>
+    public class IdentityUserRoleMap<TUserRole> : EntityMap<TUserRole>
+        where TUserRole : IdentityUserRole 
+    {
+        /// <summary>
+        /// Initialize a new instance of the class.
+        /// </summary>
+        /// <param name="configuration">Entity configuration.</param>
+        public IdentityUserRoleMap(EntityConfiguration<TUserRole> configuration) : base(configuration)
+        {
+        }
+
+        /// <summary>
+        /// Map primary key.
+        /// </summary>
+        protected override void MapPrimaryKey()
+        {
+            HasKey(p => new
+            {
+                p.UserId,
+                p.RoleId
+            });
+
+            Property(p => p.UserId)
+                .HasColumnName(Configuration.Property(p => p.UserId).ColumnName)
+                .IsRequired();
+
+            Property(p => p.RoleId)
+                .HasColumnName(Configuration.Property(p => p.RoleId).ColumnName)
+                .IsRequired();
+        }
+    }
+
 }

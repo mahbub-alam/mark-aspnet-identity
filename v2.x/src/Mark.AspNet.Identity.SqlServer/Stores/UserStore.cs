@@ -44,7 +44,7 @@ namespace Mark.AspNet.Identity.SqlServer
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TUserRole : IdentityUserRole<TKey>, new()
         where TUserClaim : IdentityUserClaim<TKey>, new()
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         private IUnitOfWork _unitOfWork;
         private UserRepository<TUser, TKey, TUserLogin, TUserRole, TUserClaim> _userRepo;
@@ -1062,4 +1062,26 @@ namespace Mark.AspNet.Identity.SqlServer
         }
     }
 
+    /// <summary>
+    /// Represents default storage class for 'User' management.
+    /// </summary>
+    /// <typeparam name="TUser">User type.</typeparam>
+    public class UserStore<TUser>
+        : UserStore<
+            TUser,
+            IdentityRole,
+            string,
+            IdentityUserLogin,
+            IdentityUserRole,
+            IdentityUserClaim>
+        where TUser : IdentityUser, new()
+    {
+        /// <summary>
+        /// Initialize a new instance of the class with unit of work.
+        /// </summary>
+        /// <param name="unitOfWork">Unit of work reference.</param>
+        public UserStore(IUnitOfWork unitOfWork) : base(unitOfWork)
+        {
+        }
+    }
 }

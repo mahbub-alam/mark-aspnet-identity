@@ -36,7 +36,7 @@ namespace Mark.AspNet.Identity.MySql
     internal class UserClaimRepository<TUserClaim, TKey>
         : MySqlRepository<TUserClaim>
         where TUserClaim : IdentityUserClaim<TKey>, new()
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class with the unit of work reference.

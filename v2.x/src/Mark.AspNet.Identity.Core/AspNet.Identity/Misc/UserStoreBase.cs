@@ -45,7 +45,7 @@ namespace Mark.AspNet.Identity
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TUserRole : IdentityUserRole<TKey>, new()
         where TUserClaim : IdentityUserClaim<TKey>, new()
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
 
     {
         /// <summary>
@@ -352,7 +352,22 @@ namespace Mark.AspNet.Identity
             IdentityUserRole<TKey>, 
             IdentityUserClaim<TKey>> 
         where TUser : IdentityUser<TKey>
-        where TKey : struct, IEquatable<TKey> 
+        where TKey : IEquatable<TKey> 
+    {
+    }
+
+    /// <summary>
+    /// Represents base storage class for 'User' management.
+    /// </summary>
+    /// <typeparam name="TUser">User type.</typeparam>
+    public abstract class UserStoreBase<TUser>
+        : UserStoreBase<TUser,
+            IdentityRole,
+            string,
+            IdentityUserLogin,
+            IdentityUserRole,
+            IdentityUserClaim>
+        where TUser : IdentityUser
     {
     }
 }

@@ -25,10 +25,10 @@ using Mark.DotNet.Data;
 namespace Mark.AspNet.Identity
 {
     /// <summary>
-    /// EntityType that represents a user belonging to a role.
+    /// Entity type that represents a user belonging to a role.
     /// </summary>
     /// <typeparam name="TKey">Id type.</typeparam>
-    public class IdentityUserRole<TKey> : IEntity where TKey : struct, IEquatable<TKey>
+    public class IdentityUserRole<TKey> : IEntity where TKey : IEquatable<TKey>
     {
         /// <summary>
         ///     RoleId for the role
@@ -45,5 +45,12 @@ namespace Mark.AspNet.Identity
         {
             get; set;
         }
+    }
+
+    /// <summary>
+    /// Entity type that represents a user belonging to a role.
+    /// </summary>
+    public class IdentityUserRole : IdentityUserRole<string>
+    {
     }
 }

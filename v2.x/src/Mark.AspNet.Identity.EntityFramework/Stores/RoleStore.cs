@@ -36,7 +36,7 @@ namespace Mark.AspNet.Identity.EntityFramework
     public class RoleStore<TRole, TKey, TUserRole> : RoleStoreBase<TRole, TKey, TUserRole>, IQueryableRoleStore<TRole, TKey>
         where TRole : IdentityRole<TKey, TUserRole>
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         private DbContext _context;
         private EntityStore<TRole, TKey> _roleStore;
@@ -220,7 +220,23 @@ namespace Mark.AspNet.Identity.EntityFramework
     /// <typeparam name="TKey">Id type.</typeparam>
     public class RoleStore<TRole, TKey> : RoleStore<TRole, TKey, IdentityUserRole<TKey>>
         where TRole : IdentityRole<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
+    {
+        /// <summary>
+        /// Initialize a new instance of the class with the database context.
+        /// </summary>
+        /// <param name="context">Database context.</param>
+        public RoleStore(DbContext context) : base(context)
+        {
+        }
+    }
+
+    /// <summary>
+    /// Represents default storage class for 'Role' management.
+    /// </summary>
+    /// <typeparam name="TRole">Role type.</typeparam>
+    public class RoleStore<TRole> : RoleStore<TRole, string, IdentityUserRole>
+        where TRole : IdentityRole
     {
         /// <summary>
         /// Initialize a new instance of the class with the database context.

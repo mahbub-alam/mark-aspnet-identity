@@ -36,7 +36,7 @@ namespace Mark.AspNet.Identity
         where TUserLogin : IdentityUserLogin<TKey>
         where TUserRole : IdentityUserRole<TKey>
         where TUserClaim : IdentityUserClaim<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.
@@ -179,13 +179,37 @@ namespace Mark.AspNet.Identity
     /// <typeparam name="TKey">Id type.</typeparam>
     public class IdentityUser<TKey> : 
         IdentityUser<TKey, IdentityUserLogin<TKey>, IdentityUserRole<TKey>, IdentityUserClaim<TKey>>
-         where TKey : struct, IEquatable<TKey>
+         where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Initialize a new instance of the class.
         /// </summary>
         public IdentityUser()
         {
+        }
+
+        /// <summary>
+        /// Initialize a new instance of the class with the given username.
+        /// </summary>
+        /// <param name="userName">Username to assign.</param>
+        public IdentityUser(string userName) : this()
+        {
+            this.UserName = userName;
+        }
+    }
+
+    /// <summary>
+    /// Entity type that represents user.
+    /// </summary>
+    public class IdentityUser : 
+        IdentityUser<string, IdentityUserLogin, IdentityUserRole, IdentityUserClaim>
+    {
+        /// <summary>
+        /// Initialize a new instance of the class.
+        /// </summary>
+        public IdentityUser()
+        {
+            this.Id = Guid.NewGuid().ToString();
         }
 
         /// <summary>

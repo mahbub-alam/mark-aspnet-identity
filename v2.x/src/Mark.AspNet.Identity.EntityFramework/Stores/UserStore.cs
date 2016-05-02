@@ -46,7 +46,7 @@ namespace Mark.AspNet.Identity.EntityFramework
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TUserRole : IdentityUserRole<TKey>, new()
         where TUserClaim : IdentityUserClaim<TKey>, new()
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         private DbContext _context;
         private EntityStore<TRole, TKey> _roleStore;
@@ -1073,7 +1073,30 @@ namespace Mark.AspNet.Identity.EntityFramework
             IdentityUserRole<TKey>,
             IdentityUserClaim<TKey>>
         where TUser : IdentityUser<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
+    {
+        /// <summary>
+        /// Initialize a new instance of the class with the database context.
+        /// </summary>
+        /// <param name="context">Database context.</param>
+        public UserStore(DbContext context) : base(context)
+        {
+        }
+    }
+
+    /// <summary>
+    /// Represents default storage class for 'User' management.
+    /// </summary>
+    /// <typeparam name="TUser">User type.</typeparam>
+    public class UserStore<TUser>
+        : UserStore<
+            TUser,
+            IdentityRole,
+            string,
+            IdentityUserLogin,
+            IdentityUserRole,
+            IdentityUserClaim>
+        where TUser : IdentityUser
     {
         /// <summary>
         /// Initialize a new instance of the class with the database context.

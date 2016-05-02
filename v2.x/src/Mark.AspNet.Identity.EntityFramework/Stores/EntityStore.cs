@@ -31,7 +31,7 @@ namespace Mark.AspNet.Identity.EntityFramework
     /// <typeparam name="TKey">Id type.</typeparam>
     internal class EntityStore<TEntity, TKey> : IDisposable
         where TEntity : class
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         private DbContext _context;
 

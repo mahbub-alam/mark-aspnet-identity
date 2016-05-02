@@ -33,7 +33,7 @@ namespace Mark.AspNet.Identity.ModelConfiguration
     public class RoleConfiguration<TRole, TKey, TUserRole> : EntityConfiguration<TRole>
         where TRole : IdentityRole<TKey, TUserRole>
         where TUserRole : IdentityUserRole<TKey>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
         /// <summary>
         /// Configure entity.
@@ -58,7 +58,7 @@ namespace Mark.AspNet.Identity.ModelConfiguration
             TKey, 
             IdentityUserRole<TKey>>
         where TRole : IdentityRole<TKey, IdentityUserRole<TKey>>
-        where TKey : struct, IEquatable<TKey>
+        where TKey : IEquatable<TKey>
     {
     }
 }
