@@ -31,6 +31,12 @@ namespace Mark.DotNet.Data
         where TEntity : IEntity
     {
         /// <summary>
+        /// Set unit of work reference to be used by the repository.
+        /// </summary>
+        /// <param name="unitOfWork">Unit of work reference.</param>
+        void SetUnitOfWork(IUnitOfWork unitOfWork);
+
+        /// <summary>
         /// Add entity to the repository.
         /// </summary>
         /// <param name="item">entity to be added.</param>
