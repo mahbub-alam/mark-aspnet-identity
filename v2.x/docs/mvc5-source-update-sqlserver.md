@@ -37,5 +37,3 @@ By default, the project use `string` **(which is GUID)** as the primary key for 
   1. Change all `GetUserId()` method calls to `GetUserId<int>()` so that it returns **User Id** as `int`.
   2. Some of the places, **User Id** need to be passed as `string`; so, add `.ToString()` where needed.
 6. Now, build the project and test it.
-
-<center>**The End**</center>
