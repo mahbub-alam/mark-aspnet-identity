@@ -32,5 +32,5 @@ Here is the list of things you need to do to use the provider(s) implemented for
     - Mark.AspNet.Identity.SqlServer.dll (Add if you want to use SQL Server ADO.NET Identity provider. The ADO.NET driver already provided by the .NET Framework.)
 5. 	Now, update code in the created MVC project to reflect new Identity provider. Follow instruction document for each Identity provider type-
     - For EF Identity provider, see [ASP.NET MVC 5 source update instruction for EF Identity provider](v2.x/docs/mvc5-source-update-entity-framework.md).
-    - For SQL Server (ADO.NET) Identity provider, see [ASP.NET MVC 5 source update instruction for SQL Server Identity provider](v2.x/docs/mvc5-source-update-entity-framework.md).
-    - For MySQL (ADO.NET) Identity provider, see [ASP.NET MVC 5 source update instruction for MySQL Identity provider](v2.x/docs/mvc5-source-update-entity-framework.md).
+    - For SQL Server (ADO.NET) Identity provider, see [ASP.NET MVC 5 source update instruction for SQL Server Identity provider](v2.x/docs/mvc5-source-update-sqlserver.md).
+    - For MySQL (ADO.NET) Identity provider, see [ASP.NET MVC 5 source update instruction for MySQL Identity provider](v2.x/docs/mvc5-source-update-mysql.md).
