@@ -21,12 +21,9 @@ By default, the project use `string` **(which is GUID)** as the primary key for 
     1. In `ConfirmEmail(string userId, string code)` method, change the `userId` parameter type to `int` and change the `if` condition from `userId == null`to `userId == default(int)`.
     2. In `SendCode(string returnUrl, bool rememberMe)` method, change the `if` condition from `userId == null`to `userId == default(int)`.
 5. In **Controllers/ManageController.cs** file, if you use `int` as key type-
-<<<<<<< HEAD
     1. Change all `GetUserId()` method calls to `GetUserId<int>()` so that it returns **User Id** as `int`.
     2. Some of the places, **User Id** need to be passed as `string`; so, add `.ToString()` where needed.
 6. Now, build the project and test it.
-=======
-  1. Change all `GetUserId()` method calls to `GetUserId<int>()` so that it returns **User Id** as `int`.
-  2. Some of the places, **User Id** need to be passed as `string`; so, add `.ToString()` where needed.
+    1. Change all `GetUserId()` method calls to `GetUserId<int>()` so that it returns **User Id** as `int`.
+    2. Some of the places, **User Id** need to be passed as `string`; so, add `.ToString()` where needed.
 6. Now, build the project and test it.
->>>>>>> origin/master
