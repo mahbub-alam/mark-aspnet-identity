@@ -1,0 +1,3 @@
+Post Build Event Command:
+
+$(ProjectDir)..\build-scripts\post-build-copy-asm $(TargetDir)$(TargetName) $(SolutionDir) $(ConfigurationName)

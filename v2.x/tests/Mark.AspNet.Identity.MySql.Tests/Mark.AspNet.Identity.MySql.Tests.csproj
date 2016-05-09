@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FA60EB3D-B925-4DD8-A837-56C86E432A6F}</ProjectGuid>
+    <ProjectGuid>{CE550450-F253-4361-BFCB-636B9D6D0734}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mark.AspNet.Identity.SqlServer.Tests</RootNamespace>
-    <AssemblyName>Mark.AspNet.Identity.SqlServer.Tests</AssemblyName>
+    <RootNamespace>Mark.AspNet.Identity.MySql.Tests</RootNamespace>
+    <AssemblyName>Mark.AspNet.Identity.MySql.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,8 +30,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mark.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\build\Mark.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Mark.AspNet.Identity.MySql, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\build\Mark.AspNet.Identity.MySql.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=3.2.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
@@ -54,23 +66,13 @@
     <Compile Include="Entities\ApplicationUserClaim.cs" />
     <Compile Include="Entities\ApplicationUserLogin.cs" />
     <Compile Include="Entities\ApplicationUserRole.cs" />
-    <Compile Include="Misc\SqlStorageContext.cs" />
+    <Compile Include="Misc\MySqlStorageContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Stores\ApplicationRoleStore.cs" />
     <Compile Include="Stores\ApplicationUserStore.cs" />
-    <Compile Include="Tests\RoleStoreTests.cs" />
     <Compile Include="Tests\UserStoreTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Mark.AspNet.Identity.SqlServer\Mark.AspNet.Identity.SqlServer.csproj">
-      <Project>{994cfcbb-fd48-4e42-b54a-b880c5ff1f11}</Project>
-      <Name>Mark.AspNet.Identity.SqlServer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Mark.AspNet.Identity.Core\Mark.AspNet.Identity.Core.csproj">
-      <Project>{d77bb5ad-50c4-42fc-b7da-9a77274ccb52}</Project>
-      <Name>Mark.AspNet.Identity.Core</Name>
-    </ProjectReference>
+    <Compile Include="Tests\RoleStoreTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
