@@ -49,7 +49,11 @@ namespace Mark.DotNet
                     Type uType = Nullable.GetUnderlyingType(type);
                     bool isNullable = uType != null;
 
-
+                    // If nullable type and the underlying value is it's default value
+                    if (isNullable && target.Equals(uType.GetDefault()))
+                    {
+                        return DBNull.Value;
+                    }
                 }
 
 
