@@ -24,12 +24,12 @@ Here is the list of things you need to do to use the provider(s) implemented for
 3. Remove Entity Framework and Microsoft ASP.NET Identity Entity Framework packages-
     - Uninstall-Package Microsoft.AspNet.Identity.EntityFramework
     - Uninstall-Package EntityFramework (unless you will be using EF Identity provider)
-4. 	Build the project solution and you will find necessary assemblies inside the respective module's **\Bin** directory. The following assemblies are needed depending on provider-
-    - Microsoft.AspNet.Identity.Core.dll (which is the core module for ASP.NET Identity system and is already installed as a package.)
-    - Mark.AspNet.Identity.Core.dll (which is a base module for all Identity providers.)
-    - Mark.AspNet.Identity.EntityFramework.dll (Add if you want to use EF Identity provider. You will also need EF driver package for each respective database.)
-    - Mark.AspNet.Identity.MySql.dll (Add if you want to use MySQL ADO.NET Identity  provider. You will also need to install *MySql.Data* package for MySQL ADO.NET driver.)
-    - Mark.AspNet.Identity.SqlServer.dll (Add if you want to use SQL Server ADO.NET Identity provider. The ADO.NET driver already provided by the .NET Framework.)
+4. 	Build the project solution and you will find necessary assemblies inside the respective module's **/Bin** directory. All these assemblies can be collectively found in the [/build](v2.x/build) directory as they are copied when each project is built. The following assemblies are needed depending on provider-
+    - **Microsoft.AspNet.Identity.Core.dll** (which is the core module for ASP.NET Identity system and is already installed as a package.)
+    - **Mark.AspNet.Identity.Core.dll** (which is a base module for all Identity providers.)
+    - **Mark.AspNet.Identity.EntityFramework.dll** (Add if you want to use EF Identity provider. You will also need EF driver package for each respective database.)
+    - **Mark.AspNet.Identity.MySql.dll** (Add if you want to use MySQL ADO.NET Identity  provider. You will also need to install *MySql.Data* package for MySQL ADO.NET driver.)
+    - **Mark.AspNet.Identity.SqlServer.dll** (Add if you want to use SQL Server ADO.NET Identity provider. The ADO.NET driver already provided by the .NET Framework.)
 5. 	Now, update code in the created MVC project to reflect new Identity provider. Follow instruction document for each Identity provider type-
     - For EF Identity provider, see [ASP.NET MVC 5 source update instruction for EF Identity provider](v2.x/docs/mvc5-source-update-entity-framework.md).
     - For SQL Server (ADO.NET) Identity provider, see [ASP.NET MVC 5 source update instruction for SQL Server Identity provider](v2.x/docs/mvc5-source-update-sqlserver.md).
