@@ -13,7 +13,7 @@ This project implemented provider for Entity Framework that can be used by any p
 - Supports ASP.NET Identity v2.x (Currently 2.2.1)
 - Supports same features in ASP.NET Identity V2.x like same domain/entity properties.
 - Used the same names for classes used by Microsoft implementation like IdentityUser, IdentityRole, UserStore, RoleStore etc.
-- Supports for custom properties are similar to Microsoft implementation. To allow custom properties into consideration, you need to update entity configuration class similar to EF mapping so that it can do dynamic read/write of entities. 
+- Supports for custom properties are similar to Microsoft implementation. To allow custom properties into consideration, you need to update entity configuration class similar to EF mapping so that it can do dynamic read/write of entities.
 
 ## Instruction
 
