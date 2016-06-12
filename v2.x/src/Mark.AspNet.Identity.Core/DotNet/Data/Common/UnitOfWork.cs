@@ -123,7 +123,10 @@ namespace Mark.DotNet.Data.Common
                 // Save all acts performed by unit of handlers.
                 retCount = _storageContext.SaveChanges();
 
-                tContext.Commit();
+                if (tContext != null)
+                {
+                    tContext.Commit();
+                }
             }
             catch (Exception)
             {
