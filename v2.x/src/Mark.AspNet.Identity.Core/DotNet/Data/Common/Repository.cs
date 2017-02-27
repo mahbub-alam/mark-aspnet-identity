@@ -83,7 +83,7 @@ namespace Mark.DotNet.Data.Common
         /// Set unit of work reference to be used by the repository.
         /// </summary>
         /// <param name="unitOfWork">Unit of work reference.</param>
-        public void SetUnitOfWork(IUnitOfWork unitOfWork)
+        public virtual void SetUnitOfWork(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }

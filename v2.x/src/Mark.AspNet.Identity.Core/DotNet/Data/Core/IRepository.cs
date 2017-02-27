@@ -27,7 +27,7 @@ namespace Mark.DotNet.Data
     /// Represents base repository interface.
     /// </summary>
     /// <typeparam name="TEntity">Entity type.</typeparam>
-    public interface IRepository<TEntity> 
+    public interface IRepository<TEntity> : IDisposable  
         where TEntity : IEntity
     {
         /// <summary>

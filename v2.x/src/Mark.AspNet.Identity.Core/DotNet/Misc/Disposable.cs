@@ -33,6 +33,15 @@ namespace Mark.DotNet
         private bool _isDisposed = false; // To detect redundant calls
 
         /// <summary>
+        /// Whether the object is already disposed.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsDisposed()
+        {
+            return _isDisposed;
+        }
+
+        /// <summary>
         /// Throw exception if the object is already disposed.
         /// </summary>
         protected void ThrowIfDisposed()

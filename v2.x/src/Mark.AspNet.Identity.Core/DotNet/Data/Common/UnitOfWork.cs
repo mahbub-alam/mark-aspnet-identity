@@ -112,7 +112,7 @@ namespace Mark.DotNet.Data.Common
 
             try
             {
-                tContext = _storageContext.CreateTransactionContext();
+                tContext = _storageContext.GetTransactionContext();
             
                 // Execute all unit of work handlers that act upon storage context
                 foreach (Work work in _workList.OrderBy(w => w.EntryDateTime))
@@ -141,7 +141,10 @@ namespace Mark.DotNet.Data.Common
             {
                 if (tContext != null)
                 {
-                    tContext.Dispose();
+                    tContext = null;
+                    // We don't need currently returned transaction context 
+                    // anymore
+                    _storageContext.DisposeTransactionContext();
                 }
 
                 // Must be cleared

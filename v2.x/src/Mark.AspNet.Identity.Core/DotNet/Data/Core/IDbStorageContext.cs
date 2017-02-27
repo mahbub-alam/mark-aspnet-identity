@@ -31,13 +31,10 @@ namespace Mark.DotNet.Data
     public interface IDbStorageContext : IStorageContext
     {
         /// <summary>
-        /// Get the current global transaction context associated with the storage context. If no 
-        /// transaction context is found, a new one is created and returned.
+        /// Get the current transaction context associated with the storage context. If no 
+        /// transaction context is found, a new associated one is created and returned.
         /// </summary>
-        new IDbTransactionContext TransactionContext
-        {
-            get;
-        }
+        IDbTransactionContext GetDbTransactionContext();
 
         /// <summary>
         /// Open database connection if it is not opened yet.

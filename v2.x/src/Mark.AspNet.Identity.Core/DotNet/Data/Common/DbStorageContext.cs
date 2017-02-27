@@ -170,33 +170,12 @@ namespace Mark.DotNet.Data.Common
             return _conn.CreateCommand();
         }
 
-        /// <summary>
-        /// Create a new transaction context.
-        /// </summary>
-        /// <param name="createPrivate">Whether to create private transaction context.</param>
-        /// <returns>Returns a new transaction context.</returns>
-        public IDbTransactionContext CreateTransactionContext(bool createPrivate = false)
-        {
-            ThrowIfDisposed();
-
-            IDbTransactionContext transactionContext = NewTransactionContext();
-
-            if (!createPrivate)
-            {
-                _tContext = transactionContext;
-            }
-
-            return transactionContext;
-        }
-
-        /// <summary>
-        /// Create a new transaction context.
-        /// </summary>
-        /// <returns>Returns a new transaction context.</returns>
-        protected virtual IDbTransactionContext NewTransactionContext()
+        private IDbTransactionContext CreateDbTransactionContext()
         {
             Open();
-            return new DbTransactionContext(_conn.BeginTransaction());
+            IDbTransactionContext transactionContext = new DbTransactionContext(_conn.BeginTransaction());
+
+            return transactionContext;
         }
 
         /// <summary>
@@ -211,33 +190,38 @@ namespace Mark.DotNet.Data.Common
         }
 
         /// <summary>
-        /// Get the current global transaction context associated with the storage context. If no 
-        /// transaction context is found, a new one is created and returned.
+        /// Get the current transaction context associated with the storage context. If no 
+        /// transaction context is found, a new associated one is created and returned.
         /// </summary>
-        ITransactionContext IStorageContext.TransactionContext
+        public ITransactionContext GetTransactionContext()
         {
-            get
-            {
-                return this.TransactionContext;
-            }
+            return GetDbTransactionContext();
         }
 
         /// <summary>
-        /// Get the current global transaction context associated with the storage context. If no 
-        /// transaction context is found, a new one is created and returned.
+        /// Get the current transaction context associated with the storage context. If no 
+        /// transaction context is found, a new associated one is created and returned.
         /// </summary>
-        public IDbTransactionContext TransactionContext
+        public IDbTransactionContext GetDbTransactionContext()
         {
-            get
+            ThrowIfDisposed();
+
+            if (!TransactionExists)
             {
-                ThrowIfDisposed();
+                _tContext = CreateDbTransactionContext();
+            }
 
-                if (!TransactionExists)
-                {
-                    _tContext = CreateTransactionContext();
-                }
+            return _tContext;
+        }
 
-                return _tContext;
+        /// <summary>
+        /// Dispose current transaction context associated with the storage context.
+        /// </summary>
+        public void DisposeTransactionContext()
+        {
+            if (TransactionExists)
+            {
+                _tContext.Dispose();
             }
         }
 
@@ -305,7 +289,7 @@ namespace Mark.DotNet.Data.Common
             // existing transaction before creating private transaction context.
             if (!TransactionExists)
             {
-                privateTContext = this.CreateTransactionContext(true);
+                privateTContext = CreateDbTransactionContext();
             }
             
             try

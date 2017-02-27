@@ -26,7 +26,7 @@ using System.Data.Common;
 namespace Mark.DotNet.Data.Common
 {
     /// <summary>
-    /// Represents database command builder for SQL operation.
+    /// Represents database command builder for CRUD operation.
     /// </summary>
     /// <typeparam name="TEntity">Entity type.</typeparam>
     public class DbCommandBuilder<TEntity> where TEntity : IEntity
@@ -107,7 +107,7 @@ namespace Mark.DotNet.Data.Common
 
             if (_storageContext.TransactionExists)
             {
-                command.Transaction = _storageContext.TransactionContext.Transaction;
+                command.Transaction = _storageContext.GetDbTransactionContext().Transaction;
             }
 
             DbCommandContext cmdContext = new DbCommandContext(command, entities.Cast<IEntity>().ToList());
@@ -143,7 +143,7 @@ namespace Mark.DotNet.Data.Common
 
             if (_storageContext.TransactionExists)
             {
-                command.Transaction = _storageContext.TransactionContext.Transaction;
+                command.Transaction = _storageContext.GetDbTransactionContext().Transaction;
             }
 
             DbCommandContext cmdContext = new DbCommandContext(command, entities.Cast<IEntity>().ToList());
@@ -171,7 +171,7 @@ namespace Mark.DotNet.Data.Common
 
             if (_storageContext.TransactionExists)
             {
-                command.Transaction = _storageContext.TransactionContext.Transaction;
+                command.Transaction = _storageContext.GetDbTransactionContext().Transaction;
             }
 
             DbCommandContext cmdContext = new DbCommandContext(command, entities.Cast<IEntity>().ToList());

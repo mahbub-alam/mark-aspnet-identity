@@ -29,28 +29,23 @@ namespace Mark.DotNet.Data
     public interface IStorageContext : IDisposable
     {
         /// <summary>
-        /// Create a new transaction context.
-        /// </summary>
-        /// <param name="createPrivate">Whether to create private transaction context.</param>
-        /// <returns>Returns a new transaction context.</returns>
-        IDbTransactionContext CreateTransactionContext(bool createPrivate = false);
-
-        /// <summary>
-        /// Get the current global transaction context associated with the storage context. If no 
-        /// transaction context is found, a new one is created and returned.
-        /// </summary>
-        ITransactionContext TransactionContext
-        {
-            get;
-        }
-
-        /// <summary>
         /// Whether there is a transaction exists within the storage context.
         /// </summary>
         bool TransactionExists
         {
             get;
         }
+
+        /// <summary>
+        /// Get the current transaction context associated with the storage context. If no 
+        /// transaction context is found, a new associated one is created and returned.
+        /// </summary>
+        ITransactionContext GetTransactionContext();
+
+        /// <summary>
+        /// Dispose current transaction context associated with the storage context.
+        /// </summary>
+        void DisposeTransactionContext();
 
         /// <summary>
         /// Save all changes to a storage.
