@@ -29,7 +29,7 @@ namespace Mark.DotNet.Data.Common
     /// <summary>
     /// Represents command context for ADO.NET style storage context.
     /// </summary>
-    public sealed class DbCommandContext : Disposable, IDbCommandContext
+    public class DbCommandContext : Disposable, IDbCommandContext
     {
         private DbCommand _command;
         private DbParameterCollection _parameters;

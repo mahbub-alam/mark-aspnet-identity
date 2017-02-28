@@ -26,7 +26,7 @@ namespace Mark.DotNet.Data.ModelConfiguration
     /// <summary>
     /// Represents a collection of entity configuration.
     /// </summary>
-    public sealed class EntityConfigurationCollection
+    public class EntityConfigurationCollection
     {
         private Dictionary<string, IEntityConfiguration<IEntity>> _collection;
 

@@ -26,7 +26,7 @@ namespace Mark.DotNet.Data.Common
     /// <summary>
     /// Represents unit of work.
     /// </summary>
-    public sealed class UnitOfWork : Disposable, IUnitOfWork
+    public class UnitOfWork : Disposable, IUnitOfWork
     {
         private IStorageContext _storageContext;
         private List<Work> _workList;
@@ -201,7 +201,7 @@ namespace Mark.DotNet.Data.Common
         /// <summary>
         /// Represents work in a unit of work.
         /// </summary>
-        private sealed class Work
+        private class Work
         {
             private IEntity _item;
             private IUnitOfWorkHandler _handler;

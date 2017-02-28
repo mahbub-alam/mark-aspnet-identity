@@ -27,7 +27,7 @@ namespace Mark.DotNet.Data.Common
     /// <summary>
     /// Represents command parameter collection.
     /// </summary>
-    public sealed class DbParameterCollection : IDbParameterCollection
+    public class DbParameterCollection : IDbParameterCollection
     {
         private DbCommand _command;
         private System.Data.Common.DbParameterCollection _parameters;
