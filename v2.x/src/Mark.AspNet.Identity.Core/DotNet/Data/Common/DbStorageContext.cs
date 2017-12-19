@@ -222,6 +222,7 @@ namespace Mark.DotNet.Data.Common
             if (TransactionExists)
             {
                 _tContext.Dispose();
+                _tContext = null;
             }
         }
 
