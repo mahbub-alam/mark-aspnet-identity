@@ -1,3 +1,4 @@
+NOTE: This respoitory is archived and no longer active.
 
 # Mark.AspNet.Identity
 ##### ASP.NET Identity 2.x implementations/providers for Entity Framework (Any driver that supports EF), MySQL (ADO.NET) and MS SQL Server (ADO.NET)
